@@ -1,5 +1,5 @@
 <?php
-	class Area() {
+	class Area {
 
 		private $codigoArea;
 		private $nombreArea;
