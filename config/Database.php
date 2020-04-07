@@ -9,7 +9,7 @@
 		 		$this->conexion = mysqli_connect(servidorMysql, usuarioMysql, passwordMysql, databseMysql);
 				return true;
 			}catch(Exception $e) {
-				if(ambiente = 'DEV') { echo $e->getMessage(); }
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
 				return false;
 			}
 		}

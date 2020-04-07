@@ -17,7 +17,7 @@
 				$this->consulta = $consulta;
 				return true;
 			}catch(Exception $e) {
-				if(ambiente = 'DEV') { echo 'Ha ocurrido un error al recibir la cadena de consulta: '.$e->getMessage(); }
+				if(ambiente == 'DEV') { echo 'Ha ocurrido un error al recibir la cadena de consulta: '.$e->getMessage(); }
 				return false;
 			}
 		}
@@ -26,7 +26,7 @@
 			try {
 				return $this->resultado;
 			}catch(Exception $e) {
-				if(ambiente = 'DEV') { echo 'Ha ocurrido un error al recibir la cadena de consulta: '.$e->getMessage(); }
+				if(ambiente == 'DEV') { echo 'Ha ocurrido un error al recibir la cadena de consulta: '.$e->getMessage(); }
 				return null;
 			}
 		}
@@ -65,12 +65,12 @@
 						return false;
 					}
 				}else{
-					if(ambiente = 'DEV') { echo "Falló el seteo de la cadena de la consulta."; }
+					if(ambiente == 'DEV') { echo "Falló el seteo de la cadena de la consulta."; }
 					return false;
 				}
 			}catch(Exception $e) {
 				$this->deshacer();
-				if(ambiente = 'DEV') { echo "No se pudoo ejecutar la consulta: ".$e->getMessage(); }
+				if(ambiente == 'DEV') { echo "No se pudoo ejecutar la consulta: ".$e->getMessage(); }
 				return false;
 			}
 		}
@@ -83,7 +83,7 @@
 					return 0;
 				}
 			}catch(Exception $e) {
-				if(ambiente = 'DEV') { echo "Fallo el conteo de registros afectados: ".$e->getMessage()."."; }
+				if(ambiente == 'DEV') { echo "Fallo el conteo de registros afectados: ".$e->getMessage()."."; }
 				return 0;
 			}
 		}

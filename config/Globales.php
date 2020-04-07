@@ -21,7 +21,7 @@
 		//directorio de cores
 		define('dirCore'		, 'core/');
 		//directorio de fachada
-		define('dirFacade',		, 'facade/');
+		define('dirFacade'		, 'facade/');
 		//directorio de frameworks utilizados
 		define('dirFramework'	, 'frameworks/');
 		//direcotiors de modelos de la base de datos

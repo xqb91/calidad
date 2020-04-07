@@ -19,7 +19,7 @@
 				$this->databaseTransaction = $databaseTransaction;
 				return true;
 			}catch(Exception $e) {
-				if(ambiente = 'DEV') { echo $e->getMessage(); }
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
 				return false;
 			}
 		}
@@ -43,11 +43,11 @@
 						return $array;
 					}
 				}else{
-					if(ambiente = 'DEV') { echo "Controller Area - Listar: El objeto DatabaseTransaction se encuentra nulo"; }
+					if(ambiente == 'DEV') { echo "Controller Area - Listar: El objeto DatabaseTransaction se encuentra nulo"; }
 					return false;
 				}
 			}catch(Exception $e) {
-				if(ambiente = 'DEV') { echo $e->getMessage(); }
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
 				return false;
 			}
 		}
@@ -61,15 +61,15 @@
 					if($this->databaseTransaction->cantidadResultados() == 1) {
 						return new Area($this->databaseTransaction->resultados());
 					}else{
-						if(ambiente = 'DEV') { echo "Controller Area - ListarPorCodigo: La consulta SQL devolvió mas de un resultado por eso se devuelve NULL"; }
+						if(ambiente == 'DEV') { echo "Controller Area - ListarPorCodigo: La consulta SQL devolvió mas de un resultado por eso se devuelve NULL"; }
 						return null;
 					}
 				}else{
-					if(ambiente = 'DEV') { echo "Controller Area - Listar: El objeto DatabaseTransaction se encuentra nulo"; }
+					if(ambiente == 'DEV') { echo "Controller Area - Listar: El objeto DatabaseTransaction se encuentra nulo"; }
 					return false;
 				}
 			}catch(Exception $e) {
-				if(ambiente = 'DEV') { echo $e->getMessage(); }
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
 				return false;
 			}
 		}
