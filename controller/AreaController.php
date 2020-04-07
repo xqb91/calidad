@@ -37,7 +37,7 @@
 						$array = null;
 						$i 	   = 0;
 						while($registro = $this->databaseTransaction->resultados()) {
-							$array[$i] = new Area($row);
+							$array[$i] = new Area($registro);
 							$i++;
 						}
 						return $array;

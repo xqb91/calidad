@@ -6,7 +6,7 @@
 		//constructor de la clase de conexion
 		function __construct() {
 		 	try {
-		 		$this->conexion = mysqli_connect(servidorMysql, usuarioMysql, passwordMysql, databseMysql);
+		 		$this->conexion = mysqli_connect(servidorMysql, usuarioMysql, passwordMysql, databaseMysql);
 				return true;
 			}catch(Exception $e) {
 				if(ambiente == 'DEV') { echo $e->getMessage(); }

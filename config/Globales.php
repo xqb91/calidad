@@ -36,15 +36,15 @@
 		//configuración de conexión de desarrollo
 		define('servidorMysql'	, 'localhost');
 		define('usuarioMysql'	, 'root');
-		define('passwordMysql'	, 'FTPxqb91RDS$$');
-		define('databseMysql'	, 'calidad');
+		define('passwordMysql'	, 'Tricot');
+		define('databaseMysql'	, 'calidad');
 		define('puertoMysql'	,  3306);
 	}else{
 		//configuración de conexión de producción
 		define('servidorMysql'	, 'rauli.tricotcentral.local');
 		define('usuarioMysql'	, 'root');
 		define('passwordMysql'	, 'FTPxqb91RDS$$');
-		define('databseMysql'	, 'calidad');
+		define('databaseMysql'	, 'calidad');
 		define('puertoMysql'	, 3306);
 	}
 
