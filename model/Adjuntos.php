@@ -113,6 +113,36 @@
 	    		return false;
 	    	}
 	    }  
+		//metodos de la clase
+		//lista todos los valores de la clase
+		public function serializar() {
+	        return get_object_vars($this);
+		}
 
+		//serializa los objetos de la clase
+		public function serialize() {
+        	return json_encode($this->serializar(), JSON_FORCE_OBJECT);
+	    }
+
+	    //desserializa un string
+	    public function unserialize($serializado) {
+	        $this->serializado = unserialize($serializado);
+	    }	
+
+		//metodos de la clase
+		//lista todos los valores de la clase
+		public function serializar() {
+	        return get_object_vars($this);
+		}
+
+		//serializa los objetos de la clase
+		public function serialize() {
+        	return json_encode($this->serializar(), JSON_FORCE_OBJECT);
+	    }
+
+	    //desserializa un string
+	    public function unserialize($serializado) {
+	        $this->serializado = unserialize($serializado);
+	    }		    
 
 ?>     
