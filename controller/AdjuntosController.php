@@ -1,5 +1,6 @@
 <?php
 	class AdjuntosController {
+		include(dirModel."Adjuntos.php");
 
 		private $databaseTransaction;
 
@@ -105,6 +106,39 @@
 				return false;
 			}
 		}
+
+		public function ingresarAdjunto($Adjunto) {
+			try {
+				//objeto
+				$obj = $Adjunto;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "INSERT INTO Adjuntos ";
+					$consulta = $consulta."(numero_evaluacion, fecha_carga, periodo, nombre_original, archivo_server) VALUES ";
+					$consulta = $consulta."(".$obj->getnumero_evaluacion().", '".$obj->getfecha_carga()."', '".$obj->getperiodo()."', '".$obj->getnombre_original()."', '".$getarchivo_server()."');";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultados == true) {
+							return 1;
+						}else{
+							return 0;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "AdjuntosController - listarPorNumeroEvaluacion: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "AdjuntosController - listarPorNumeroEvaluacion: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+
 
 	}
 ?>

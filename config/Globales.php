@@ -16,18 +16,20 @@
 	//***************************************************
 	// D I R E C T O R I O S
 	//***************************************************
+		//directorio base del sistema
+		define('dirbase'		, $_SERVER["DOCUMENT_ROOT"]);
 		//directorio de controladores
-		define('dirController'	, 'controller/');
+		define('dirController'	, dirbase.'/calidad/calidad/controller/');
 		//directorio de cores
-		define('dirCore'		, 'core/');
+		define('dirCore'		, dirbase.'/calidad/calidad/core/');
 		//directorio de fachada
-		define('dirFacade'		, 'facade/');
+		define('dirFacade'		, dirbase.'/calidad/calidad/facade/');
 		//directorio de frameworks utilizados
-		define('dirFramework'	, 'frameworks/');
+		define('dirFramework'	, dirbase.'/calidad/calidad/frameworks/');
 		//direcotiors de modelos de la base de datos
-		define('dirModel'		, 'model/');
+		define('dirModel'		, dirbase.'/calidad/calidad/model/');
 		//directorio del transaccional
-		define('dirTransaction'	, 'transaction/');
+		define('dirTransaction'	, dirbase.'/calidad/calidad/transaction/');
 
 	//***************************************************
 	// C O N E X I O N   D A T A B A S E
