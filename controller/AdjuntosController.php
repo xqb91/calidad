@@ -98,7 +98,7 @@
 						return $array;
 					}
 				}else{
-					if(ambiente == 'DEV') { echo "AdjuntosController - listarPorNumeroEvaluacion: El objeto DatabaseTransaction se encuentra nulo"; }
+					if(ambiente == 'DEV') { echo "AdjuntosController - listarPeriodo: El objeto DatabaseTransaction se encuentra nulo"; }
 					return false;
 				}
 			}catch(Exception $e) {
@@ -107,7 +107,7 @@
 			}
 		}
 
-		public function ingresarAdjunto($Adjunto) {
+		public function ingresar($Adjunto) {
 			try {
 				//objeto
 				$obj = $Adjunto;
@@ -125,11 +125,11 @@
 							return 0;
 						}
 					}else{
-						if(ambiente == 'DEV') { echo "AdjuntosController - listarPorNumeroEvaluacion: El objeto DatabaseTransaction se encuentra nulo"; }
+						if(ambiente == 'DEV') { echo "AdjuntosController - ingresar: El objeto DatabaseTransaction se encuentra nulo"; }
 						return false;
 					}
 				}else{
-					if(ambiente == 'DEV') { echo "AdjuntosController - listarPorNumeroEvaluacion: El objeto Adjunto (Model) se encuentra nulo"; }
+					if(ambiente == 'DEV') { echo "AdjuntosController - ingresar: El objeto Adjunto (Model) se encuentra nulo"; }
 					return false;
 				}
 			}catch(Exception $e) {
@@ -139,6 +139,65 @@
 		}
 
 
+		public function actualizar($Adjunto) {
+			try {
+				//objeto
+				$obj = $Adjunto;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "UPDATE adjuntos ";
+					$consulta = $consulta."SET  numero_evaluacion = ".$obj->getnumero_evaluacion().", fecha_carga = '".$obj->getfecha_carga()."', periodo = '".$obj->getperiodo()."', ";
+					$consulta = $consulta."nombre_original = '".$obj->getnombre_original()."', archivo_server = '".$obj->getarchivo_server()."' WHERE codigo_adjunto = ".$obj->getcodigo_adjunto()." ";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultados == true) {
+							return 1;
+						}else{
+							return 0;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "AdjuntosController - actualizar: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "AdjuntosController - actualizar: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+		public function eliminar($Adjunto) {
+			try {
+				//objeto
+				$obj = $Adjunto;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "DELETE from adjuntos WHERE codigo_adjunto = ".$obj->getcodigo_adjunto()." ";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultados == true) {
+							return 1;
+						}else{
+							return 0;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "AdjuntosController - eliminar: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "AdjuntosController - eliminar: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
 
 	}
 ?>
