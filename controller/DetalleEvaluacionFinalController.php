@@ -1,11 +1,13 @@
 <?php
+	//Controlador OK: 09.04.2020
+	include(dirModel."DetalleEvaluadorFinal.php");
 	class DetalleEvaluadorFinalController {
 
 		private $databaseTransaction;
 
 		//constructor del controlador de Area
-		public function __construct($databaseTransaction) {
-			$this->databaseTransaction = $databaseTransaction;
+		public function __construct() {
+			$this->databaseTransaction = new DatabaseTransaction();
 		}
 
 		//devuelve el objeto inicializado por el controlador de DatabaseTransaction (Conexion contra la base de datos)
@@ -27,11 +29,12 @@
 		//funcion retorna un arreglo de todos los registros que encuentre en la tabla
 		public function listar() {
 			try {
-				$consulta = 'SELECT * FROM detalle_evaluacion_final';
+				$consulta = 'SELECT * FROM detalle_evaluacion_final ORDER BY numero_final DESC, numero_evaluacion ASC';
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
 					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
 					}else{
 						$array = null;
@@ -40,6 +43,7 @@
 							$array[$i] = new DetalleEvaluacionFinal($registro);
 							$i++;
 						}
+						$this->databaseTransaction->cerrar();
 						return $array;
 					}
 				}else{
@@ -54,15 +58,22 @@
 
 		public function listarPorNumeroFinal($quincenal) {
 			try {
-				$consulta = "SELECT * FROM detalle_evaluacion_final WHERE numero_final = ".$quincenal."";
+				$consulta = "SELECT * FROM detalle_evaluacion_final WHERE numero_final = ".$quincenal." ORDER BY numero_final DESC, numero_evaluacion ASC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
-					if($this->databaseTransaction->cantidadResultados() == 1) {
-						return new DetalleEvaluacionFinal($this->databaseTransaction->resultados());
-					}else{
-						if(ambiente == 'DEV') { echo "DetalleEvaluadorFinalController - listarPorNumeroFinal: La consulta SQL devolvió mas de un resultado por eso se devuelve NULL"; }
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new DetalleEvaluacionFinal($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "DetalleEvaluadorFinalController - listarPorNumeroFinal: El objeto DatabaseTransaction se encuentra nulo"; }
@@ -76,18 +87,129 @@
 
 		public function listarPorNumeroParcial($parcial) {
 			try {
-				$consulta = "SELECT * FROM detalle_evaluacion_final WHERE evaluacion_parcial = ".$parcial."";
+				$consulta = "SELECT * FROM detalle_evaluacion_final WHERE evaluacion_parcial = ".$parcial." ORDER BY numero_final DESC, numero_evaluacion ASC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
-					if($this->databaseTransaction->cantidadResultados() == 1) {
-						return new DetalleEvaluacionFinal($this->databaseTransaction->resultados());
-					}else{
-						if(ambiente == 'DEV') { echo "DetalleEvaluadorFinalController - listarPorNumeroParcial: La consulta SQL devolvió mas de un resultado por eso se devuelve NULL"; }
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new DetalleEvaluacionFinal($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "DetalleEvaluadorFinalController - listarPorNumeroParcial: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+		public function ingresar($param) {
+			try {
+				//objeto
+				$obj = $param;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "INSERT INTO detalle_evaluacion_final ";
+					$consulta = $consulta."(numero_evaluacion, numero_final) VALUES ";
+					$consulta = $consulta."('".$obj->getnumero_evaluacion()."', '".$obj->numero_final()."' );";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultado == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
+							return 1;
+						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
+							return 0;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "CicloController - ingresar: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "CicloController - ingresar: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+
+		public function eliminarPorParcialyFinal($param) {
+			try {
+				//objeto
+				$obj = $param;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "DELETE FROM detalle_evaluacion_final ";
+					$consulta = $consulta."WHERE numero_evaluacion = ".$obj->getnumero_evaluacion()." AND numero_final = ".$obj->getnumero_final()."";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultado == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
+							return 1;
+						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
+							return 0;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "CicloController - eliminar: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "CicloController - eliminar: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+		public function eliminarPorParcial($param) {
+			try {
+				//objeto
+				$obj = $param;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "DELETE FROM detalle_evaluacion_final ";
+					$consulta = $consulta."WHERE numero_evaluacion = ".$obj->getnumero_evaluacion()." ";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultado == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
+							return 1;
+						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
+							return 0;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "CicloController - eliminar: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "CicloController - eliminar: El objeto Adjunto (Model) se encuentra nulo"; }
 					return false;
 				}
 			}catch(Exception $e) {

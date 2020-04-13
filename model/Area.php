@@ -9,11 +9,18 @@
 		//Constructor
 		//Obtiene un arreglo que es generado de forma automática por MySQL
 		//mediante un mysql_result, debe entregarse un arreglo de tipo asociativo
-		private function __construct($arreglo) {
+		public function __construct($arreglo = null) {
 			$this->codigo_area		= $arreglo['codigo_area'];
 			$this->nombre_area		= $arreglo['nombre_area'];
 			$this->estado			= $arreglo['estado'];
 			$this->fecha_creacion	= $arreglo['fecha_creacion'];
+		}
+
+		public function nuevo($codigo_area, $nombre_area, $estado, $fecha_creacion) {
+			$this->codigo_area		= $codigo_area;
+			$this->nombre_area		= $nombre_area;
+			$this->estado			= $estado;
+			$this->fecha_creacion	= $fecha_creacion;
 		}
 
 		//accesadores
@@ -52,7 +59,7 @@
 		//mutadores
 		public function setcodigo_area($codigo_area) {
 			try {
-				$this->codigo_area = $codigo_area;
+				$this->codigo_area = intval(preg_replace('/[^0-9]+/', '', $codigo_area), 10);
 				return true;
 			}catch(Exception $e) {
 				return false;
@@ -61,8 +68,12 @@
 
 		public function setnombre_area($nombre_area) {
 			try {
-				$this->nombre_area = $nombre_area;
-				return true;
+				if(strlen($nombre_area) == 0) {
+	    			return false;
+	    		}else{ 
+					$this->nombre_area =preg_replace('([^A-Za-z0-9Á-Ú ])', '', trim($nombre_area));
+					return true;
+				}
 			}catch(Exception $e) {
 				return false;
 			}
@@ -70,8 +81,12 @@
 
 		public function setestado($estado) {
 			try {
-				$this->estado = $estado;
-				return true;
+				if(strlen($estado) == 0) {
+	    			return false;
+	    		}else{ 
+					$this->estado = intval(preg_replace('/[^0-9]+/', '', $estado), 10);
+					return true;
+				}
 			}catch(Exception $e) {
 				return false;
 			}
@@ -79,8 +94,12 @@
 
 		public function setfecha_creacion($fecha_creacion) {
 			try {
-				$this->fecha_creacion = $fecha_creacion;
-				return true;
+				if(strlen($fecha_creacion) == 0) {
+	    			return false;
+	    		}else{ 
+					$this->fecha_creacion = $fecha_creacion;
+					return true;
+				}
 			}catch(Exception $e) {
 				return false;
 			}

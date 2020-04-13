@@ -46,7 +46,7 @@
 		//mutadores
 		public function setnumero_evaluacion($numero_evaluacion) {
 			try {
-				$this->numero_evaluacion = $numero_evaluacion;
+				$this->numero_evaluacion = intval(preg_replace('/[^0-9]+/', '', $numero_evaluacion), 10);
 				return true;
 			}catch(Exception $e) {
 				return false;

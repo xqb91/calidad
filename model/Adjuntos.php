@@ -20,6 +20,15 @@
 			$this->archivo_server	 = $arreglo['archivo_server'];
 		}	   
 
+		public function nuevo($numero_evaluacion, $fecha_carga, $periodo, $nombre_original, $archivo_server ) {
+			$this->numero_evaluacion = $numero_evaluacion;
+			$this->fecha_carga		 = $fecha_carga;
+			$this->periodo	 		 = $periodo;
+			$this->nombre_original	 = $nombre_original;
+			$this->archivo_server	 = $archivo_server;
+		}
+
+
 	    public function getcodigo_adjunto() {
 	    	try {
 	    		return $this->codigo_adjunto;
@@ -67,48 +76,76 @@
 		//mutadores
 	    public function setcodigo_adjunto($codigo_adjunto) {
 	    	try {
-	    		$this->codigo_adjunto = $codigo_adjunto;
-				return true;
+	    		if(strlen($codigo_adjunto) == 0) {
+	    			return false;
+	    		}else{ 
+	    			if(strlen($intval(preg_replace('/[^0-9]+/', '', $codigo_adjunto), 10)) == 0) {
+	    				return false;
+	    			}else{
+			    		$this->codigo_adjunto = intval(preg_replace('/[^0-9]+/', '', $codigo_adjunto), 10);
+						return true;
+	    			}
+	    		}
 	    	}catch(Exception $e) {
 	    		return false;
 	    	}
 	    }  
 	    public function setnumero_evaluacion($numero_evaluacion) {
 	    	try {
-	    		$this->numero_evaluacion = $numero_evaluacion;
-	    		return true;
+	    		if(strlen($numero_evaluacion) == 0) {
+	    			return false;
+	    		}else{
+	    			$this->numero_evaluacion = intval(preg_replace('/[^0-9]+/', '', $numero_evaluacion), 10);
+	    			return true;
+	    		}
 	    	}catch(Exception $e) {
 	    		return false;
 	    	}
 	    }  
 	    public function setfecha_carga($fecha_carga) {
 	    	try {
-	    		$this->fecha_carga = $fecha_carga;
-	    		return true;
+	    		if(strlen($fecha_carga) == 0) {
+	    			return false;
+	    		}else{
+	    			$this->fecha_carga = $fecha_carga;
+	    			return true;
+	    		}
 	    	}catch(Exception $e) {
 	    		return false;
 	    	}
 	    } 
 	    public function setperiodo($periodo) {
 	    	try {
-	    		$this->periodo = $periodo;
-	    		return true;
+	    		if(strlen($periodo) == 0) {
+	    			return false;
+	    		}else{
+		    		$this->periodo = $periodo;
+		    		return true;
+		    	}
 	    	}catch(Exception $e) {
 	    		return false;
 	    	}
 	    } 
 	    public function setnombre_original($nombre_original) {
 	    	try {
-	    		$this->nombre_original = $nombre_original;
-	    		return true;
+	    		if(strlen($nombre_original) == 0) {
+	    			return false;
+	    		}else{
+	    			$this->nombre_original = $nombre_original;
+	    			return true;
+	    		}
 	    	}catch(Exception $e) {
 	    		return false;
 	    	}
 	    }
 	    public function setarchivo_server($nombre_original) {
 	    	try {
-	    		$this->nombre_original = $nombre_original;
-	    		return true;	    		
+	    		if(strlen($nombre_original) == 0) {
+	    			return false;
+	    		}else{
+	    			$this->nombre_original = $nombre_original;
+	    			return true;
+	    		}	    		
 	    	}catch(Exception $e) {
 	    		return false;
 	    	}

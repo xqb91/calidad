@@ -1,12 +1,13 @@
 <?php
+	//Controlador OK: 09.04.2020
+	include(dirModel."Adjuntos.php");
 	class AdjuntosController {
-		include(dirModel."Adjuntos.php");
 
 		private $databaseTransaction;
 
 		//constructor del controlador de Area
-		public function __construct($databaseTransaction) {
-			$this->databaseTransaction = $databaseTransaction;
+		public function __construct() {
+			$this->databaseTransaction = new DatabaseTransaction();
 		}
 
 		//devuelve el objeto inicializado por el controlador de DatabaseTransaction (Conexion contra la base de datos)
@@ -28,11 +29,12 @@
 		//funcion retorna un arreglo de todos los registros que encuentre en la tabla
 		public function listar() {
 			try {
-				$consulta = 'SELECT * FROM Adjuntos';
+				$consulta = 'SELECT * FROM Adjuntos ORDER BY codigo_adjunto ASC';
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
 					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
 					}else{
 						$array = null;
@@ -41,6 +43,7 @@
 							$array[$i] = new Adjuntos($registro);
 							$i++;
 						}
+						$this->databaseTransaction->cerrar();
 						return $array;
 					}
 				}else{
@@ -55,11 +58,12 @@
 
 		public function listarPorNumeroEvaluacion($evaluacion) {
 			try {
-				$consulta = 'SELECT * FROM Adjuntos WHERE numero_evaluacion = $evaluacion';
+				$consulta = 'SELECT * FROM Adjuntos WHERE numero_evaluacion = $evaluacion  ORDER BY numero_evaluacion ASC';
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
 					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
 					}else{
 						$array = null;
@@ -68,6 +72,7 @@
 							$array[$i] = new Adjuntos($registro);
 							$i++;
 						}
+						$this->databaseTransaction->cerrar();
 						return $array;
 					}
 				}else{
@@ -87,6 +92,7 @@
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
 					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
 					}else{
 						$array = null;
@@ -95,6 +101,7 @@
 							$array[$i] = new Adjuntos($registro);
 							$i++;
 						}
+						$this->databaseTransaction->cerrar();
 						return $array;
 					}
 				}else{
@@ -120,8 +127,12 @@
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
 						if($resultados == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
 							return 1;
 						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
 							return 0;
 						}
 					}else{
@@ -152,8 +163,12 @@
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
 						if($resultados == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
 							return 1;
 						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
 							return 0;
 						}
 					}else{
@@ -181,8 +196,12 @@
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
 						if($resultados == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
 							return 1;
 						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
 							return 0;
 						}
 					}else{

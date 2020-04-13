@@ -33,7 +33,7 @@
 
 
 		public function conectar($fuente = "") {
-			$this->conexion = new Database($fuente, $this->debug);
+			$this->conexion = new Database();
 		}
 
 		public function iniciarTransaccion() {

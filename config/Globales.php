@@ -19,6 +19,8 @@
 		//directorio base del sistema
 		define('dirbase'		, $_SERVER["DOCUMENT_ROOT"]);
 		//directorio de controladores
+		define('dirConfig'		, dirbase.'/calidad/config/');
+		//directorio de controladores
 		define('dirController'	, dirbase.'/calidad/controller/');
 		//directorio de cores
 		define('dirCore'		, dirbase.'/calidad/core/');
