@@ -1,11 +1,13 @@
 <?php
+	//Controlador OK: 09.04.2020
+	include(dirModel."EvaluacionQuincenal.php");
 	class EvaluacionQuincenalController {
 
 		private $databaseTransaction;
 
 		//constructor del controlador de Area
-		public function __construct($databaseTransaction) {
-			$this->databaseTransaction = $databaseTransaction;
+		public function __construct() {
+			$this->databaseTransaction = new DatabaseTransaction();
 		}
 
 		//devuelve el objeto inicializado por el controlador de DatabaseTransaction (Conexion contra la base de datos)
@@ -32,6 +34,7 @@
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
 					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
 					}else{
 						$array = null;
@@ -40,6 +43,7 @@
 							$array[$i] = new EvaluacionQuincenal($registro);
 							$i++;
 						}
+						$this->databaseTransaction->cerrar();
 						return $array;
 					}
 				}else{
@@ -58,11 +62,18 @@
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
-					if($this->databaseTransaction->cantidadResultados() == 1) {
-						return new EvaluacionQuincenal($this->databaseTransaction->resultados());
-					}else{
-						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorNumero: La consulta SQL devolvió mas de un resultado por eso se devuelve NULL"; }
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionQuincenal($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorNumero: El objeto DatabaseTransaction se encuentra nulo"; }
@@ -80,11 +91,18 @@
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
-					if($this->databaseTransaction->cantidadResultados() == 1) {
-						return new EvaluacionQuincenal($this->databaseTransaction->resultados());
-					}else{
-						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorEjecutivo: La consulta SQL devolvió mas de un resultado por eso se devuelve NULL"; }
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionQuincenal($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorEjecutivo: El objeto DatabaseTransaction se encuentra nulo"; }
@@ -102,11 +120,18 @@
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
-					if($this->databaseTransaction->cantidadResultados() == 1) {
-						return new EvaluacionQuincenal($this->databaseTransaction->resultados());
-					}else{
-						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorEjecutivoPeriodo: La consulta SQL devolvió mas de un resultado por eso se devuelve NULL"; }
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionQuincenal($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorEjecutivoPeriodo: El objeto DatabaseTransaction se encuentra nulo"; }
@@ -124,11 +149,18 @@
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
-					if($this->databaseTransaction->cantidadResultados() == 1) {
-						return new EvaluacionQuincenal($this->databaseTransaction->resultados());
-					}else{
-						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorEjecutivoPeriodoFecha: La consulta SQL devolvió mas de un resultado por eso se devuelve NULL"; }
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionQuincenal($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorEjecutivoPeriodoFecha: El objeto DatabaseTransaction se encuentra nulo"; }
@@ -146,11 +178,18 @@
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
-					if($this->databaseTransaction->cantidadResultados() == 1) {
-						return new EvaluacionQuincenal($this->databaseTransaction->resultados());
-					}else{
-						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorEvaluador: La consulta SQL devolvió mas de un resultado por eso se devuelve NULL"; }
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionQuincenal($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorEvaluador: El objeto DatabaseTransaction se encuentra nulo"; }
@@ -168,11 +207,16 @@
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
-					if($this->databaseTransaction->cantidadResultados() == 1) {
-						return new EvaluacionQuincenal($this->databaseTransaction->resultados());
-					}else{
-						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorEvaluadorPeriodo: La consulta SQL devolvió mas de un resultado por eso se devuelve NULL"; }
+					if($this->databaseTransaction->cantidadResultados() == 0) {
 						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionQuincenal($registro);
+							$i++;
+						}
+						return $array;
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorEvaluadorPeriodo: El objeto DatabaseTransaction se encuentra nulo"; }
@@ -190,11 +234,16 @@
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
-					if($this->databaseTransaction->cantidadResultados() == 1) {
-						return new EvaluacionQuincenal($this->databaseTransaction->resultados());
-					}else{
-						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorEvaluadorPeriodoFecha: La consulta SQL devolvió mas de un resultado por eso se devuelve NULL"; }
+					if($this->databaseTransaction->cantidadResultados() == 0) {
 						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionQuincenal($registro);
+							$i++;
+						}
+						return $array;
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorEvaluadorPeriodoFecha: El objeto DatabaseTransaction se encuentra nulo"; }
@@ -212,11 +261,18 @@
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
-					if($this->databaseTransaction->cantidadResultados() == 1) {
-						return new EvaluacionQuincenal($this->databaseTransaction->resultados());
-					}else{
-						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorArea: La consulta SQL devolvió mas de un resultado por eso se devuelve NULL"; }
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionQuincenal($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorArea: El objeto DatabaseTransaction se encuentra nulo"; }
@@ -234,11 +290,18 @@
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
-					if($this->databaseTransaction->cantidadResultados() == 1) {
-						return new EvaluacionQuincenal($this->databaseTransaction->resultados());
-					}else{
-						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorAreaPeriodo: La consulta SQL devolvió mas de un resultado por eso se devuelve NULL"; }
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionQuincenal($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorAreaPeriodo: El objeto DatabaseTransaction se encuentra nulo"; }
@@ -256,11 +319,18 @@
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
-					if($this->databaseTransaction->cantidadResultados() == 1) {
-						return new EvaluacionQuincenal($this->databaseTransaction->resultados());
-					}else{
-						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorAreaPeriodoFecha: La consulta SQL devolvió mas de un resultado por eso se devuelve NULL"; }
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
 						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionQuincenal($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - listarPorAreaPeriodoFecha: El objeto DatabaseTransaction se encuentra nulo"; }
@@ -271,5 +341,76 @@
 				return false;
 			}
 		}
+
+		public function ingresar($param) {
+			try {
+				//objeto
+				$obj = $param;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "INSERT INTO evaluacion_quincenal ";
+					$consulta = $consulta."(rut_ejecutivo, fecha_creacion, rut_evaluador, periodo, codigo_area) VALUES ";
+					$consulta = $consulta."(".$obj->getrut_ejecutivo().", '".date('Y-m-d H:i:s')."',  ".$obj->getrut_evaluador().", '".$obj->getperiodo()."', ".$obj->getcodigo_area()." );";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultado == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
+							return 1;
+						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
+							return 0;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - ingresar: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - ingresar: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+		public function eliminar($param) {
+			try {
+				//objeto
+				$obj = $param;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "DELETE FROM evaluacion_quincenal ";
+					$consulta = $consulta."WHERE numero_quincenal = ".$obj->getnumero_quinncenal().";";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultado == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
+							return 1;
+						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
+							return 0;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - eliminar: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - eliminar: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+
 	}
 ?>
