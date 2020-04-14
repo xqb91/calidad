@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-04-2020 a las 15:18:14
+-- Tiempo de generación: 14-04-2020 a las 15:41:11
 -- Versión del servidor: 10.4.8-MariaDB
 -- Versión de PHP: 7.3.11
 
@@ -50,6 +50,17 @@ CREATE TABLE `area` (
   `fecha_creacion` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
+--
+-- Volcado de datos para la tabla `area`
+--
+
+INSERT INTO `area` (`codigo_area`, `nombre_area`, `estado`, `fecha_creacion`) VALUES
+(1, 'Cobranza', 1, '2020-04-09'),
+(2, 'Calidad del Dato', 1, '2020-04-09'),
+(3, 'SAC', 1, '2020-04-09'),
+(4, 'Informática', 1, '2020-04-09'),
+(5, 'Avatar', 1, '2020-04-09');
+
 -- --------------------------------------------------------
 
 --
@@ -88,6 +99,20 @@ CREATE TABLE `ciclo` (
   `nombre_ciclo` varchar(20) COLLATE utf8_spanish_ci NOT NULL,
   `sigla_ciclo` varchar(4) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `ciclo`
+--
+
+INSERT INTO `ciclo` (`codigo_ciclo`, `nombre_ciclo`, `sigla_ciclo`) VALUES
+(1, 'Ciclo 1', 'C1'),
+(2, 'Ciclo 2', 'C2'),
+(3, 'Ciclo 3', 'C3'),
+(4, 'Ciclo Especial', 'CE'),
+(5, 'Castigo', 'CS'),
+(6, 'No Aplica', 'NA'),
+(7, 'R1', 'R1'),
+(8, 'MA', 'MA');
 
 -- --------------------------------------------------------
 
@@ -155,6 +180,17 @@ CREATE TABLE `evaluaciones_area` (
   `cantidad_finales` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
+--
+-- Volcado de datos para la tabla `evaluaciones_area`
+--
+
+INSERT INTO `evaluaciones_area` (`id`, `codigo_area`, `periodo`, `cantidad_quincenales`, `cantidad_finales`) VALUES
+(1, 1, '2020-04', 3, 6),
+(2, 2, '2020-04', 3, 6),
+(3, 3, '2020-04', 6, 12),
+(4, 4, '2020-04', 5, 10),
+(5, 5, '2020-04', 4, 8);
+
 -- --------------------------------------------------------
 
 --
@@ -218,6 +254,55 @@ CREATE TABLE `evaluador` (
   `estado` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
+--
+-- Volcado de datos para la tabla `evaluador`
+--
+
+INSERT INTO `evaluador` (`rut_evaluador`, `nombre_evaluador`, `usuario`, `contrasena`, `fecha_creacion`, `estado`) VALUES
+(8001845, 'Francisco Toro', 'ftoro', 'ftoro', '2014-09-04', 1),
+(8451769, 'Rosa Cespedes', 'rcespedes', 'rcespedes', '2013-06-19', 1),
+(9097045, 'Erika Zapata', 'ezapata', 'ezapata', '2012-09-28', 1),
+(10476722, 'Claudia Miranda', 'cmiranda', 'koyam', '2012-09-28', 1),
+(11391098, 'Daniel Fuentes', 'dfuentes', 'dfuentes', '2017-11-10', 1),
+(12163729, 'Daniel Bustamante', 'dbustamante', 'dbustamante', '2013-06-19', 1),
+(12345678, 'Pablo Reinoso', 'riesgo', 'riesgo', '2012-09-28', 1),
+(12432380, 'Patricio Palma', 'palma', 'palma', '2013-12-12', 1),
+(13069996, 'Monica Marmolejo', '13069996', 'renato', '2012-09-28', 1),
+(13665465, 'Rodrigo Castillo', 'rodcastillo', 'rodcastillo', '2012-09-28', 1),
+(14120614, 'Rocio Castillo', 'rcastillo', 'rcastillo', '2012-09-28', 1),
+(14151509, 'Aldo Pereira', 'apereira', 'apereira', '2013-06-19', 1),
+(14542456, 'Jorge Zuniga', 'jzuniga', 'jzuniga', '2012-09-28', 1),
+(15337548, 'Angel García C', 'agarcia', '1804', '2012-09-28', 1),
+(15837192, 'Yassica Abarza Caro', '15837192', '15837192', '2019-06-26', 1),
+(15902137, 'Loreto Rojas', '15902137', '15902137', '2015-07-01', 1),
+(16116248, 'Valentina Lizana ', '16116248', '16116248', '2019-02-26', 1),
+(16246433, 'Catalina Plaza', '16246433', '16246433', '2014-07-21', 1),
+(16383994, 'Valeria Torres', 'vtorres', 'cobranza01791', '2012-09-28', 1),
+(16615143, 'Paulina Matus', '16615143', '16615143', '2019-03-13', 1),
+(16668246, 'Paulina Garrido', '16668246', '16668246', '2019-12-19', 1),
+(16799112, 'Nayareth Toro', 'ntoro', 'ntoro', '2012-09-28', 1),
+(16914225, 'Fabiola de Mauro', 'fdmauro', 'fdmauro', '2015-05-27', 1),
+(16954407, 'Veronica Carreno', 'vcarreno', 'vcarreno123', '2013-06-19', 1),
+(17110903, 'Ruth Araneda', '17110903', '17110903', '2017-04-04', 1),
+(17151127, 'Camila Muñoz', '17151127', '17151127', '2020-01-23', 1),
+(17229197, 'Daniela Ortega', '17229197', '17229197', '2017-02-08', 1),
+(17316768, 'Valeska Campos', '17316768', '17316768', '2018-01-19', 1),
+(17381572, 'Geraldine Gallardo', '17381572', '17381572', '2017-04-04', 1),
+(17391788, 'Karina Adasme', '17391788', '17391788', '2017-02-08', 1),
+(17421454, 'Paulina Alvarado', '17421454', '15902137', '2015-07-01', 1),
+(17463666, 'Natasha Simms', '17463666', '17463666', '2020-02-17', 1),
+(17544301, 'Daniela Hernandez', '17544301', '17544301', '2017-02-08', 1),
+(17545513, 'Yennifer Zenteno', '17545513', '17545513', '2017-04-04', 1),
+(17768972, 'Paz Suarez', '17768972', '17768972', '2019-02-26', 1),
+(17783072, 'Carla Jimenez', '17783072', '17783072', '2015-11-01', 1),
+(17919214, 'Carolina Salinas ', '17919214', '17919214', '2019-02-26', 1),
+(18000655, 'Felipe Palacios', 'fpalacions', 'fpalacios', '2012-04-30', 1),
+(18048469, 'Gabriel Villaroel', 'gvillaroel', 'gvillaroel', '2012-09-28', 1),
+(18176014, 'Isabel Diaz', '18176014', '18176014', '2020-01-02', 1),
+(18294053, 'Valentina Castillo', '18294053', '18294053', '2019-02-26', 1),
+(18421823, 'Karina Cantillana', '18421823', '18421823', '2019-05-24', 1),
+(20319199, 'Catalina Zapata', '20319199', '20319199', '2019-02-26', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -241,6 +326,14 @@ CREATE TABLE `jornada` (
   `codigo_jornada` int(11) NOT NULL,
   `nombre_jornada` varchar(20) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `jornada`
+--
+
+INSERT INTO `jornada` (`codigo_jornada`, `nombre_jornada`) VALUES
+(1, 'Mañana'),
+(2, 'Tarde');
 
 -- --------------------------------------------------------
 
@@ -455,7 +548,7 @@ ALTER TABLE `log_evaluacion_parcial`
 -- AUTO_INCREMENT de la tabla `area`
 --
 ALTER TABLE `area`
-  MODIFY `codigo_area` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `codigo_area` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `audio`
@@ -473,7 +566,7 @@ ALTER TABLE `categoria`
 -- AUTO_INCREMENT de la tabla `ciclo`
 --
 ALTER TABLE `ciclo`
-  MODIFY `codigo_ciclo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `codigo_ciclo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_evaluacion_parcial`
@@ -485,7 +578,7 @@ ALTER TABLE `detalle_evaluacion_parcial`
 -- AUTO_INCREMENT de la tabla `evaluaciones_area`
 --
 ALTER TABLE `evaluaciones_area`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `evaluacion_final`
@@ -515,7 +608,7 @@ ALTER TABLE `item_evaluacion`
 -- AUTO_INCREMENT de la tabla `jornada`
 --
 ALTER TABLE `jornada`
-  MODIFY `codigo_jornada` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `codigo_jornada` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `log_audio`
