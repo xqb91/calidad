@@ -1,5 +1,5 @@
 <?php
-	class Area implements Serializable {
+	class Area {
 		//columnas de la tabla
 		private $codigo_area;
 		private $nombre_area;
@@ -108,18 +108,8 @@
 		//metodos de la clase
 		//lista todos los valores de la clase
 		public function serializar() {
-	        return get_object_vars($this);
+	        return json_encode(get_object_vars($this), JSON_FORCE_OBJECT);
 		}
-
-		//serializa los objetos de la clase
-		public function serialize() {
-        	return json_encode($this->serializar(), JSON_FORCE_OBJECT);
-	    }
-
-	    //desserializa un string
-	    public function unserialize($serializado) {
-	        $this->serializado = unserialize($serializado);
-	    }	
 
 	}
 ?>

@@ -87,7 +87,7 @@
 
 		public function listarPorUsuario($usuario) {
 			try {
-				$consulta = "SELECT * FROM evaluador WHERE usuario = '".$usuario."'";
+				$consulta = "SELECT * FROM evaluador WHERE usuario = ".$usuario."";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -95,14 +95,22 @@
 						$this->databaseTransaction->cerrar();
 						return null;
 					}else{
-						$array = null;
-						$i 	   = 0;
-						while($registro = $this->databaseTransaction->resultados()) {
-							$array[$i] = new Evaluador($registro);
-							$i++;
+						switch ($this->databaseTransaction->cantidadResultados()) {
+							case 1:
+								return new Evaluador($this->databaseTransaction->resultados());
+							break;
+							
+							default:
+								$array = null;
+								$i 	   = 0;
+								while($registro = $this->databaseTransaction->resultados()) {
+									$array[$i] = new Evaluador($registro);
+									$i++;
+								}
+								$this->databaseTransaction->cerrar();
+								return $array;
+							break;
 						}
-						$this->databaseTransaction->cerrar();
-						return $array;
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "EvaluadorController - listarPorUsuario: El objeto DatabaseTransaction se encuentra nulo"; }
