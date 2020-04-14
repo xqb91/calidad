@@ -87,7 +87,7 @@
 
 		public function listarPorUsuario($usuario) {
 			try {
-				$consulta = "SELECT * FROM evaluador WHERE usuario = ".$usuario."";
+				$consulta = "SELECT * FROM evaluador WHERE usuario = '".$usuario."'";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);

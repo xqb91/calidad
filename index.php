@@ -2,7 +2,7 @@
   include("config/Globales.php");
   //error_reporting(0);
   session_start();
-  $_SESSION['rauliUser'] = 18421823;
+  $_SESSION['rauliUser'] = 'ntoro';
   //---- NO OLVIDAR SETEAR ESTA VARIABLE DE SESION CUANDO INICIE EN EL SISTEMA VIEJO!!!!!!!!!
   $_SESSION['lastActivity'] = date('Y-m-d H:i:s');
 ?>
@@ -48,26 +48,24 @@
                     <hr />
                     <p id="lblMensajeUsuario"></p>
                   </div>
-                  <form class="user">
+                  <form class="user" id="formInit">
                   <div class="row">
                     <div class="col">
                       <div class="form-group">
                       <label for="slcPeriodo"><strong>Periodo</strong></label>
-                      <select class="form-control" id="slcPeriodo">
+                      <select class="form-control" id="slcPeriodo" name="slcPeriodo">
                       </select>
                     </div>
                     </div>
                     <div class="col">
                       <div class="form-group">
                       <label for="slcArea"><strong>Área</strong></label>
-                      <select class="form-control" id="slcArea">
+                      <select class="form-control" id="slcArea" name="slcArea">
                       </select>
                     </div>
                     </div>
                   </div>
-                   
-                    
-                    <button type="button" class="btn btn-primary btn-lg btn-block" id="btnComenzar">Comenzar</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block" id="btnComenzar">Comenzar <i class="fas fa-arrow-right"></i></button>
                     <hr>
                   </form>
                 </div>

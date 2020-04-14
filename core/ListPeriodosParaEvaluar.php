@@ -1,18 +1,21 @@
 <?php
-	/*class ListPeriodo {
-		private $peridos;
+	class ListPeriodo {
+		private $periodos;
 	
 		public function __construct() {
-			for($i=1; i<=3; $i++) {
-				$fecha 		=  	new DateTime(date('Y-m-d H:i:s'));
-				$intervalo 	=	new DateInterval();
+			$array = null;
+			for($i=0; $i<=3; $i++) {
+				$date = new DateTime("-".$i." months");
+				$array[$i] = $date->format("Y-m");
 			}
+			$this->periodos = $array;
 		}
-	}*/
 
-	$fecha 		=  	new DateTime(date('Y-m-d H:i:s'));
-	$intervalo 	=	new DateInterval("2M");
-	$fecha->add($intervalo);
-	echo $fecha->format('Y-m')
+		public function serializar() {
+	        return json_encode(get_object_vars($this), JSON_FORCE_OBJECT);
+		}
+	}
 
+	$val = new ListPeriodo();
+	echo $val->serializar();
 ?>
