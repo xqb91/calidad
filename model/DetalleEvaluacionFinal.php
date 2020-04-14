@@ -8,7 +8,7 @@
 		//Constructor
 		//Obtiene un arreglo que es generado de forma automática por MySQL
 		//mediante un mysql_result, debe entregarse un arreglo de tipo asociativo
-		private function __construct($arreglo) {
+		public function __construct($arreglo) {
 			$this->numero_evaluacion	= $arreglo['numero_evaluacion'];
 			$this->numero_final			= $arreglo['numero_final'];
 		}   

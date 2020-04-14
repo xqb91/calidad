@@ -1,5 +1,5 @@
 <?php
-	class Adjuntos implements Serializable {
+	class Adjuntos {
 		//columnas de la tabla
 	    private $codigo_adjunto ; 
 	    private $numero_evaluacion ; 
@@ -11,7 +11,7 @@
 		//Constructor
 		//Obtiene un arreglo que es generado de forma automática por MySQL
 		//mediante un mysql_result, debe entregarse un arreglo de tipo asociativo
-		private function __construct($arreglo) {
+		public function __construct($arreglo) {
 			$this->codigo_adjunto	 = $arreglo['codigo_adjunto'];
 			$this->numero_evaluacion = $arreglo['numero_evaluacion'];
 			$this->fecha_carga		 = $arreglo['fecha_carga'];
@@ -153,18 +153,8 @@
 		//metodos de la clase
 		//lista todos los valores de la clase
 		public function serializar() {
-	        return get_object_vars($this);
+	        return json_encode(get_object_vars($this), JSON_FORCE_OBJECT);
 		}
-
-		//serializa los objetos de la clase
-		public function serialize() {
-        	return json_encode($this->serializar(), JSON_FORCE_OBJECT);
-	    }
-
-	    //desserializa un string
-	    public function unserialize($serializado) {
-	        $this->serializado = unserialize($serializado);
-	    }	
 
 	}
 ?>     

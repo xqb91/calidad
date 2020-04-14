@@ -1,13 +1,13 @@
   <?php
-	class Categoria  implements Serializable {
+	class Categoria  {
 
-	     private $codigo_categoria; 
-	     private $codigo_area;
-	     private $nombre_categoria; 
-	     private $peso_categoria; 
-	     private $orden;
+	    private $codigo_categoria; 
+	    private $codigo_area;
+	    private $nombre_categoria; 
+	    private $peso_categoria; 
+	    private $orden;
 
-		private function __construct($arreglo) {
+		public function __construct($arreglo) {
 			$this->codigo_categoria = $arreglo['codigo_categoria'];
 			$this->codigo_area		= $arreglo['codigo_area'];
 			$this->nombre_categoria	= $arreglo['nombre_categoria'];
@@ -101,17 +101,8 @@
 		//metodos de la clase
 		//lista todos los valores de la clase
 		public function serializar() {
-	        return get_object_vars($this);
-		}
+	        return json_encode(get_object_vars($this), JSON_FORCE_OBJECT);
+		}		
 
-		//serializa los objetos de la clase
-		public function serialize() {
-	    	return json_encode($this->serializar(), JSON_FORCE_OBJECT);
-	    }
-
-	    //desserializa un string
-	    public function unserialize($serializado) {
-	        $this->serializado = unserialize($serializado);
-	    }
 	}
 ?>
