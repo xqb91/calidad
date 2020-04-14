@@ -3,7 +3,7 @@
 	// S I S T E M A
 	//***************************************************
 		//Ambiente (DES: Desarrollo / PRD: Produccion)
-		define('ambiente', 'DES');
+		define('ambiente', 'DEV');
 		//Zona horaria
 		date_default_timezone_set('America/Santiago');
 
@@ -36,7 +36,7 @@
 	//***************************************************
 	// C O N E X I O N   D A T A B A S E
 	//***************************************************
-	if(ambiente == 'DES') {
+	if(ambiente == 'DEV') {
 		//configuración de conexión de desarrollo
 		define('servidorMysql'	, 'localhost');
 		define('usuarioMysql'	, 'root');
@@ -56,7 +56,7 @@
 	//***************************************************
 	// C O N F I G U R A C I O N E S   G L O B A L E S
 	//***************************************************
-	if(ambiente == 'DES') {
+	if(ambiente == 'DEV') {
 		//Reporte de Errores en desarrollo de sitio web
 		error_reporting(E_ALL);
 	}else{

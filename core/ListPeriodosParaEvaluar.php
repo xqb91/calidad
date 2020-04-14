@@ -1,21 +1,18 @@
 <?php
-	include("../config/Globales.php");
-	include("../config/basicos.php");
-	include(dirController."EvaluacionesAreaController.php");
+	/*class ListPeriodo {
+		private $peridos;
 	
-	try {
-		$c = new EvaluacionesAreaController();
-		$v = $c->listar();
-		echo "["; 
-		for($i=0; $i<count($v); $i++) {
-			echo $v[$i]->serializar();
-			if($i<count($v)-1) {
-				echo ",";
+		public function __construct() {
+			for($i=1; i<=3; $i++) {
+				$fecha 		=  	new DateTime(date('Y-m-d H:i:s'));
+				$intervalo 	=	new DateInterval();
 			}
 		}
-		echo "]";
-		http_response_code(200);
-	}catch(Exception $e) {
-		http_response_code(500);
-	}
+	}*/
+
+	$fecha 		=  	new DateTime(date('Y-m-d H:i:s'));
+	$intervalo 	=	new DateInterval("2M");
+	$fecha->add($intervalo);
+	echo $fecha->format('Y-m')
+
 ?>
