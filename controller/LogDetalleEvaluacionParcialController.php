@@ -1,5 +1,5 @@
 <?php
-include("../config/Globales.php");
+
 	include(dirModel."Ciclo.php");
 	class LogDetallelEvaluacionParcialController {
 
