@@ -174,7 +174,7 @@
 
 		public function listarPorArea($area) {
 			try {
-				$consulta = "SELECT * FROM ejecutivo WHERE codigo_area = '".$area."' ORDER BY nombre_ejecutivo ASC";
+				$consulta = "SELECT * FROM ejecutivo WHERE codigo_area = ".$area." ORDER BY nombre_ejecutivo ASC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
