@@ -58,7 +58,7 @@
 
 		public function listarPorCodigo($codigo) {
 			try {
-				$consulta = "SELECT * FROM item_evaluacion WHERE codigo_item = '".$codigo."' ORDER BY codigo_categiria, orden ASC";
+				$consulta = "SELECT * FROM item_evaluacion WHERE codigo_item = ".$codigo." ORDER BY codigo_categiria, orden ASC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -87,7 +87,7 @@
 
 		public function listarPorCategoria($categoria) {
 			try {
-				$consulta = "SELECT * FROM item_evaluacion WHERE codigo_categoria = '".$categoria."' ORDER BY codigo_categiria, orden ASC";
+				$consulta = "SELECT * FROM item_evaluacion WHERE codigo_categoria = ".$categoria." ORDER BY codigo_categoria, orden ASC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -116,7 +116,7 @@
 
 		public function listarPorCategoriaCodigoItem($categoria, $codigo) {
 			try {
-				$consulta = "SELECT * FROM item_evaluacion WHERE codigo_categoria = '".$categoria."' AND codigo_item = '".$codigo."' ORDER BY codigo_categiria, orden ASC";
+				$consulta = "SELECT * FROM item_evaluacion WHERE codigo_categoria = ".$categoria." AND codigo_item = '".$codigo."' ORDER BY codigo_categiria, orden ASC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);

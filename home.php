@@ -32,7 +32,7 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar">
 
       <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="home.php">
         <div class="sidebar-brand-icon rotate-n-0">
           <img src="facade/img/tricard_logo.png" width="90%" />
         </div>
@@ -43,7 +43,7 @@
 
       <!-- Nav Item - Dashboard -->
       <li class="nav-item active" id="btn-inicio">
-        <a class="nav-link" href="index.html">
+        <a class="nav-link" href="home.php">
           <i class="fas fa-home"></i>
           <span>Inicio</span></a>
       </li>
@@ -97,8 +97,8 @@
       <!-- Nav Item - Tables -->
       <li class="nav-item" id="btn-">
         <a class="nav-link" href="tables.html">
-          <i class="fas fa-th"></i>
-          <span>Tables</span></a>
+          <i class="fas fa-cog"></i>
+          <span>Ajustes</span></a>
       </li>
 
       <!-- Divider -->
@@ -120,12 +120,10 @@
           <form class="form-inline">
             <label class="my-1 mr-2" for="slcArea">Área: </label>
             <select class="custom-select my-1 mr-sm-2" id="slcArea">
-              <option selected>DefaultValue...</option>
             </select>
 
             <label class="my-1 mr-2" for="slcPeriodo">Periodo: </label>
             <select class="custom-select my-1 mr-sm-2" id="slcPeriodo">
-              <option selected>Default Value...</option>
             </select>
           </form>
 
@@ -147,27 +145,19 @@
             <!-- Nav Item - User Information -->
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
-                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="lblEvaluadorLogin"><img src="facade/img/loading2.gif" /> Identificando...</span>
+                <img class="img-profile rounded-circle" src="facade/img/avatar.png">
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                 <a class="dropdown-item" href="#">
-                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Profile
-                </a>
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Settings
-                </a>
-                <a class="dropdown-item" href="#">
                   <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Activity Log
+                  Cierre Temprano
                 </a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Logout
+                  Salir del sistema de Calidad
                 </a>
               </div>
             </li>
@@ -192,9 +182,10 @@
                 <!-- Card Body -->
                   <div class="card-body">
                       <div class="table-responsive">
-                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <table class="table table-bordered" id="tablaEjecutivos" width="100%" cellspacing="0">
                           <thead>
                             <tr>
+                              <th>Rut de Ejecutivo</th>
                               <th>Nombre de Ejecutivo</th>
                               <th></th>
                               <th></th>
@@ -203,6 +194,7 @@
                           </thead>
                           <tfoot>
                             <tr>
+                              <th>Rut de Ejecutivo</th>
                               <th>Nombre de Ejecutivo</th>
                               <th></th>
                               <th></th>
@@ -210,15 +202,6 @@
                             </tr>
                           </tfoot>
                           <tbody>
-                            <tr>
-                              <td width="76%">Nombre de Ejemplo <em>(12.345.678-9)</em></td>
-                              <td width="8%" align="center"><button id="btn-nuevo" name="btn-nuevo" type="button" class="btn btn-light" data-toggle="tooltip" data-placement="bottom" title="Nuevo"><i class="fas fa-plus-circle"></i></button></td>
-                              <td width="8%" align="center"><button id="btn-visualiza" name="btn-visualiza" type="button" class="btn btn-light" data-toggle="tooltip" data-placement="bottom" title="Visualizar"><i class="fas fa-eye"></i></button></td>
-                              <td width="8%" align="center"><button id="btn-final" name="btn-final" type="button" class="btn btn-light" data-toggle="tooltip" data-placement="bottom" title="Final"><i class="fab fa-font-awesome-flag"></i></button></td>
-                            </tr>
-                            <tr>
-                              <td colspan="4">No Se Encontraron Registros</td>
-                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -284,19 +267,10 @@
     </div>
     <!-- End of Content Wrapper -->
 
-  </div>
-  <!-- End of Page Wrapper -->
-
-  <!-- Scroll to Top Button-->
-  <a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-  </a>
 
 
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalHome">Grabar</button>
-
-<div class="modal fade bd-example-modal-xl" id="modalHome" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+<div class="modal fade bd-example-modal-xl" id="modalHome" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document" id="modalHomeConfig">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modalHomeTitle">Modal title</h5>
@@ -315,6 +289,35 @@
   </div>
 </div>
 
+
+<div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;" id="toastHome">
+  <div class="toast" style="position: absolute; top: 0; right: 0;">
+    <div class="toast-header">
+      <img src="..." class="rounded mr-2" alt="...">
+      <strong class="mr-auto">Bootstrap</strong>
+      <small>11 mins ago</small>
+      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body">
+      Hello, world! This is a toast message.
+    </div>
+  </div>
+</div>
+
+
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+
+
   <!-- Bootstrap core JavaScript-->
   <script src="facade/vendor/jquery/jquery.min.js"></script>
   <script src="facade/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -329,9 +332,7 @@
   <script src="facade/vendor/datatables/jquery.dataTables.min.js"></script>
   <script src="facade/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
-
   <!-- Page level custom scripts -->
-  <script src="facade/js/demo/datatables-demo.js"></script>
   <script src="transaction/homeTransaction.js"></script>
 
 </body>

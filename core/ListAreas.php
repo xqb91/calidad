@@ -3,6 +3,7 @@
 	include("../config/basicos.php");
 	include(dirController."AreaController.php");
 	
+	sleep(1);
 	try {
 		$c = new AreaController();
 		$v = $c->listar();

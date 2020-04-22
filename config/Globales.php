@@ -32,6 +32,18 @@
 		define('dirModel'		, dirbase.'/calidad/model/');
 		//directorio del transaccional
 		define('dirTransaction'	, dirbase.'/calidad/transaction/');
+		//directorio de attachments
+		define('dirFileAttachments'	, dirbase.'/calidad/files/attachments/');
+		//directorio de audios
+		define('dirFileAudio'	, dirbase.'/calidad/files/audio/');
+		//directorio de finales
+		define('dirFileFinales'	, dirbase.'/calidad/files/finales/');
+		//directorio de parciales
+		define('dirFileParciales'	, dirbase.'/calidad/files/parciales/');
+		//directorio de quincenales
+		define('dirFilesQuincenales'	, dirbase.'/calidad/files/quincenales/');
+		//directorio temporal de carga de archivos
+		define('dirFoñesTemporal'	, dirbase.'/calidad/files/tmp/');
 
 	//***************************************************
 	// C O N E X I O N   D A T A B A S E

@@ -1,0 +1,232 @@
+<?php
+  session_start();
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>SB Admin 2 - Blank</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="facade/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="facade/css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <div id="content-wrapper" class="d-flex flex-column">
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - Alerts -->
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <!-- Counter - Alerts -->
+                <i class="far fa-calendar-alt"></i>&nbsp;Periodo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="badge badge-danger badge-counter">2020-01</span>
+              </a>
+            </li>
+
+            <!-- Nav Item - Messages -->
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-headset"></i>
+                 Nombre de Ejecutivo Evaluado 
+              </a>
+              <!-- Dropdown - Messages -->
+              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="messagesDropdown">
+                <h6 class="dropdown-header">
+                  Message Center
+                </h6>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                  <div class="dropdown-list-image mr-3">
+                    <img class="rounded-circle" src="https://source.unsplash.com/fn_BT9fwg_E/60x60" alt="">
+                    <div class="status-indicator bg-success"></div>
+                  </div>
+                  <div class="font-weight-bold">
+                    <div class="text-truncate">Hi there! I am wondering if you can help me with a problem I've been having.</div>
+                    <div class="small text-gray-500">Emily Fowler · 58m</div>
+                  </div>
+                </a>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                  <div class="dropdown-list-image mr-3">
+                    <img class="rounded-circle" src="https://source.unsplash.com/AU4VPcFN4LE/60x60" alt="">
+                    <div class="status-indicator"></div>
+                  </div>
+                  <div>
+                    <div class="text-truncate">I have the photos that you ordered last month, how would you like them sent to you?</div>
+                    <div class="small text-gray-500">Jae Chun · 1d</div>
+                  </div>
+                </a>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                  <div class="dropdown-list-image mr-3">
+                    <img class="rounded-circle" src="https://source.unsplash.com/CS2uCrpNzJY/60x60" alt="">
+                    <div class="status-indicator bg-warning"></div>
+                  </div>
+                  <div>
+                    <div class="text-truncate">Last month's report looks great, I am very happy with the progress so far, keep up the good work!</div>
+                    <div class="small text-gray-500">Morgan Alvarez · 2d</div>
+                  </div>
+                </a>
+                <a class="dropdown-item d-flex align-items-center" href="#">
+                  <div class="dropdown-list-image mr-3">
+                    <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60" alt="">
+                    <div class="status-indicator bg-success"></div>
+                  </div>
+                  <div>
+                    <div class="text-truncate">Am I a good boy? The reason I ask is because someone told me that people say this to all dogs, even if they aren't good...</div>
+                    <div class="small text-gray-500">Chicken the Dog · 2w</div>
+                  </div>
+                </a>
+                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+              </div>
+            </li>
+
+            <div class="topbar-divider d-none d-sm-block"></div>
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="lblEvaluadorLogin"><img src="facade/img/loading2.gif" /> Identificando...</span>
+                <img class="img-profile rounded-circle" src="facade/img/avatar.png">
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Cierre Temprano
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Salir del sistema de Calidad
+                </a>
+              </div>
+            </li>
+
+          </ul>
+
+        </nav>
+      <div id="content">
+          <h1 class="h3 mb-4 text-gray-800"></h1>
+
+
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-8">
+                <div class="card mb-8">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Items a Evaluar</h6>
+                  </div>
+                  <div class="card-body">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th scope="col">Item</th>
+                          <th scope="col">No Aplica</th>
+                          <th scope="col">0.0</th>
+                          <th scope="col">0.5</th>
+                          <th scope="col">1.0</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">Presentacion (25%)</th>
+                          <td><input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio11" value="option11"><label class="form-check-label" for="inlineRadio11">N/A</label></td>
+                          <td><input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio12" value="option12"><label class="form-check-label" for="inlineRadio12">0.0</label></td>
+                          <td><input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio13" value="option13"><label class="form-check-label" for="inlineRadio13">0.5</label></td>
+                          <td><input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio14" value="option14"><label class="form-check-label" for="inlineRadio14">1.0</label></td>
+                        </tr>
+                        <tr>
+                          <th scope="row">Identificacion Del Cliente Y Comprobacion De Datos (25%)</th>
+                          <td><input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio21" value="option21"><label class="form-check-label" for="inlineRadio21">N/A</label></td>
+                          <td><input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio22" value="option22"><label class="form-check-label" for="inlineRadio22">0.0</label></td>
+                          <td><input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio23" value="option23"><label class="form-check-label" for="inlineRadio23">0.5</label></td>
+                          <td><input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio24" value="option24"><label class="form-check-label" for="inlineRadio24">1.0</label></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <div class="card mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Carga de Audio</h6>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="form-group">
+                        <label for="exampleFormControlFile1">Seleccione el archivo de audio desde aquí</label>
+                        <input type="file" class="form-control-file form-control-sm" id="exampleFormControlFile1">
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+      </div>
+       <div id="content">
+            <div class="row">
+              <div class="col-sm-8">
+                <div class="card mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Carga de Audio</h6>
+                  </div>
+                  <div class="card-body">
+                    <form>
+                      <div class="form-group">
+                        <label for="exampleFormControlFile1">Seleccione el archivo de audio desde aquí</label>
+                        <input type="file" class="form-control-file form-control-sm" id="exampleFormControlFile1">
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h1 class="h3 mb-4 text-gray-800"></h1>
+      </div>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="facade/vendor/jquery/jquery.min.js"></script>
+  <script src="facade/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="facade/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="facade/js/sb-admin-2.min.js"></script>
+
+</body>
+
+</html>
