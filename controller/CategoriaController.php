@@ -58,7 +58,7 @@
 
 		public function listarPorCodigo($codigo) {
 			try {
-				$consulta = "SELECT * FROM Categoria WHERE codigo_categoria = '".$codigo."' ORDER BY codigo_categoria, orden ASC";
+				$consulta = "SELECT * FROM Categoria WHERE codigo_categoria = ".$codigo." ORDER BY codigo_categoria, orden ASC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -69,7 +69,7 @@
 						$array = null;
 						$i 	   = 0;
 						while($registro = $this->databaseTransaction->resultados()) {
-							$array[$i] = new Categoria($registro);
+							$array = new Categoria($registro);
 							$i++;
 						}
 						$this->databaseTransaction->cerrar();

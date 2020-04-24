@@ -1,10 +1,17 @@
 <?php
+	include(dirController."CategoriaController.php");
 	class ItemEvaluacion {
 		//columnas de la tabla
 	     private $codigo_item ; 
 	     private $codigo_categoria;
 	     private $nombre_item;
 	     private $orden ;
+
+	     //foreign objects
+	     private $codigo_area;
+	     private $nombre_categoria;
+	     private $peso_categoria;
+	     private $orden_categoria;
 
 		//Constructor
 		//Obtiene un arreglo que es generado de forma automática por MySQL
@@ -14,6 +21,7 @@
 			$this->codigo_categoria	= $arreglo['codigo_categoria'];
 			$this->nombre_item		= $arreglo['nombre_item'];
 			$this->orden			= $arreglo['orden'];
+			$this->setCategoria();
 		}
 
 		//accesadores
@@ -44,6 +52,15 @@
 		public function getorden() {
 			try {
 				return $this->orden;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
+
+		public function getcategoria() {
+			try {
+				return $this->categoria;
 			}catch(Exception $e) {
 				return null;
 			}
@@ -85,6 +102,29 @@
 				return false;
 			}
 		}		
+
+		public function setCategoria() {
+			try {
+				$ct = new CategoriaController();
+				$arreglo = $ct->listarPorCodigo($this->getcodigo_categoria());
+				if($arreglo == null) {
+					$this->codigo_categoria = null;
+					$this->codigo_area = null;
+					$this->nombre_categoria = null;
+					$this->peso_categoria = null;
+					$this->orden_categoria = null;
+					return false;
+				}else {
+					$this->codigo_area 			= $arreglo->getcodigo_area();;
+					$this->nombre_categoria 	= $arreglo->getnombre_categoria();
+					$this->peso_categoria 		= $arreglo->getpeso_categoria();
+					$this->orden_categoria 		= $arreglo->getorden();
+					return true;
+				}
+			}catch(Exception $e) {
+				return false;
+			}
+		}	
 
 		//metodos de la clase
 		//lista todos los valores de la clase

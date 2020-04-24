@@ -5,12 +5,15 @@
 	if(!isset($_FILES['fileadjuntos']['name'])) {
 		http_response_code(500);
 	}else{
-		$fichero_subido = dirFileAudio. basename($_FILES['fileadjuntos']['name']);
+		$nombre 		= md5(date("Ymdhis")."-".basename($_FILES['fileadjuntos']['name'])).".".explode(".", basename($_FILES['fileadjuntos']['name']))[count(explode(".", basename($_FILES['fileadjuntos']['name'])))-1];
+		$original		= basename($_FILES['fileadjuntos']['name']);
+		$fichero_subido = dirFileAttachments.$nombre;
 
 		if (move_uploaded_file($_FILES['fileadjuntos']['tmp_name'], $fichero_subido)) {
 		    $json = '{';
-		    $json = $json.'"nombre_fichero":"'.basename($_FILES["fileadjuntos"]["name"]).'", ';
-		    $json = $json.'"url": "'.str_replace($_SERVER["DOCUMENT_ROOT"]."/calidad/", "", dirFileAudio)."".basename($_FILES['fileadjuntos']['name']).'", ';
+		    $json = $json.'"nombre_fichero":"'.$original.'", ';
+		    $json = $json.'"nombre_unico":"'.$nombre.'", ';
+		    $json = $json.'"url": "'.str_replace($_SERVER["DOCUMENT_ROOT"]."/calidad/", "", dirFileAttachments)."".$nombre.'", ';
 		    $json = $json.'"peso":"'.formatBytes($_FILES['fileadjuntos']['size']).'"';
 		    $json = $json.'}'; 
 		    echo $json;
@@ -22,7 +25,7 @@
 
 
 
-	function formatBytes($size, $precision = 2)
+	function formatBytes($size, $precision = 1)
 	{
 	    $base = log($size, 1024);
 	    $suffixes = array('', 'Kb', 'Mb', 'Gb', 'Tb');   

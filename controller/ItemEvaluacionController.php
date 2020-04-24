@@ -143,6 +143,36 @@
 			}
 		}
 
+		public function listarPorArea($codigo) {
+			try {
+				$consulta = "SELECT a.codigo_item, a.codigo_categoria, a.nombre_item, a.orden FROM item_evaluacion a INNER JOIN categoria b ON a.codigo_categoria = b.codigo_categoria WHERE b.codigo_area = ".$codigo."  ORDER BY a.codigo_categoria ASC, a.codigo_item ASC";
+				
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new ItemEvaluacion($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "ItemEvaluacionController - listarPorCategoriaCodigoItem: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
 		public function ingresar($param) {
 			try {
 				//objeto

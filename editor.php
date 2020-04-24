@@ -108,14 +108,14 @@
                 <div class="card-header py-3">
                   <strong>Ingreso de Evaluación</strong>
                 </div>
-                <div class="card-body">
+                <!--<div class="card-body">-->
 
-                  <table class="table table-sm">
+                  <table class="table table-sm" id="tablaEvaluaciones">
                     <thead>
                       <tr>
                         <th scope="col">Categoría</th>
                         <th scope="col">Item</th>
-                        <th scope="col">No Aplica</th>
+                        <th scope="col">N/A</th>
                         <th scope="col">0.0</th>
                         <th scope="col">0.5</th>
                         <th scope="col">1.0</th>
@@ -123,21 +123,49 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <th scope="row">1</th>
-                        <td></td>
-                        <td><div class="form-check"><input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked><label class="form-check-label" for="exampleRadios1"></label></div></td>
-                        <td><div class="form-check"><input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked><label class="form-check-label" for="exampleRadios1"></label></div></td>
-                        <td><div class="form-check"><input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked><label class="form-check-label" for="exampleRadios1"></label></div></td>
-                        <td><div class="form-check"><input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked><label class="form-check-label" for="exampleRadios1"></label></div></td>
+
                       </tr>
                     </tbody>
                   </table>
-                </div>
+                <!--</div> -->
               </div>
 
             </div>
 
             <div class="col-lg-5">
+
+              <div class="card shadow mb-4">
+                <!-- Card Header - Accordion -->
+                <a href="#collapseCardExample" class="d-block card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Resumen</h6>
+                </a>
+                <!-- Card Content - Collapse -->
+                <!--<div class="collapse show" id="collapseCardExample"> -->
+                  
+                    <table class="table" id="tablaNotas">
+                      <thead>
+                        <tr>
+                          <th scope="col" align="center" id="tablaNotasTituloCategoria1"><img src="facade/img/loading2.gif" /></th>
+                          <th scope="col" align="center" id="tablaNotasTituloCategoria2"><img src="facade/img/loading2.gif" /></th>
+                          <th scope="col" align="center" id="tablaNotasTituloCategoria3"><img src="facade/img/loading2.gif" /></th>
+                          <th scope="col" align="center" >Nota Final</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td align="center" id="tablaNotasNotaCategoria1">0</td>
+                          <td align="center" id="tablaNotasNotaCategoria2">0</td>
+                          <td align="center" id="tablaNotasNotaCategoria3">0</td>
+                          <td align="center" id="tablaNotasNotaFinal">0</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                 
+                <!--</div> -->
+              </div>
+
+
+
               <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -195,23 +223,9 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td><button type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i> Eliminar</button></td>
-                      </tr>
+
                     </tbody>
                   </table>
-                </div>
-              </div>
-
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Observación de la interacción telefónica</h6>
-                </div>
-                <div class="card-body">
-                  <div id="editor">
-                  </div>
                 </div>
               </div>
 
@@ -222,9 +236,18 @@
             </div>
 
           </div>
-
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Observación de la interacción telefónica</h6>
+                </div>
+                <div class="card-body">
+                  <div id="editor">
+                  </div>
+                </div>
+              </div>
         </div>
         <!-- /.container-fluid -->
+
 
       </div>
       <!-- End of Main Content -->
