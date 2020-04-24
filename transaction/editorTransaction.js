@@ -15,6 +15,14 @@ $(document).ready(function() {
 	//declaración de editor de texto
 	ClassicEditor.create( document.querySelector( '#editor' ), {
 			//toolbar: ['undo', 'redo', '|', 'bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript'],
+			toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ],
+        heading: {
+            options: [
+                { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' }
+            ]
+        }
 	})
 	.then( editor => {
 		window.editor = editor;
@@ -369,6 +377,7 @@ $("#fileAudio").change(function() {
 
 });
 
+//eliminación de audio
 $("#btnDeleteAudio").click(function() {
 	var respuesta = confirm('Esta usted seguro de eliminar el audio '+$("#btnDeleteAudio").prop('url')+'? Presione ACEPTAR para eliminar el archivo, de lo contrario presione CANNCELAR.');
 	if(respuesta) {
@@ -453,7 +462,7 @@ $("#btnDeleteAudio").click(function() {
 			        $("#infoAudioCargado").hide(); 
 			        $("#frmCargaAudio").show();
 			        $("#fileAudio").next('.custom-file-label').addClass("selected").html('Seleccione Audio'); 
-			        $("#fileaudio").val(null);
+			        $("#fileAudio").val(null);
 			        $("#fileAudio").removeAttr('disabled');
 			        setTimeout(function(){ $("#modalEditorBtnCerrar").click(); }, 2000);
 			    }
@@ -538,7 +547,8 @@ $("#fileadjuntos").change(function() {
 	            $("#valBarraCargaAdjuntos").prop('aria-valuenow', 100);
 	            $("#valBarraCargaAdjuntos").html('100%');
 	            $("#valBarraCargaAdjuntos").prop('class', 'progress-bar bg-success');
-	            setTimeout(function(){ $("#barraCargaAdjuntos").hide(); $("#tablaArchivosAdjuntados").show(); $("#fileadjuntos").removeAttr('disabled'); }, 2000);
+	            $("#fileadjuntos").val(null);
+	            setTimeout(function(){ $("#barraCargaAdjuntos").hide(); $("#tablaArchivosAdjuntados").show(); $("#fileadjuntos").removeAttr('disabled'); }, 500);
 	            respuesta = JSON.parse(responseObject);
 	            if(respuesta.nombre_fichero.length <= 20) { 
 	            	var nombre_mostrar = respuesta.nombre_fichero; 
@@ -574,7 +584,7 @@ function borrarAdjunto(nombre, mostrar, textoHtml) {
 				$("#modalEditorConfig").prop('class', 'modal-dialog');
 				$("#modalEditorTitle").text('Eliminando');
 				$("#modalEditorContenido").attr('align', 'left');
-				$("#modalEditorCerrarVentana").show();
+				$("#modalEditorCerrarVentana").hide();
 				$("#modalEditorContenido").html('<img src="facade/img/loading2.gif" /> Estamos eliminando el audio...');
 				$("#modalEditorBtnCerrar").show();
 				$("#modalEditorBtnCerrar").text('Cerrar');
@@ -634,9 +644,10 @@ function borrarAdjunto(nombre, mostrar, textoHtml) {
 			        $("#modalEditorBtnAccion").hide();
 			    },
 			    200: function(responseObject, textStatus, errorThrown) {
+			    	$("#modalEditorCerrarVentana").hide();
 			    	$("#tablaArchivosAdjuntados tr:contains('"+textoHtml+"')").remove();
-			    	$("#modalEditorContenido").html('Archivo adjunto '+mostrar+' ha sido eliminado exitosamente');
-			    	setTimeout(function(){ $("#modalEditorBtnCerrar").click(); }, 2000);
+			    	$("#modalEditorBtnCerrar").hide();
+			    	setTimeout(function(){ $("#modalEditorBtnCerrar").click(); }, 1000);
 			    }
 			}
 		});

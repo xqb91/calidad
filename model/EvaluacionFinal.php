@@ -8,6 +8,7 @@
 		private $evaluador_rut_evaluador; 
 		private $ejecutivo_codigo_area; 
 		private $observaciones;
+		private $nota_final;
 
 		//Constructor
 		//Obtiene un arreglo que es generado de forma automática por MySQL
@@ -20,6 +21,7 @@
 			$this->evaluador_rut_evaluador	= $arreglo['evaluador_rut_evaluador'];
 			$this->ejecutivo_codigo_area	= $arreglo['ejecutivo_codigo_area'];
 			$this->observaciones			= $arreglo['observaciones'];
+			$this->nota_final 				= $arreglo['nota_final'];
 		}
 
 
@@ -67,6 +69,15 @@
 		public function getobservaciones() {
 			try {
 				return $this->observaciones;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
+
+		public function getnotafinal() {
+			try {
+				return $this->nota_final;
 			}catch(Exception $e) {
 				return null;
 			}

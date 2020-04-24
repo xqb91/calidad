@@ -1,3 +1,5 @@
+
+
 var tablaEjecutivos;
 
 $(document).ready(function(){
@@ -745,6 +747,7 @@ $("#slcArea").change(function(){
 																                            //cargando datos a la tabla
 																                            tablaEjecutivos.clear().draw();
 																                            tablaEjecutivos.destroy();
+																                            tablaEjecutivos = null;
 																                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																							    data: resultado,
 																							    columns: [

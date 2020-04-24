@@ -8,7 +8,6 @@
 		http_response_code(500);
 	}else{
 		$id = filter_input(INPUT_POST, ("id"));
-		$id = 1;
 		$id = preg_replace('/^[a-zA-Z\s]*$/', '', $id);
 		if($id == '') {
 			http_response_code(401);
