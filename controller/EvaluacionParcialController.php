@@ -58,7 +58,7 @@
 
 		public function listarPorNumero($numero) {
 			try {
-				$consulta = "SELECT * FROM evaluacion_parcial WHERE numero_evaluacion = '".$numero_evaluacion."'";
+				$consulta = "SELECT * FROM evaluacion_parcial WHERE numero_evaluacion = '".$numero."'";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -267,7 +267,7 @@
 					//construyendo string
 					$consulta = "INSERT INTO evaluacion_parcial ";
 					$consulta = $consulta."(fecha_evaluacion, periodo, rut_ejecutivo, rut_evaluador, nota_final, observacion, codigo_area) VALUES ";
-					$consulta = $consulta."('".date('Y-m-d H:i:s')."', ".$obj->getrut_ejecutivo().", ".$obj->getrut_evaluador().", ".$obj->getnota_final().", '".$obj->getobservacion()."', ".$obj->getcodigo_area()." );";
+					$consulta = $consulta."('".date('Y-m-d H:i:s')."', '".$obj->getperiodo()."', ".$obj->getrut_ejecutivo().", ".$obj->getrut_evaluador().", ".$obj->getnota_final().", '".$obj->getobservacion()."', ".$obj->getcodigo_area()." );";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -301,7 +301,42 @@
 				if($obj != null) {
 					//construyendo string
 					$consulta = "UPDATE evaluacion_parcial ";
-					$consulta = $consulta."SET observacion = '".$obj->getobservaciones()."', nota_final = ".$obj->getnota_final()." ";
+					$consulta = $consulta."SET observacion = '".$obj->getobservacion()."', nota_final = ".$obj->getnota_final()." ";
+					$consulta = $consulta."WHERE numero_evaluacion = ".$obj->getnumero_evaluacion().";";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultado == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
+							return 1;
+						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
+							return 0;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "EvaluacionParcialController - actualizar: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionParcialController - actualizar: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+		public function actualizarNota($param) {
+			try {
+				//objeto
+				$obj = $param;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "UPDATE evaluacion_parcial ";
+					$consulta = $consulta."SET nota_final = ".$obj->getnota_final()." ";
 					$consulta = $consulta."WHERE numero_evaluacion = ".$obj->getnumero_evaluacion().";";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
@@ -363,6 +398,90 @@
 			}
 		}
 
+		public function ultimaEvaluacionGenerada($periodo, $ejecutivo, $evaluador, $area) {
+			try {
+				$consulta = "SELECT * FROM evaluacion_parcial WHERE periodo = '".$periodo."' AND rut_ejecutivo = ".$ejecutivo." AND rut_evaluador = ".$evaluador." AND codigo_area = ".$area." ORDER BY numero_evaluacion DESC LIMIT 1";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionParcial($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionParcialController - listarPorNumero: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+		public function existeEvaluacion($numero_evaluacion) {
+			try {
+				$consulta = "SELECT count(*) total FROM evaluacion_parcial WHERE numero_evaluacion = ".$numero_evaluacion." ";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return false;
+					}else{
+						if($this->databaseTransaction->resultados()["total"] == 0) {
+							$this->databaseTransaction->cerrar();
+							return false;
+						}else{
+							$this->databaseTransaction->cerrar();
+							return true;
+						}
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionParcialController - listarPorNumero: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+		public function haCompletadoEvaluacionesPorPeriodo($ejecutivo, $periodo) {
+			try {
+				$consulta = "SELECT COALESCE(CASE WHEN count(a.numero_evaluacion) < c.cantidad_finales THEN FALSE WHEN count(a.numero_evaluacion) >= c.cantidad_finales THEN TRUE END, FALSE) as valor FROM evaluacion_parcial a INNER JOIN area b ON a.codigo_area = b.codigo_area INNER JOIN evaluaciones_area c ON b.codigo_area = c.codigo_area AND a.periodo = c.periodo WHERE a.rut_ejecutivo = ".$ejecutivo." AND a.periodo = '".$periodo."'";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return false;
+					}else{
+						if($this->databaseTransaction->resultados()["valor"] == 0) {
+							$this->databaseTransaction->cerrar();
+							return false;
+						}else{
+							$this->databaseTransaction->cerrar();
+							return true;
+						}
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionParcialController - haCompletadoEvaluacionesPorPeriodo: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
 
 	}
 ?>

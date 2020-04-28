@@ -114,6 +114,35 @@
 			}
 		}
 
+		public function listarPorArchivoServer($archivo) {
+			try {
+				$consulta = "SELECT * FROM Adjuntos WHERE archivo_server = '".$archivo."'";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new Adjuntos($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "AdjuntosController - listarPorArchivoServer: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
 		public function ingresar($Adjunto) {
 			try {
 				//objeto
@@ -122,18 +151,18 @@
 					//construyendo string
 					$consulta = "INSERT INTO Adjuntos ";
 					$consulta = $consulta."(numero_evaluacion, fecha_carga, periodo, nombre_original, archivo_server) VALUES ";
-					$consulta = $consulta."(".$obj->getnumero_evaluacion().", '".$obj->getfecha_carga()."', '".$obj->getperiodo()."', '".$obj->getnombre_original()."', '".$getarchivo_server()."');";
+					$consulta = $consulta."(".$obj->getnumero_evaluacion().", '".$obj->getfecha_carga()."', '".$obj->getperiodo()."', '".$obj->getnombre_original()."', '".$obj->getarchivo_server()."');";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
-						if($resultados == true) {
+						if($resultado == true) {
 							$this->databaseTransaction->confirmar();
 							$this->databaseTransaction->cerrar();
-							return 1;
+							return true;
 						}else{
 							$this->databaseTransaction->deshacer();
 							$this->databaseTransaction->cerrar();
-							return 0;
+							return false;
 						}
 					}else{
 						if(ambiente == 'DEV') { echo "AdjuntosController - ingresar: El objeto DatabaseTransaction se encuentra nulo"; }
@@ -195,14 +224,14 @@
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
-						if($resultados == true) {
+						if($resultado == true) {
 							$this->databaseTransaction->confirmar();
 							$this->databaseTransaction->cerrar();
-							return 1;
+							return true;
 						}else{
 							$this->databaseTransaction->deshacer();
 							$this->databaseTransaction->cerrar();
-							return 0;
+							return false;
 						}
 					}else{
 						if(ambiente == 'DEV') { echo "AdjuntosController - eliminar: El objeto DatabaseTransaction se encuentra nulo"; }

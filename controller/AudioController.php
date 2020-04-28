@@ -143,6 +143,89 @@
 			}
 		}
 
+		public function listarPorNombre($nombre_audio) {
+			try {
+				$consulta = "SELECT * FROM audio WHERE nombre_audio = '".$nombre_audio."'";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new Audio($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "AudioController - buscarPorNombre: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+		public function listarPorEvaluacion($evaluacion) {
+			try {
+				$consulta = "SELECT * FROM audio WHERE numero_evaluacion = '".$evaluacion."'";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new Audio($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "AudioController - buscarPorNombre: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+
+		public function existePorNombre($nombre_audio) {
+			try {
+				$consulta = "SELECT count(*) as cantidad FROM audio WHERE nombre_audio = '".$nombre_audio."'";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return 0;
+					}else{
+						$this->databaseTransaction->cerrar();
+						return $this->databaseTransaction->resultados()['cantidad'];
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "AudioController - buscarPorNombre: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+
 		public function ingresar($param) {
 			try {
 				//objeto
@@ -158,11 +241,11 @@
 						if($resultado == true) {
 							$this->databaseTransaction->confirmar();
 							$this->databaseTransaction->cerrar();
-							return 1;
+							return true;
 						}else{
 							$this->databaseTransaction->deshacer();
 							$this->databaseTransaction->cerrar();
-							return 0;
+							return false;
 						}
 					}else{
 						if(ambiente == 'DEV') { echo "AudioController - ingresar: El objeto DatabaseTransaction se encuentra nulo"; }

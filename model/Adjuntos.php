@@ -38,7 +38,6 @@
 	    }  
 	    public function getnumero_evaluacion() {
 	    	try {
-	    		return null;
 	    		return $this->numero_evaluacion;
 	    	}catch(Exception $e) {
 	    		return null;

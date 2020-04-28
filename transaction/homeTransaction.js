@@ -193,9 +193,9 @@ $(document).ready(function(){
 																								    ],
 																								    //añadiendo botones de acción
 																							        "columnDefs": [ 
-																							        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" title="evaluación Final"><i class="fab fa-font-awesome-flag"></i></button>'},
-																							        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Detalles de Ejecutivo"><i class="fas fa-eye"></i></button>'},
-																							        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Nueva evaluación Parcial"><i class="fas fa-asterisk"></i></button>'} 
+																							        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verFinal" title="evaluación Final"><i class="fab fa-font-awesome-flag"></i></button>'},
+																							        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verEjecutivo" title="Detalles de Ejecutivo"><i class="fas fa-eye"></i></button>'},
+																							        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="crearEval" title="Nueva evaluación Parcial"><i class="fas fa-asterisk"></i></button>'} 
 																							        ]
 																								});
 
@@ -254,17 +254,77 @@ $(document).ready(function(){
 ///// NUEVA PARCIAL RAPIDA ******************************************************************************************************
 //leyendo las acciones según botón presionado de la tabla
 $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
-    //var data = tablaEjecutivos.row( $(this).parents('tr') ).data();
-    var data = tablaEjecutivos.row( $(this).parents('tr') ).data();
-    $("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
-    $("#modalHome").modal('show');
-	$("#modalHomeTitle").html('<i class="far fa-edit"></i> Nueva evaluación parcial para <strong>'+data.nombre_ejecutivo+'</strong>');
-	$("#modalHomeBtnCerrar").show();
-	$("#modalHomeBtnCerrar").text('Cancelar');
-	$("#modalHomeCerrarVentana").hide();
-	$("#modalHomeBtnAccion").show();
-	$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');
-	$("#modalHomeContenido").load('editor.php?periodo=ejecutivo='+data.rut_ejecutivo);
+	var data = tablaEjecutivos.row( $(this).parents('tr') ).data();
+
+	//funcion que determina que botón se presionó y arrancar respuesta
+	if($(this).attr('placetogo') == 'verEjecutivo') {
+		$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+	    $("#modalHome").modal('show');
+		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Información de <strong>'+data.nombre_ejecutivo+'</strong>');
+		$("#modalHomeContenido").load('viewEjecutivoDetail.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
+    	$("#modalHomeBtnCerrar").show();
+		$("#modalHomeBtnCerrar").text('Cerrar');
+		$("#modalHomeCerrarVentana").show();
+		$("#modalHomeBtnAccion").hide();
+		$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
+	}else if($(this).attr('placetogo') == 'crearEval') {
+	    //var data = tablaEjecutivos.row( $(this).parents('tr') ).data();
+	    
+	    $("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+	    $("#modalHome").modal('show');
+		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Nueva evaluación parcial para <strong>'+data.nombre_ejecutivo+'</strong>');
+		
+
+		$.ajax({
+	        type: 'post',
+	        url: 'core/CreateEvaluacionParcialCantidad.php',
+	        data: 'periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo,
+	        beforeSend: function() {
+	            //inicializando modal que valida sesión de raulí
+	        },
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+			    if (XMLHttpRequest.readyState == 0) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Verifique su conexión a internet');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+					$("#modalHomeBtnCerrar").show();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").hide();
+			    }
+			},
+	        statusCode: {
+	            401: function(responseObject, textStatus, errorThrown) {
+	                $("#modalIndexTitle").text('Información de Evaluador');
+	                $("#modalIndexContenido").attr('align', 'left');
+	                $("#modalIndexCerrarVentana").show();
+					$("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE CAMBIARPERIODOYAREA INPUT AREA EMPTY</strong>');
+	                $("#modalIndexBtnCerrar").hide();
+	                $("#modalIndexBtnCerrar").text('Cerrar');
+	                $("#modalIndexBtnAccion").hide();
+	            },
+	            301: function(responseObject, textStatus, errorThrown) {
+	                $("#modalHomeContenido").load('creator.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
+	            	$("#modalHomeBtnCerrar").show();
+					$("#modalHomeBtnCerrar").text('Cancelar');
+					$("#modalHomeCerrarVentana").hide();
+					$("#modalHomeBtnAccion").show();
+					$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
+	            },
+	            200: function(responseObject, textStatus, errorThrown) {
+	            	$("#modalHomeContenido").load('todoListoParcial.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
+	            	$("#modalHomeBtnCerrar").show();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeBtnAccion").hide();
+					$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
+	            }
+	        }
+	    });
+	}else{
+		alert('No esta programado');
+	}
 } );
 
 
@@ -787,3 +847,53 @@ $("#slcArea").change(function(){
 		}
 	});
 });
+
+
+$("#modalHomeBtnAccion").click(function() {
+	if($("#modalHomeBtnAccion").text() == "Guardar Evaluación Parcial") {
+		$.ajax({
+		    type: 'post',
+		    url: 'core/CreateEvaluacionParcialObservacion.php',
+		    data: 'comentarios='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
+		    beforeSend: function() {
+		        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');
+		    },
+		    error: function(XMLHttpRequest, textStatus, errorThrown) {
+			    if (XMLHttpRequest.readyState == 0) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Verifique su conexión a internet');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+					$("#modalHomeBtnCerrar").show();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").hide();
+			    }
+			},
+		    statusCode: {
+		        404: function(responseObject, textStatus, errorThrown) {
+		            alert('No se encontró respuesta del servidor para los periodos a trabajar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 404');
+		        },
+		        500: function(responseObject, textStatus, errorThrown) {
+		            alert('El servidor no encontró el número de evaluación que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 500');
+		        },
+		        501: function(responseObject, textStatus, errorThrown) {
+		            alert('El servidor no encontró los comentarios que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 501');
+		        },
+				503: function(responseObject, textStatus, errorThrown) {
+		            alert('La evaluación no retornó ningun resultado o bien el controller retornó un objeto nulo. CORE CREATEEVALUACIONPARCIALOBSERVARCION 503');
+		        },
+				301: function(responseObject, textStatus, errorThrown) {
+		            alert('Los cambios no pudieron ser guardados, por favor intentelo más tarde. CORE CREATEEVALUACIONPARCIALOBSERVARCION 301');
+		        },
+		        200: function(responseObject, textStatus, errorThrown) {
+		        	$("#modalHomeConfig").attr('class', 'modal-dialog');
+		            $("#modalHomeContenido").html('La evaluación parcial ha sido guardada!');
+		            $("#modalHomeBtnCerrar").show();
+		            $("#modalHomeBtnCerrar").text('Cerrar');
+		            $("#modalHomeBtnAccion").hide();
+		       	}
+		    }
+		});
+	}
+})

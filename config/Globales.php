@@ -57,10 +57,10 @@
 		define('puertoMysql'	,  3306);
 	}else{
 		//configuración de conexión de producción
-		define('servidorMysql'	, 'rauli.tricotcentral.local');
-		define('usuarioMysql'	, 'root');
-		define('passwordMysql'	, 'FTPxqb91RDS$$');
-		define('databaseMysql'	, 'calidad');
+		define('servidorMysql'	, 'localhost');
+		define('usuarioMysql'	, 'nrgchile_calidad');
+		define('passwordMysql'	, 'calidad2020$$');
+		define('databaseMysql'	, 'nrgchile_calidad');
 		define('puertoMysql'	, 3306);
 	}
 

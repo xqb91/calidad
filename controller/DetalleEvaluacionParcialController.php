@@ -58,7 +58,7 @@
 
 		public function listarPorNumeroItem($numero, $codigo_item) {
 			try {
-				$consulta = "SELECT * FROM detalle_evaluacion_parcial WHERE numeroEvaluacion = ".$numero." AND codigo_item = ".$codigo_item." ORDER BY numero_evaluacion DESC, id ASC";
+				$consulta = "SELECT * FROM detalle_evaluacion_parcial WHERE numero_Evaluacion = ".$numero." AND codigo_item = ".$codigo_item." ORDER BY numero_evaluacion DESC, id ASC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -92,8 +92,9 @@
 				if($obj != null) {
 					//construyendo string
 					$consulta = "INSERT INTO detalle_evaluacion_parcial ";
-					$consulta = $consulta."(numero_evaluacion, numero_final) VALUES ";
-					$consulta = $consulta."('".$obj->getnumero_evaluacion()."', '".$obj->numero_final()."' );";
+					$consulta = $consulta."(numero_evaluacion, codigo_item, nota) VALUES ";
+					$consulta = $consulta."(".$obj->getnumero_evaluacion().", ".$obj->getcodigo_item().", ".$obj->getnota()." );";
+					echo $consulta;
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -107,11 +108,11 @@
 							return 0;
 						}
 					}else{
-						if(ambiente == 'DEV') { echo "CicloController - ingresar: El objeto DatabaseTransaction se encuentra nulo"; }
+						if(ambiente == 'DEV') { echo "DetalleEvaluacionParcialController - ingresar: El objeto DatabaseTransaction se encuentra nulo"; }
 						return false;
 					}
 				}else{
-					if(ambiente == 'DEV') { echo "CicloController - ingresar: El objeto Adjunto (Model) se encuentra nulo"; }
+					if(ambiente == 'DEV') { echo "DetalleEvaluacionParcialController - ingresar: El objeto Adjunto (Model) se encuentra nulo"; }
 					return false;
 				}
 			}catch(Exception $e) {
@@ -127,8 +128,9 @@
 				if($obj != null) {
 					//construyendo string
 					$consulta = "UPDATE detalle_evaluacion_parcial ";
-					$consulta = $consulta."SET nota = ".$obj->getnota()."";
+					$consulta = $consulta."SET nota = ".$obj->getnota()." ";
 					$consulta = $consulta."WHERE numero_evaluacion = ".$obj->getnumero_evaluacion()." AND codigo_item = ".$obj->getcodigo_item().";";
+					echo $consulta;
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -177,11 +179,11 @@
 							return 0;
 						}
 					}else{
-						if(ambiente == 'DEV') { echo "CicloController - eliminar: El objeto DatabaseTransaction se encuentra nulo"; }
+						if(ambiente == 'DEV') { echo "DetalleEvaluacionParcialController - eliminar: El objeto DatabaseTransaction se encuentra nulo"; }
 						return false;
 					}
 				}else{
-					if(ambiente == 'DEV') { echo "CicloController - eliminar: El objeto Adjunto (Model) se encuentra nulo"; }
+					if(ambiente == 'DEV') { echo "DetalleEvaluacionParcialController - eliminar: El objeto Adjunto (Model) se encuentra nulo"; }
 					return false;
 				}
 			}catch(Exception $e) {
@@ -211,11 +213,11 @@
 							return 0;
 						}
 					}else{
-						if(ambiente == 'DEV') { echo "CicloController - eliminar: El objeto DatabaseTransaction se encuentra nulo"; }
+						if(ambiente == 'DEV') { echo "DetalleEvaluacionParcialController - eliminar: El objeto DatabaseTransaction se encuentra nulo"; }
 						return false;
 					}
 				}else{
-					if(ambiente == 'DEV') { echo "CicloController - eliminar: El objeto Adjunto (Model) se encuentra nulo"; }
+					if(ambiente == 'DEV') { echo "DetalleEvaluacionParcialController - eliminar: El objeto Adjunto (Model) se encuentra nulo"; }
 					return false;
 				}
 			}catch(Exception $e) {
@@ -224,6 +226,42 @@
 			}
 		}
 
+
+		public function existeDetalle($evaluacion, $item) {
+			try {
+				//objeto
+				$obj = $evaluacion;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "SELECT count(*) as total FROM detalle_evaluacion_parcial WHERE numero_evaluacion = ".$evaluacion." AND codigo_item =  ".$item." ";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($this->databaseTransaction->cantidadResultados() == 0) {
+							$this->databaseTransaction->cerrar();
+							return false;
+						}else{
+							if($this->databaseTransaction->resultados()["total"] == 0) {
+								$this->databaseTransaction->cerrar();
+								return false;
+							}else{
+								$this->databaseTransaction->cerrar();
+								return true;
+							}
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "DetalleEvaluacionParcialController - eliminar: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "DetalleEvaluacionParcialController - eliminar: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
 
 	}
 ?>

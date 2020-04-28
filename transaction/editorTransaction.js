@@ -161,7 +161,7 @@ $(document).ready(function() {
 								                    var act  = "";
 								                    var ct 	 = -1;
 								                    var colores = ['#E4E1F1', '#E2CBE0', '#CFB0CF','#BC96C0', '#A77EB0', '#9166A1'];
-								                    for (var i =0; i<items.length-1; i++) {
+								                    for (var i =0; i<items.length; i++) {
 								                    	//categorias[i]
 								                    		act = items[i].nombre_categoria;
 								                    		if(last != act) { last = items[i].nombre_categoria; ct++; }
