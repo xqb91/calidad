@@ -1,6 +1,6 @@
 <?php
 	//Controlador OK: 09.04.2020
-	include(dirModel."EvaluacionFinalController.php");
+	include(dirModel."EvaluacionFinal.php");
 	class EvaluacionFinalController {
 
 		private $databaseTransaction;
@@ -59,6 +59,35 @@
 		public function listarPorNumero($codigo) {
 			try {
 				$consulta = "SELECT * FROM evaluacion_final WHERE numero_final = '".$codigo."' ORDER BY numero_final DESC";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionFinal($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionFinalController - listarPorCodigo: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+		public function listarPorEjecutivo($ejecutivo, $periodo) {
+			try {
+				$consulta = "SELECT * FROM evaluacion_final WHERE rut_ejecutivo = '".$ejecutivo."' AND periodo = '".$periodo."' ORDER BY numero_final DESC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);

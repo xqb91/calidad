@@ -7,6 +7,7 @@
 	    private $rut_evaluador;
 	    private $periodo; 
 	    private $ejecutivo_codigo_area; 
+	    private $nota_quincenal;
 
 
 		//Constructor
@@ -18,7 +19,8 @@
 			$this->fecha_creacion			= $arreglo['fecha_creacion'];
 			$this->rut_evaluador			= $arreglo['rut_evaluador'];
 			$this->periodo					= $arreglo['periodo'];
-			$this->ejecutivo_codigo_area	= $arreglo['ejecutivo_codigo_area'];
+			$this->ejecutivo_codigo_area	= $arreglo['codigo_area'];
+			$this->nota_quincenal			= $arreglo['nota_quincenal'];
 		}
 
 		//accesadores
@@ -65,6 +67,14 @@
 		public function getejecutivo_codigo_area() {
 			try {
 				return $this->ejecutivo_codigo_area;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
+		public function getnota_quincenal() {
+			try {
+				return $this->nota_quincenal;
 			}catch(Exception $e) {
 				return null;
 			}
@@ -119,6 +129,15 @@
 		public function setejecutivo_codigo_area($ejecutivo_codigo_area) {
 			try {
 				$this->ejecutivo_codigo_area = $ejecutivo_codigo_area;
+				return true;
+			}catch(Exception $e) {
+				return false;
+			}
+		}	
+
+		public function setnota_quincenal($nota_quincenal) {
+			try {
+				$this->nota_quincenal = $nota_quincenal;
 				return true;
 			}catch(Exception $e) {
 				return false;

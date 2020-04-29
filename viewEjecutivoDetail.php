@@ -10,14 +10,13 @@
   <meta name="author" content="">
 
   <title>SB Admin 2 - Cards</title>
-
   <!-- Custom fonts for this template-->
   <link href="facade/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
   <!-- Custom styles for this template-->
   <link href="facade/css/sb-admin-2.min.css" rel="stylesheet">
-
+  <input type="hidden" name="irql" id="irql" value="<?php if(isset($_GET["ejecutivo"])) { echo $_GET["ejecutivo"]; } ?>">
 </head>
 
 <body id="page-top">
@@ -40,7 +39,6 @@
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Detalle del Ejecutivo | Periodo 0000-00</h1>
           </div>
 
           <div class="row">
@@ -49,37 +47,19 @@
 
               <!-- Default Card Example -->
               <div class="card mb-4">
-                <div class="card-header">
-                  <strong>Evaluaciones Parciales</strong>
+                <div class="card-header" id="titleEvalPar">
+                  <strong>Evaluaciones Parciales <img src="facade/img/loading2.gif"></strong>
                 </div>
-                  <table class="table">
+                  <table class="table" id="tablaParciales">
                     <thead>
                       <tr>
                         <th scope="col">#</th>
-                        <th scope="col">First</th>
-                        <th scope="col">Last</th>
-                        <th scope="col">Handle</th>
+                        <th scope="col">Periodo</th>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Nota</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">3</th>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                      </tr>
                     </tbody>
                   </table>
               </div>
@@ -102,9 +82,9 @@
                       
                       <div class="card" style="width: 90%;">
                         <div class="card-body">
-                          <h5 class="card-title">Evaluación Quicenal</h5>
-                          <h6 class="card-subtitle mb-2 text-muted">Generada el 00/00/0000</h6>
-                          <a href="#" class="card-link">Descargar PDF</a>
+                          <h5 class="card-title" id="titleQuincenal">Evaluación Quicenal</h5>
+                          <h6 class="card-subtitle mb-2 text-muted" id="fechaQuincenal">Generada el 00/00/0000 <img src="facade/img/loading2.gif"></h6>
+                          <a href="#" class="card-link" id="linkQuincenal">Descargar PDF</a>
                         </div>
                       </div>
 
@@ -113,7 +93,7 @@
                       <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
                         <div class="card-body">
                           <h5 class="card-title" style="text-align: center;">Nota Obtenida</h5>
-                          <p class="card-text" style="font-size:35px; text-align:center;"><strong>7.27</strong></p>
+                          <p class="card-text" style="font-size:35px; text-align:center;" id="notaQuincenal"><strong>7.27 <img src="facade/img/loading2.gif"></strong></p>
                         </div>
                       </div>
                     </div>
@@ -137,9 +117,9 @@
                         
                         <div class="card" style="width: 90%;">
                           <div class="card-body">
-                            <h5 class="card-title">Evaluación Final</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">Generada el 00/00/0000</h6>
-                            <a href="#" class="card-link">Descargar PDF</a>
+                            <h5 class="card-title" id="titleFinal">Evaluación Final</h5>
+                            <h6 class="card-subtitle mb-2 text-muted" id="fechaFinal">Generada el 00/00/0000  <img src="facade/img/loading2.gif"></h6>
+                            <a href="#" class="card-link" id="linkFinal">Descargar PDF</a>
                           </div>
                         </div>
 
@@ -148,7 +128,7 @@
                         <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
                           <div class="card-body">
                             <h5 class="card-title" style="text-align: center;">Nota Obtenida</h5>
-                            <p class="card-text" style="font-size:35px; text-align:center;"><strong>7.27</strong></p>
+                            <p class="card-text" style="font-size:35px; text-align:center;" id="notFinal"><strong><img src="facade/img/loading2.gif"></strong></p>
                           </div>
                         </div>
                       </div>
@@ -201,11 +181,14 @@
   </div>
 
   <!-- Bootstrap core JavaScript-->
-  <script src="facade/vendor/jquery/jquery.min.js"></script>
-  <script src="facade/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!--<script src="facade/vendor/jquery/jquery.min.js"></script>
+  <script src="facade/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>-->
 
   <!-- Core plugin JavaScript-->
   <script src="facade/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Transaction Jquery -->
+   <script src="Transaction/viewEjecutivoDetailTransaction.js"></script>
 
   <!-- Custom scripts for all pages-->
   <script src="facade/js/sb-admin-2.min.js"></script>

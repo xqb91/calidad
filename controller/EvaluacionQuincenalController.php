@@ -85,9 +85,9 @@
 			}
 		}
 
-		public function listarPorEjecutivo($ejecutivo) {
+		public function listarPorEjecutivo($ejecutivo, $periodo) {
 			try {
-				$consulta = "SELECT * FROM evaluacion_quincenal WHERE rut_ejecutivo = '".$ejecutivo."'";
+				$consulta = "SELECT * FROM evaluacion_quincenal WHERE rut_ejecutivo = '".$ejecutivo."' AND periodo='".$periodo."' ";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -349,8 +349,8 @@
 				if($obj != null) {
 					//construyendo string
 					$consulta = "INSERT INTO evaluacion_quincenal ";
-					$consulta = $consulta."(rut_ejecutivo, fecha_creacion, rut_evaluador, periodo, codigo_area) VALUES ";
-					$consulta = $consulta."(".$obj->getrut_ejecutivo().", '".date('Y-m-d H:i:s')."',  ".$obj->getrut_evaluador().", '".$obj->getperiodo()."', ".$obj->getcodigo_area()." );";
+					$consulta = $consulta."(rut_ejecutivo, fecha_creacion, rut_evaluador, periodo, codigo_area, nota_quincenal) VALUES ";
+					$consulta = $consulta."(".$obj->getrut_ejecutivo().", '".date('Y-m-d H:i:s')."',  ".$obj->getrut_evaluador().", '".$obj->getperiodo()."', ".$obj->getejecutivo_codigo_area().", ".$obj->getnota_quincenal()." );";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -403,6 +403,36 @@
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - eliminar: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+
+		public function ultimaEvaluacionGenerada($periodo, $ejecutivo, $evaluador, $area) {
+			try {
+				$consulta = "SELECT * FROM evaluacion_quincenal WHERE periodo = '".$periodo."' AND rut_ejecutivo = ".$ejecutivo." AND rut_evaluador = ".$evaluador." AND codigo_area = ".$area." ORDER BY numero_quincenal DESC LIMIT 1";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionParcial($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionParcialController - listarPorNumero: El objeto DatabaseTransaction se encuentra nulo"; }
 					return false;
 				}
 			}catch(Exception $e) {

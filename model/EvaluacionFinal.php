@@ -17,9 +17,9 @@
 			$this->numero_final				= $arreglo['numero_final'];
 			$this->fecha_creacion			= $arreglo['fecha_creacion'];
 			$this->periodo					= $arreglo['periodo'];
-			$this->ejecutivo_rut_ejecutivo	= $arreglo['ejecutivo_rut_ejecutivo'];
-			$this->evaluador_rut_evaluador	= $arreglo['evaluador_rut_evaluador'];
-			$this->ejecutivo_codigo_area	= $arreglo['ejecutivo_codigo_area'];
+			$this->ejecutivo_rut_ejecutivo	= $arreglo['rut_ejecutivo'];
+			$this->evaluador_rut_evaluador	= $arreglo['rut_evaluador'];
+			$this->ejecutivo_codigo_area	= $arreglo['codigo_area'];
 			$this->observaciones			= $arreglo['observaciones'];
 			$this->nota_final 				= $arreglo['nota_final'];
 		}

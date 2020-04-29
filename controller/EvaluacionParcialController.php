@@ -143,9 +143,9 @@
 			}
 		}
 
-		public function listarPorEjecutivo($ejecutivo) {
+		public function listarPorEjecutivo($ejecutivo, $periodo) {
 			try {
-				$consulta = "SELECT * FROM evaluacion_parcial WHERE rut_ejecutivo = '".$ejecutivo."' ORDER BY rut_ejecutivo DESC, numero_evaluacion DESC, periodo DESC";
+				$consulta = "SELECT * FROM evaluacion_parcial WHERE rut_ejecutivo = '".$ejecutivo."' AND periodo = '".$periodo."' ORDER BY rut_ejecutivo DESC, numero_evaluacion DESC, periodo DESC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);

@@ -819,9 +819,9 @@ $("#slcArea").change(function(){
 																							    ],
 																							    //añadiendo botones de acción
 																						        "columnDefs": [ 
-																						        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" title="evaluación Final"><i class="fab fa-font-awesome-flag"></i></button>'},
-																						        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Detalles de Ejecutivo"><i class="fas fa-eye"></i></button>'},
-																						        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Nueva evaluación Parcial"><i class="fas fa-asterisk"></i></button>'} 
+																						        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" placetogo="verFinal" data-placement="top" title="evaluación Final"><i class="fab fa-font-awesome-flag"></i></button>'},
+																						        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" placetogo="verEjecutivo" data-placement="top" title="Detalles de Ejecutivo"><i class="fas fa-eye"></i></button>'},
+																						        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" placetogo="crearEval" data-placement="top" title="Nueva evaluación Parcial"><i class="fas fa-asterisk"></i></button>'} 
 																						        ]
 																							});
 

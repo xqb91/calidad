@@ -2,6 +2,9 @@
 	include("../config/Globales.php");
 	include("../config/basicos.php");
 	include(dirController."EvaluacionParcialController.php");
+	include(dirController."EvaluacionQuincenalController.php");
+	include(dirController."EvaluacionesAreaController.php");
+	include(dirController."DetalleEvaluacionQuincenalController.php");
 
 	$array = null;
 
@@ -26,6 +29,49 @@
 
 					$evaluacion = new EvaluacionParcial($array);
 					$controlado = new EvaluacionParcialController();
+					$quincenal  = new EvaluacionQuincenalController();
+					$evaArea    = new EvaluacionesAreaController();
+					$detaQuinc 	= new DetalleEvaluacionQuincenalController();
+
+					//generando evaluacion quincenal
+					$evaluaciones = $evaArea->listarPorCodigoAreaPeriodo($area, $periodo)[0];
+					if($evaluaciones != null) {
+						if($controlado->listarPorEjecutivo($ejecutivo, $periodo) != null) { 
+							if(count($controlado->listarPorEjecutivo($ejecutivo, $periodo)) == $evaluaciones->getcantidad_quincenales()) {
+								$arreglo['numero_quincenal'] 	= 0;
+								$arreglo['rut_ejecutivo']		= $ejecutivo;
+								$arreglo['fecha_creacion']		= date("Y-m-d");
+								$arreglo['rut_evaluador']		= $evaluador;
+								$arreglo['periodo']				= $periodo;
+								$arreglo['codigo_area']			= $area;
+								//obtener promedio de notas parciales
+								$contador = 0;
+								$notas	  = 0;
+								foreach ($controlado->listarPorEjecutivo($ejecutivo, $periodo) as $k) {
+									$notas = $notas + $k->getnota_final();
+									$contador++;
+								}
+								$arreglo['nota_quincenal']		= ($notas/$contador);
+
+								//ingresando evaluacion
+								$obj = new EvaluacionQuincenal($arreglo);
+								$quincenal->ingresar($obj);
+
+								//obtener número de última quincenal
+								$recienCreada = $quincenal->ultimaEvaluacionGenerada($periodo, $ejecutivo, $evaluador, $area);
+								//ingresar detalle a la quincenal
+								foreach ($controlado->listarPorEjecutivo($ejecutivo, $periodo) as $k) {
+									$arreglo = null;
+									$arreglo['numero_quincenal']	= $recienCreada[0]->getnumero_quincenal();
+									$arreglo['evaluacion_parcial']	= $k->getnumero_evaluacion();
+
+									$detaQuinc->ingresar($arreglo);
+								}
+							}
+						}
+					}
+
+
 					if($controlado->ingresar($evaluacion) == 1) {
 						$parcial = $controlado->ultimaEvaluacionGenerada($periodo, $ejecutivo, $evaluador, $area);
 						echo $parcial[0]->serializar();

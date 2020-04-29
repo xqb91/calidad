@@ -1,7 +1,7 @@
 <?php
 	//Controlador OK: 09.04.2020
-	include(dirModel."DetalleEvaluadorQuincenal.php");
-	class DetalleEvaluadorQuincenalController {
+	include(dirModel."DetalleEvaluacionQuincenal.php");
+	class DetalleEvaluacionQuincenalController {
 
 		private $databaseTransaction;
 

@@ -1,0 +1,15 @@
+1;'Atención de la llamada';25;1
+1;'Gestión de la llamada';25;1
+1;'Gestión de la solución';50;1
+2;'Atención de la llamada';25;1
+2;'Gestión de la llamada';25;1
+2;'Gestión del crédito';50;1
+3;'Atención de la llamada';50;1
+3;'Gestión de la llamada';30;1
+3;'Gestión de la solución';20;1
+4;'Atención de la llamada';20;1
+4;'Gestión de la llamada';15;1
+4;'Gestión de la solución';65;1
+5;'Atención de la llamada';35;1
+5;'Gestión de la llamada';35;1
+5;'Gestión de la solución';30;1
