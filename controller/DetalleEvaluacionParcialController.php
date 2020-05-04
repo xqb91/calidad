@@ -85,6 +85,35 @@
 			}
 		}
 
+		public function listarPorNumero($numero) {
+			try {
+				$consulta = "SELECT * FROM detalle_evaluacion_parcial WHERE numero_Evaluacion = ".$numero." ORDER BY numero_evaluacion DESC, id ASC";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new DetalleEvaluacionParcial($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "DetalleEvaluacionParcialController - listarPorNumeroItem: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
 		public function ingresar($param) {
 			try {
 				//objeto

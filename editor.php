@@ -1,4 +1,5 @@
 <?php
+  //echo "<h1>".$_GET["periodo"]." && ".$_GET["ejecutivo"]."</h1>";
 
 ?>
 <!DOCTYPE html>
@@ -11,11 +12,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <input type="hidden" name="irql" id="irql" value="<?php echo $_GET["ejecutivo"]; ?>" />
+  <input type="hidden" name="irql" id="irql" value="<?php echo $_GET["evaluacion"]; ?>" />
 
   <!-- Custom fonts for this template-->
   <link href="facade/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Quill Framework -->
+  <link href="framework/quill/quill.snow.css" rel="stylesheet">
 
   <!-- Custom styles for this template-->
   <link href="facade/css/sb-admin-2.min.css" rel="stylesheet">
@@ -47,7 +51,13 @@
 
           <!-- Topbar Navbar -->
           <ul class="navbar-nav ml-auto">
+            
 
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="#" id="lblEvaluacionParcial" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img src="facade/img/loading2.gif" />
+              </a>
+            </li>
 
             <!-- Nav Item - Alerts -->
             <li class="nav-item dropdown no-arrow mx-1">
@@ -164,6 +174,7 @@
                   <div class="custom-file">
                     <input type="file" class="form-control-file" id="fileAudio">
                   </div>
+                  <div class="valid-feedback" id="fileAudioFeedBack">Looks good!</div>
                 </div>
                 <!-- barra de carga de archivo -->
                 <div class="progress" id="barraCargaAudio">
@@ -175,7 +186,7 @@
               <div class="card" id="infoAudioCargado">
                 <div class="card-body">
                   <div class="dropdown">
-                  <p id="infoFileAudio">Texto.</p>
+                  <p id="infoFileAudio"><img src="facade/img/loading2.gif" /> Buscando el audio asociado</p>
                     <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
                       <a id="btnDownloadAudio" href="#" target="_blank"><button type="button" class="btn btn-primary" id="btnDownloadAudio"><i class="far fa-save"></i> Descargar Audio</button></a>
                       <button type="button" class="btn btn-danger" id="btnDeleteAudio"><i class="fas fa-trash-alt"></i> Eliminar Audio</button>
@@ -271,13 +282,14 @@
 </div>
 
   <!-- Bootstrap core JavaScript-->
-  <!--<script src="facade/vendor/jquery/jquery.min.js"></script>
-  <script src="facade/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>-->
+  <script src="facade/vendor/jquery/jquery.min.js"></script>
+  <script src="facade/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- Core plugin JavaScript-->
   <script src="facade/vendor/jquery-easing/jquery.easing.min.js"></script>
-  <!-- CKEditor -->
-  <script src="framework/ckeditor/ckeditor.js"></script>
+
+  <!-- Framework Quill -->
+  <script src="framework/quill/quill.js"></script>
 
   <!-- Custom scripts for all pages-->
   <script src="facade/js/sb-admin-2.min.js"></script>

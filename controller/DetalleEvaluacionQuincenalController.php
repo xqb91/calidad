@@ -122,7 +122,7 @@
 					//construyendo string
 					$consulta = "INSERT INTO detalle_evaluacion_quincenal ";
 					$consulta = $consulta."(numero_quincenal, evaluacion_parcial) VALUES ";
-					$consulta = $consulta."('".$obj->getrut_ejecutivo()."', '".date('Y-m-d H:i:s')."', ".$obj->getrut_evaluador().", '".$obj->getperiodo()."', ".$obj->getcodigo_area().", ".$obj->getnota_final()." );";
+					$consulta = $consulta."(".$obj->getnumero_quincenal().", ".$obj->getevaluacion_parcial()." );";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);

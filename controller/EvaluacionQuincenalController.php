@@ -425,7 +425,7 @@
 						$array = null;
 						$i 	   = 0;
 						while($registro = $this->databaseTransaction->resultados()) {
-							$array[$i] = new EvaluacionParcial($registro);
+							$array[$i] = new EvaluacionQuincenal($registro);
 							$i++;
 						}
 						$this->databaseTransaction->cerrar();

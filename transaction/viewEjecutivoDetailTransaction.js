@@ -29,7 +29,7 @@ $(document).ready(function() {
 	            		$("#titleQuincenal").html('Evaluacion Quincenal '+respuesta.quincenal.periodo);
 	            		var fecha = respuesta.quincenal.fecha_creacion.split('-');
 	            		$("#fechaQuincenal").html('Generada el '+fecha[2]+'/'+fecha[1]+'/'+fecha[0]);
-	            		$("#notaQuincenal").html('<strong>'+respuesta.quincenal.nota+'</strong>');
+	            		$("#notaQuincenal").html('<strong>'+parseFloat(respuesta.quincenal.nota).toFixed(2)+'</strong>');
 	            		$("#linkQuincenal").show();
 	            	}
 
@@ -44,7 +44,7 @@ $(document).ready(function() {
 	            		$("#titleFinal").html('Evaluacion Final '+respuesta.efinal.periodo);
 	            		var fecha = respuesta.efinal.fecha_creacion.split('-');
 	            		$("#fechaFinal").html('Generada el '+fecha[2]+'/'+fecha[1]+'/'+fecha[0]);
-	            		$("#notFinal").html('<strong>'+respuesta.efinal.nota+'</strong>');
+	            		$("#notFinal").html('<strong>'+parseFloat(respuesta.efinal.nota).toFixed(2)+'</strong>');
 	            		$("#linkFinal").show();
 	            	}
 

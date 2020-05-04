@@ -58,14 +58,14 @@
 								$quincenal->ingresar($obj);
 
 								//obtener número de última quincenal
-								$recienCreada = $quincenal->ultimaEvaluacionGenerada($periodo, $ejecutivo, $evaluador, $area);
+								$recienCreada = $quincenal->ultimaEvaluacionGenerada($obj->getperiodo(), $obj->getrut_ejecutivo(), $obj->getrut_evaluador(), $obj->getejecutivo_codigo_area());
 								//ingresar detalle a la quincenal
 								foreach ($controlado->listarPorEjecutivo($ejecutivo, $periodo) as $k) {
 									$arreglo = null;
 									$arreglo['numero_quincenal']	= $recienCreada[0]->getnumero_quincenal();
 									$arreglo['evaluacion_parcial']	= $k->getnumero_evaluacion();
-
-									$detaQuinc->ingresar($arreglo);
+									$obj = new DetalleEvaluacionQuincenal($arreglo);
+									$detaQuinc->ingresar($obj);
 								}
 							}
 						}

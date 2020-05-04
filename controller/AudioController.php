@@ -58,7 +58,7 @@
 
 		public function listarPorNumeroParcial($parcial) {
 			try {
-				$consulta = "SELECT * FROM audio WHERE numero_evaluacion = '".$parcial."'";
+				$consulta = "SELECT * FROM audio WHERE numero_evaluacion = ".$parcial." ";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);

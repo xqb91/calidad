@@ -58,7 +58,7 @@
 
 		public function listarPorNumeroEvaluacion($evaluacion) {
 			try {
-				$consulta = 'SELECT * FROM Adjuntos WHERE numero_evaluacion = $evaluacion  ORDER BY numero_evaluacion ASC';
+				$consulta = 'SELECT * FROM Adjuntos WHERE numero_evaluacion = '.$evaluacion.'  ORDER BY numero_evaluacion ASC';
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
