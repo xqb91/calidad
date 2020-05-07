@@ -1,3 +1,6 @@
+<?php
+  $ejecutivo = filter_input(INPUT_GET, "ejecutivo");
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,7 +43,7 @@
                   </div>
                   <hr>
                   <div class="text-center">
-                    <a class="small" href="register.html"><i class="far fa-edit"></i> Revisar sus evaluaciones parciales en este periodo</a>
+                    <a class="small" href="parcialHomeDet.php?ejecutivo=<?php echo $ejecutivo; ?>"><i class="far fa-edit"></i> Revisar sus evaluaciones parciales en este periodo</a>
                   </div>
                   <div class="text-center">
                     <a class="small" href="login.html"><i class="far fa-calendar-check"></i> Revisar su evaluación quincenal en este periodo</a>
@@ -59,8 +62,6 @@
 
 
   <!-- Bootstrap core JavaScript-->
-  <script src="facade/vendor/jquery/jquery.min.js"></script>
-  <script src="facade/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- Core plugin JavaScript-->
   <script src="facade/vendor/jquery-easing/jquery.easing.min.js"></script>

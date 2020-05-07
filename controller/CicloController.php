@@ -58,7 +58,7 @@
 
 		public function listarPorCodigo($codigo) {
 			try {
-				$consulta = "SELECT * FROM Ciclo WHERE codigo_ciclo = '".$codigo."'";
+				$consulta = "SELECT * FROM Ciclo WHERE codigo_ciclo = ".$codigo."";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);

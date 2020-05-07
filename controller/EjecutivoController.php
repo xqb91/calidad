@@ -29,7 +29,7 @@
 		//funcion retorna un arreglo de todos los registros que encuentre en la tabla
 		public function listar() {
 			try {
-				$consulta = 'SELECT * FROM ejecutivo ORDER BY nombre_ejecutivo ASC';
+				$consulta = 'SELECT * FROM ejecutivo WHERE codigo_estado = 1 ORDER BY nombre_ejecutivo ASC';
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -145,7 +145,7 @@
 
 		public function listarPorCiclo($ciclo) {
 			try {
-				$consulta = "SELECT * FROM ejecutivo WHERE codigo_ciclo = '".$ciclo."' ORDER BY nombre_ejecutivo ASC";
+				$consulta = "SELECT * FROM ejecutivo WHERE codigo_ciclo = '".$ciclo."' AND codigo_estado = 1 ORDER BY nombre_ejecutivo ASC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -174,7 +174,7 @@
 
 		public function listarPorArea($area) {
 			try {
-				$consulta = "SELECT * FROM ejecutivo WHERE codigo_area = ".$area." ORDER BY nombre_ejecutivo ASC";
+				$consulta = "SELECT * FROM ejecutivo WHERE codigo_area = ".$area." AND codigo_estado = 1 ORDER BY nombre_ejecutivo ASC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -203,7 +203,7 @@
 
 		public function listarPorJornada($jornada) {
 			try {
-				$consulta = "SELECT * FROM ejecutivo WHERE codigo_jornada = '".$jornada."' ORDER BY nombre_ejecutivo ASC";
+				$consulta = "SELECT * FROM ejecutivo WHERE codigo_jornada = '".$jornada."' AND codigo_estado = 1 ORDER BY nombre_ejecutivo ASC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);

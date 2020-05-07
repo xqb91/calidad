@@ -1,8 +1,19 @@
+<?php
+    if(isset($_GET["ejecutivo"])) {
+      $rut = filter_input(INPUT_GET, ("ejecutivo"));
+      if($rut == "") {
+        die();
+      }
+    }else{
+      $rut = null;
+      die();
+    }
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ES">
 
 <head>
-
+  <input type="hidden" id="irqljob" value="<?php echo $rut; ?>">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -58,7 +69,7 @@
 
       <!-- Nav Item - Utilities Collapse Menu -->
       <li class="nav-item active"  id="btn-evaparcial">
-        <a class="nav-link collapsed" href="#" aria-expanded="true" aria-controls="collapseUtilities">
+        <a class="nav-link collapsed" href="parcialHome.php" aria-expanded="true" aria-controls="collapseUtilities">
           <i class="far fa-edit"></i>
           <span>Parciales</span>
         </a>
@@ -66,7 +77,7 @@
 
       <!-- Nav Item - Utilities Collapse Menu -->
       <li class="nav-item" id="btn-evaquincenal">
-        <a class="nav-link collapsed" href="#" aria-expanded="true" aria-controls="collapseUtilities">
+        <a class="nav-link collapsed" href="quincenalHome.php" aria-expanded="true" aria-controls="collapseUtilities">
           <i class="far fa-calendar-check"></i>
           <span>Quincenales</span>
         </a>
@@ -189,17 +200,17 @@
                             <th scope="col">Periodo</th>
                             <th scope="col">Evaluaciones</th>
                             <th scope="col">Quincenal</th>
-                            <th scope="col">Nota Final</th>
+                            <th scope="col">Evaluación Final</th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr>
-                            <th scope="row col-9">Gonzalo</th>
-                            <td>Cobranza</td>
-                            <td>2020-05</td>
-                            <td>10</td>
-                            <td>0.00</td>
-                            <td>0.00</td>
+                            <th scope="row col-9" id="tblEjecutivoNombre">--</th>
+                            <td id="tblEjecutivoArea">--</td>
+                            <td id="tblEjecutivoPeriodo">____-__</td>
+                            <td id="tblEjecutivoCantidad">--</td>
+                            <td id="tblEjecutivoQuincenal">-.--</td>
+                            <td id="tblEjecutivoFinal">-.--</td>
                           </tr>
                         </tbody>
                       </table>  
@@ -212,19 +223,18 @@
                 <!-- Card Header - Dropdown -->
                   <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Evaluaciones</h6>
+                     <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <button type="button" class="btn dropdown-menu-right  btn-primary btn-sm" id="btnGenerarEva"><i class="fas fa-plus-square"></i> Generar Evaluación</button>
+                    <!--</div>-->
+                    </a>
+                  </div>
                   </div>
                 <!-- Card Body -->
                   <div class="card-body">
                       <div class="table-responsive">
-                      <table class="table table-striped">
+                      <table class="table table-hover" id="tablaEvaluacionesGeneradas">
                         <tbody>
-                          <tr>
-                            <th scope="row col-9" style="width: 40%;">Eva 1</th>
-                            <td>Pdf <i class="far fa-file-pdf"></i></td>
-                            <td>Borrar <i class="far fa-trash-alt"></i></td>
-                            <td>Editar <i class="far fa-edit"></i></td>
-                            <td>0.00</td>
-                          </tr>
                         </tbody>
                       </table>  
                       </div>
@@ -237,32 +247,34 @@
               <div class="card shadow mb-2">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Detalle</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Detalle de Evaluación</h6>
                 </div>
+
 
                 <!-- Card Body -->
                  <div class="card-body">
-                    <table class="table table-striped">
+                    <p align="center" id="lblInfoEvaluacion"><i class="fas fa-book"></i> No ha seleccionado ninguna evaluación parcial.</p>
+                    <table class="table table-striped" id="tblInfoEvaluacion">
                       <thead>
                         <tr>
-                          <th scope="col">N1</th> 
-                          <th scope="col">N2</th>
-                          <th scope="col">N3</th>
-                          <th scope="col">Final</th>
+                          <th scope="col" id="tblInfoEvaluacionT1">N1</th> 
+                          <th scope="col" id="tblInfoEvaluacionT2">N2</th>
+                          <th scope="col" id="tblInfoEvaluacionT3">N3</th>
+                          <th scope="col" id="tblInfoEvaluacionNF">Nota Final</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                          <th scope="row col-9">0.00</th>
-                          <td>0.00</td>
-                          <td>0.00</td>
-                          <td>0.00</td>
+                          <th id="tblInfoEvaluacionV1">0.00</th>
+                          <td id="tblInfoEvaluacionV2">0.00</td>
+                          <td id="tblInfoEvaluacionV3">0.00</td>
+                          <td scope="row col-9" id="tblInfoEvaluacionVNF">0.00</td>
                         </tr>
                       </tbody>
                     </table> 
                     <div class="btn-group" role="group">
-                      <button type="button" class="btn btn-secondary btn-sm">Descargar PDF</button>
-                      <button type="button" class="btn btn-secondary btn-sm">Descargar Audio</button>
+                      <button type="button" id="btnDownloadPDFEvalClicked" class="btn btn-secondary btn-sm">Descargar PDF</button>
+                      <a href="#" id="linkBtnDownloadAudioEvalClicked" target="_blank"><button type="button" id="btnDownloadAudioEvalClicked" class="btn btn-secondary btn-sm">Descargar Audio</button></a>
                     </div> 
                   </div>
               </div> 
@@ -336,7 +348,7 @@
   <script src="facade/js/sb-admin-2.min.js"></script>
 
   <!-- Page level plugins -->
-
+  <script src="transaction/parcialHomeDetTransaction.js"></script>
   <!-- Page level custom scripts -->
   
 

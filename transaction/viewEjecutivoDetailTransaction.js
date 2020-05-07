@@ -57,7 +57,7 @@ $(document).ready(function() {
                       	fila = fila+'</tr>';
                       	$("#tablaParciales tbody").append(fila);
 	            	}else{
-		            	$("#titleEvalPar").html('<strong>Evaluaciones Parciales</strong>');
+	            		$("#titleEvalPar").html('<strong>Evaluaciones Parciales</strong>');
 		            	$.each(respuesta.parciales, function(i,v){
 							var fila = '';
 							fila = fila+'<tr>';

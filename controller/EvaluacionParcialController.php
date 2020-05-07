@@ -483,5 +483,52 @@
 			}
 		}
 
+
+		public function detalleTotalEvaluacionParcial($evaluacion) {
+			try {			
+				$consulta = "SELECT ";
+				$consulta = $consulta."a.numero_evaluacion, ";
+				$consulta = $consulta."CAST(avg(a.nota_final) as decimal(16,2)) as nota_parcial, ";
+				$consulta = $consulta."d.nombre_categoria, ";
+				$consulta = $consulta."CAST(avg(d.peso_categoria) as Integer) as peso_categoria, ";
+				$consulta = $consulta."CAST(avg(b.nota) as decimal(16,2)) as nota_categoria, ";
+				$consulta = $consulta."(SELECT z.nombre_audio FROM audio z WHERE z.numero_evaluacion = a.numero_evaluacion) as audio ";
+				$consulta = $consulta."FROM ";
+				$consulta = $consulta."evaluacion_parcial a ";
+				$consulta = $consulta."INNER JOIN detalle_evaluacion_parcial b ON a.numero_evaluacion = b.numero_evaluacion ";
+				$consulta = $consulta."INNER JOIN item_evaluacion c ON b.codigo_item = c.codigo_item ";
+				$consulta = $consulta."INNER JOIN categoria d ON c.codigo_categoria = d.codigo_categoria ";
+				$consulta = $consulta."WHERE ";
+				$consulta = $consulta."a.numero_evaluacion = ".$evaluacion." ";
+				$consulta = $consulta."GROUP BY ";
+				$consulta = $consulta."a.numero_evaluacion, ";
+				$consulta = $consulta."d.nombre_categoria, "; 
+				$consulta = $consulta."audio ";
+
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$arreglo = null;
+						$i = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$arreglo[$i] = $registro;
+							$i++;
+						}
+						return $arreglo;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionParcialController - detalleTotalEvaluacionParcial: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo "Error Crítico: ".$e->getMessage(); }
+				return false;
+			}
+		}
+
 	}
 ?>

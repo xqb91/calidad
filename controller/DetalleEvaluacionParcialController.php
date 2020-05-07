@@ -87,7 +87,7 @@
 
 		public function listarPorNumero($numero) {
 			try {
-				$consulta = "SELECT * FROM detalle_evaluacion_parcial WHERE numero_Evaluacion = ".$numero." ORDER BY numero_evaluacion DESC, id ASC";
+				$consulta = "SELECT * FROM detalle_evaluacion_parcial WHERE numero_Evaluacion = ".$numero." ORDER BY numero_evaluacion DESC, codigo_item ASC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -235,11 +235,11 @@
 						if($resultado == true) {
 							$this->databaseTransaction->confirmar();
 							$this->databaseTransaction->cerrar();
-							return 1;
+							return true;
 						}else{
 							$this->databaseTransaction->deshacer();
 							$this->databaseTransaction->cerrar();
-							return 0;
+							return false;
 						}
 					}else{
 						if(ambiente == 'DEV') { echo "DetalleEvaluacionParcialController - eliminar: El objeto DatabaseTransaction se encuentra nulo"; }

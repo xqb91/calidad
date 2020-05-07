@@ -49,6 +49,7 @@
               <div class="card mb-4">
                 <div class="card-header" id="titleEvalPar">
                   <strong>Evaluaciones Parciales <img src="facade/img/loading2.gif"></strong>
+                  
                 </div>
                   <table class="table" id="tablaParciales">
                     <thead>

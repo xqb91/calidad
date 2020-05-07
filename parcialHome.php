@@ -66,7 +66,7 @@
 
       <!-- Nav Item - Utilities Collapse Menu -->
       <li class="nav-item" id="btn-evaquincenal">
-        <a class="nav-link collapsed" href="#" aria-expanded="true" aria-controls="collapseUtilities">
+        <a class="nav-link collapsed" href="quincenalHome.php" aria-expanded="true" aria-controls="collapseUtilities">
           <i class="far fa-calendar-check"></i>
           <span>Quincenales</span>
         </a>
@@ -150,11 +150,6 @@
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Cierre Temprano
-                </a>
-                <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                   Salir del sistema de Calidad
@@ -185,6 +180,8 @@
                         <table class="table table-bordered" id="tablaEjecutivos" width="100%" cellspacing="0">
                           <thead>
                             <tr>
+                              <th><i class="fas fa-traffic-light"></i></th>
+                              <th><i class="fas fa-calculator"></i></i></th>
                               <th>Rut de Ejecutivo</th>
                               <th>Nombre de Ejecutivo</th>
                               <th></th>
@@ -194,6 +191,8 @@
                           </thead>
                           <tfoot>
                             <tr>
+                              <th><i class="fas fa-traffic-light"></i></th>
+                              <th><i class="fas fa-calculator"></i></i></th>
                               <th>Rut de Ejecutivo</th>
                               <th>Nombre de Ejecutivo</th>
                               <th></th>
@@ -317,7 +316,7 @@
   <script src="facade/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
   <!-- Page level custom scripts -->
-  <script src="transaction/homeTransaction.js"></script>
+  <script src="transaction/parcialHomeTransaction.js"></script>
 
 </body>
 

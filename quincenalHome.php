@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
 
@@ -42,7 +42,7 @@
       <hr class="sidebar-divider my-0">
 
       <!-- Nav Item - Dashboard -->
-      <li class="nav-item active" id="btn-inicio">
+      <li class="nav-item" id="btn-inicio">
         <a class="nav-link" href="home.php">
           <i class="fas fa-home"></i>
           <span>Inicio</span></a>
@@ -65,8 +65,8 @@
       </li>
 
       <!-- Nav Item - Utilities Collapse Menu -->
-      <li class="nav-item" id="btn-evaquincenal">
-        <a class="nav-link collapsed" href="quincenalHome.php" aria-expanded="true" aria-controls="collapseUtilities">
+      <li class="nav-item active" id="btn-evaquincenal">
+        <a class="nav-link collapsed" href="#" aria-expanded="true" aria-controls="collapseUtilities">
           <i class="far fa-calendar-check"></i>
           <span>Quincenales</span>
         </a>
@@ -180,6 +180,7 @@
                         <table class="table table-bordered" id="tablaEjecutivos" width="100%" cellspacing="0">
                           <thead>
                             <tr>
+                              <th><i class="fas fa-calculator"></i></i></th>
                               <th>Rut de Ejecutivo</th>
                               <th>Nombre de Ejecutivo</th>
                               <th></th>
@@ -189,6 +190,7 @@
                           </thead>
                           <tfoot>
                             <tr>
+                              <th><i class="fas fa-calculator"></i></i></th>
                               <th>Rut de Ejecutivo</th>
                               <th>Nombre de Ejecutivo</th>
                               <th></th>
@@ -312,7 +314,7 @@
   <script src="facade/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
   <!-- Page level custom scripts -->
-  <script src="transaction/homeTransaction.js"></script>
+  <script src="transaction/quincenalHomeTransaction.js"></script>
 
 </body>
 

@@ -282,8 +282,7 @@
 </div>
 
   <!-- Bootstrap core JavaScript-->
-  <script src="facade/vendor/jquery/jquery.min.js"></script>
-  <script src="facade/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
 
   <!-- Core plugin JavaScript-->
   <script src="facade/vendor/jquery-easing/jquery.easing.min.js"></script>

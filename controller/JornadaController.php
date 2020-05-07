@@ -58,7 +58,7 @@
 
 		public function listarPorCodigo($codigo) {
 			try {
-				$consulta = "SELECT * FROM jornada WHERE codigo = '".$codigo."'";
+				$consulta = "SELECT * FROM jornada WHERE codigo_jornada = ".$codigo." ";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
