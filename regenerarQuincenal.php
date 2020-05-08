@@ -1,8 +1,10 @@
 <?php
-  if(isset($_GET["ejecutivo"])) {
-    $irqljob = filter_input(INPUT_GET, ("ejecutivo"));
+  if(isset($_GET["ejecutivo"]) && isset($_GET["area"])) {
+    $irqljob  = filter_input(INPUT_GET, ("ejecutivo"));
+    $irqlarea = filter_input(INPUT_GET, ("area"));
   }else{
-    
+    $irqljob  = "";
+    $irqlarea = "";
   }
 ?>
 
@@ -10,7 +12,8 @@
 <html lang="es">
 
 <head>
-
+  <input type="hidden" name="irqljob" id="irqljob" value="<?php echo $irqljob; ?>">
+  <input type="hidden" name="irqlarea" id="irqlarea" value="<?php echo $irqlarea; ?>">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -47,7 +50,7 @@
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800"><br /></h1>
+            <h1 class="h3 mb-0 text-gray-800">  </h1>
           </div>
 
           <div class="row">
@@ -56,12 +59,12 @@
 
               <!-- Default Card Example -->
               <div class="card mb-8">
-                <div class="card-header">
-                  Selección de Evaluaciones Parciales
+                <div class="card-header" id="txtTitlePantallaUsuario">
+                  Generación Manual de Evaluaciones Quincenales
                 </div>
-                <div class="card-body">
+                <div class="card-body" id="txtPantallaUsuario">
                   Seleccione las evaluaciones parciales generadas para genera la nueva evaluación quincenal manual.
-                  <table class="table table-sm">
+                  <table class="table table-sm" id="tablaListadoEvaluaciones">
                     <thead>
                       <tr>
                         <th scope="col" width="3%"></th>
@@ -71,23 +74,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <th scope="row"><div class="form-check"><input class="form-check-input" type="checkbox" value="" id="defaultCheck1"></div></th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                      </tr>
-                      <tr>
-                        <th scope="row"><div class="form-check"><input class="form-check-input" type="checkbox" value="" id="defaultCheck1"></div></th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                      </tr>
-                      <tr>
-                        <th scope="row"><div class="form-check"><input class="form-check-input" type="checkbox" value="" id="defaultCheck1"></div></th>
-                        <td colspan="2">Larry the Bird</td>
-                        <td>@twitter</td>
-                      </tr>
+
                     </tbody>
                   </table>
                 </div>
@@ -135,15 +122,13 @@
   </div>
 
   <!-- Bootstrap core JavaScript-->
-  <script src="facade/vendor/jquery/jquery.min.js"></script>
-  <script src="facade/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- Core plugin JavaScript-->
   <script src="facade/vendor/jquery-easing/jquery.easing.min.js"></script>
 
   <!-- Custom scripts for all pages-->
   <script src="facade/js/sb-admin-2.min.js"></script>
-
+  <script src="transaction/regenerarQuincenalTransaction.js"></script>
 </body>
 
 </html>

@@ -63,7 +63,7 @@
 								foreach ($controlado->listarPorEjecutivo($ejecutivo, $periodo) as $k) {
 									$arreglo = null;
 									$arreglo['numero_quincenal']	= $recienCreada[0]->getnumero_quincenal();
-									$arreglo['evaluacion_parcial']	= $k->getnumero_evaluacion();
+									$arreglo['numero_evaluacion']	= $k->getnumero_evaluacion();
 									$obj = new DetalleEvaluacionQuincenal($arreglo);
 									$detaQuinc->ingresar($obj);
 								}

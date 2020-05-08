@@ -196,7 +196,7 @@ $(document).ready(function(){
 																								    //añadiendo botones de acción
 																							        "columnDefs": [ 
 																							        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verFinal" title="evaluación Final"><i class="fab fa-font-awesome-flag"></i> Final</button>'},
-																							        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verEjecutivo" title="Detalles de Ejecutivo"><i class="fas fa-history"></i> Ver Evaluaciones</button>'},
+																							        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verEjecutivo" title="Detalles de Ejecutivo"><i class="fas fa-history"></i> Ver Evaluaciones</button>'},
 																							        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="crearEval" title="Nueva evaluación Parcial"><i class="fas fa-asterisk"></i> Nueva</button>'}
 																							        ],
 																									rowCallback : function(row, data, index) {
@@ -206,6 +206,15 @@ $(document).ready(function(){
 																										 	$(row).find('td:eq(0)').addClass('table-warning');
 																										}else{
 																										 	$(row).find('td:eq(0)').addClass('table-danger');
+																										}
+																										
+																										//bloqueo de botones
+																										if (data.cantidad_evaluaciones == 0) {
+																											$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+																											$(row).find('button.btn.btn-info.btn-sm').prop('disabled', true);
+																										}else{
+																											$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																											$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);
 																										}
 																									}
 																										
@@ -576,6 +585,16 @@ $("#slcPeriodo").change(function() {
 																	}else{
 																	 	$(row).find('td:eq(0)').addClass('table-danger');
 																	}
+
+																	//bloqueo de botones
+																	if (data.cantidad_evaluaciones == 0) {
+																		$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+																		$(row).find('button.btn.btn-info.btn-sm').prop('disabled', true);
+																	}else{
+																		$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																		$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);
+																	}
+
 																}
 																	
 															});
@@ -946,6 +965,15 @@ $("#slcArea").change(function(){
 																									}else{
 																									 	$(row).find('td:eq(0)').addClass('table-danger');
 																									}
+																									//bloqueo de botones
+																									if (data.cantidad_evaluaciones == 0) {
+																										$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+																										$(row).find('button.btn.btn-info.btn-sm').prop('disabled', true);
+																									}else{
+																										$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																										$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);
+																									}
+
 																								}
 																							});
 
@@ -1106,6 +1134,16 @@ $("#modalHomeBtnAccion").click(function() {
 												}else{
 												 	$(row).find('td:eq(0)').addClass('table-danger');
 												}
+
+												//bloqueo de botones
+												if (data.cantidad_evaluaciones == 0) {
+													$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+													$(row).find('button.btn.btn-info.btn-sm').prop('disabled', true);
+												}else{
+													$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+													$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);
+												}
+
 											}
 												
 										});

@@ -196,15 +196,21 @@ $(document).ready(function(){
 																							        "columnDefs": [ 
 																							        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verFinal" title="evaluación Final"><i class="fas fa-trash"></i> Eliminar</button>'},
 																							        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verEjecutivo" title="Descargar Evaluación"><i class="fas fa-file-pdf"></i> Descargar PDF</button>'},
-																							        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="crearEval" title="Regenera"><i class="fas fa-sync-alt"></i> Regenerar</button>'}
+																							        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="regenerar" title="Regenera"><i class="fas fa-sync-alt"></i> Regenerar</button>'}
 																							        ],
 																									rowCallback : function(row, data, index) {
 																										if(parseFloat(data.nota_quincenal) <= 10 && parseFloat(data.nota_quincenal) >= 9) {
 																										 	$(row).find('td:eq(0)').addClass('table-success');
+																										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
 																										}else if(parseFloat(data.nota_quincenal) >= 8 && parseFloat(data.nota_quincenal) < 9) {
 																										 	$(row).find('td:eq(0)').addClass('table-warning');
+																										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
 																										}else{
 																										 	$(row).find('td:eq(0)').addClass('table-danger');
+																										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+																										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
 																										}
 																									}
 																										
@@ -269,7 +275,7 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 
 	//funcion que determina que botón se presionó y arrancar respuesta
 	if($(this).attr('placetogo') == 'verEjecutivo') {
-		/*$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+		$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
 	    $("#modalHome").modal('show');
 		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Información de <strong>'+data.nombre_ejecutivo+'</strong>');
 		$("#modalHomeContenido").load('viewEjecutivoDetail.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
@@ -277,63 +283,26 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 		$("#modalHomeBtnCerrar").text('Cerrar');
 		$("#modalHomeCerrarVentana").show();
 		$("#modalHomeBtnAccion").hide();
-		$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	*/
-		window.location.href = 'parcialHomeDet.php?ejecutivo='+data.rut_ejecutivo;
-	}else if($(this).attr('placetogo') == 'crearEval') {
-	    //var data = tablaEjecutivos.row( $(this).parents('tr') ).data();
-	    
-	    $("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+		$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');
+	}else if($(this).attr('placetogo') == 'regenerar') {
+		$("#modalHomeConfig").attr('class', 'modal-dialog modal-lg');
 	    $("#modalHome").modal('show');
-		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Nueva evaluación parcial para <strong>'+data.nombre_ejecutivo+'</strong>');
-		
-
-		$.ajax({
-	        type: 'post',
-	        url: 'core/CreateEvaluacionParcialCantidad.php',
-	        data: 'periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo,
-	        beforeSend: function() {
-	            //inicializando modal que valida sesión de raulí
-	        },
-			error: function(XMLHttpRequest, textStatus, errorThrown) {
-			    if (XMLHttpRequest.readyState == 0) {
-					$("#modalHomeConfig").attr('class', 'modal-dialog');
-					$("#modalHomeTitle").text('Verifique su conexión a internet');
-					$("#modalHomeContenido").attr('align', 'left');
-					$("#modalHomeCerrarVentana").show();
-					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
-					$("#modalHomeBtnCerrar").show();
-					$("#modalHomeBtnCerrar").text('Cerrar');
-					$("#modalHomeBtnAccion").hide();
-			    }
-			},
-	        statusCode: {
-	            401: function(responseObject, textStatus, errorThrown) {
-	                $("#modalIndexTitle").text('Información de Evaluador');
-	                $("#modalIndexContenido").attr('align', 'left');
-	                $("#modalIndexCerrarVentana").show();
-					$("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE CAMBIARPERIODOYAREA INPUT AREA EMPTY</strong>');
-	                $("#modalIndexBtnCerrar").hide();
-	                $("#modalIndexBtnCerrar").text('Cerrar');
-	                $("#modalIndexBtnAccion").hide();
-	            },
-	            301: function(responseObject, textStatus, errorThrown) {
-	                $("#modalHomeContenido").load('creator.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
-	            	$("#modalHomeBtnCerrar").show();
-					$("#modalHomeBtnCerrar").text('Cancelar');
-					$("#modalHomeCerrarVentana").hide();
-					$("#modalHomeBtnAccion").show();
-					$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
-	            },
-	            200: function(responseObject, textStatus, errorThrown) {
-	            	$("#modalHomeContenido").load('todoListoParcial.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
-	            	$("#modalHomeBtnCerrar").show();
-					$("#modalHomeBtnCerrar").text('Cerrar');
-					$("#modalHomeCerrarVentana").show();
-					$("#modalHomeBtnAccion").hide();
-					$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
-	            }
-	        }
-	    });
+		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Regenerar Evaluación Quincenal de <strong>'+data.nombre_ejecutivo+'</strong>');
+		$("#modalHomeContenido").load('regenerarQuincenal.php?ejecutivo='+data.rut_ejecutivo+'&area='+$("#slcArea :selected").val());
+    	$("#modalHomeBtnCerrar").show();
+		$("#modalHomeBtnCerrar").text('Cerrar');
+		$("#modalHomeCerrarVentana").show();
+		$("#modalHomeBtnAccion").show();
+		$("#modalHomeBtnAccion").attr('disabled', true);
+		$("#modalHomeBtnAccion").text('Regenerar Quincenal');
+		$("#modalHomeBtnAccion").attr('ejecutivo', data.rut_ejecutivo);
+		$('#modalHome').click( function() {
+			if(parseInt(localStorage.getItem('bandeQuincenal')) == 1) {
+				$("#modalHomeBtnAccion").attr('disabled', false);
+			}else{
+				$("#modalHomeBtnAccion").attr('disabled', true);
+			}
+		});
 	}else{
 		alert('No esta programado');
 	}
@@ -564,15 +533,21 @@ $("#slcPeriodo").change(function() {
 														        "columnDefs": [ 
 														        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verFinal" title="evaluación Final"><i class="fas fa-trash"></i> Eliminar</button>'},
 														        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verEjecutivo" title="Descargar Evaluación"><i class="fas fa-file-pdf"></i> Descargar PDF</button>'},
-														        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="crearEval" title="Regenera"><i class="fas fa-sync-alt"></i> Regenerar</button>'}
+														        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="regenerar" title="Regenera"><i class="fas fa-sync-alt"></i> Regenerar</button>'}
 														        ],
 																rowCallback : function(row, data, index) {
 																	if(parseFloat(data.nota_quincenal) <= 10 && parseFloat(data.nota_quincenal) >= 9) {
 																	 	$(row).find('td:eq(0)').addClass('table-success');
+																	 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																	 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
 																	}else if(parseFloat(data.nota_quincenal) >= 8 && parseFloat(data.nota_quincenal) < 9) {
 																	 	$(row).find('td:eq(0)').addClass('table-warning');
+																	 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																	 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
 																	}else{
 																	 	$(row).find('td:eq(0)').addClass('table-danger');
+																	 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+																	 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
 																	}
 																}
 																	
@@ -932,17 +907,24 @@ $("#slcArea").change(function(){
 																						        "columnDefs": [ 
 																						        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verFinal" title="evaluación Final"><i class="fas fa-trash"></i> Eliminar</button>'},
 																						        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verEjecutivo" title="Descargar Evaluación"><i class="fas fa-file-pdf"></i> Descargar PDF</button>'},
-																						        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="crearEval" title="Regenera"><i class="fas fa-sync-alt"></i> Regenerar</button>'}
+																						        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="regenerar" title="Regenera"><i class="fas fa-sync-alt"></i> Regenerar</button>'}
 																						        ],
 																								rowCallback : function(row, data, index) {
 																									if(parseFloat(data.nota_quincenal) <= 10 && parseFloat(data.nota_quincenal) >= 9) {
 																									 	$(row).find('td:eq(0)').addClass('table-success');
+																									 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																									 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
 																									}else if(parseFloat(data.nota_quincenal) >= 8 && parseFloat(data.nota_quincenal) < 9) {
 																									 	$(row).find('td:eq(0)').addClass('table-warning');
+																									 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																									 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
 																									}else{
 																									 	$(row).find('td:eq(0)').addClass('table-danger');
+																									 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+																									 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
 																									}
 																								}
+
 																									
 																							});
 
@@ -971,57 +953,64 @@ $("#slcArea").change(function(){
 
 
 $("#modalHomeBtnAccion").click(function() {
-	if($("#modalHomeBtnAccion").text() == "Guardar Evaluación Parcial") {
+	if($("#modalHomeBtnAccion").text() == "Regenerar Quincenal") {
+		var array = [];
+		$('input[type=checkbox]:checked').each(function() {
+			array.push($(this).val());
+		});
+		console.log(JSON.stringify(array));
 		$.ajax({
-		    type: 'post',
-		    url: 'core/CreateEvaluacionParcialObservacion.php',
-		    data: 'comentarios='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
-		    beforeSend: function() {
-		        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');
-		    },
-		    error: function(XMLHttpRequest, textStatus, errorThrown) {
-			    if (XMLHttpRequest.readyState == 0) {
-					$("#modalHomeConfig").attr('class', 'modal-dialog');
-					$("#modalHomeTitle").text('Verifique su conexión a internet');
-					$("#modalHomeContenido").attr('align', 'left');
-					$("#modalHomeCerrarVentana").show();
-					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
-					$("#modalHomeBtnCerrar").show();
-					$("#modalHomeBtnCerrar").text('Cerrar');
-					$("#modalHomeBtnAccion").hide();
-			    }
+			type: 'post',
+			url: 'core/QuincenalManualGen.php',
+			data: 'evas='+JSON.stringify(array)+'&ejecutivo='+$("#modalHomeBtnAccion").attr('ejecutivo')+'&area='+$("#slcArea").val(),
+			beforeSend: function() {
+				$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');	
+				$("#modalHomeBtnAccion").hide();
 			},
-		    statusCode: {
-		        404: function(responseObject, textStatus, errorThrown) {
-		            alert('No se encontró respuesta del servidor para los periodos a trabajar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 404');
-		        },
-		        500: function(responseObject, textStatus, errorThrown) {
-		            alert('El servidor no encontró el número de evaluación que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 500');
-		        },
-		        501: function(responseObject, textStatus, errorThrown) {
-		            alert('El servidor no encontró los comentarios que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 501');
-		        },
-				503: function(responseObject, textStatus, errorThrown) {
-		            alert('La evaluación no retornó ningun resultado o bien el controller retornó un objeto nulo. CORE CREATEEVALUACIONPARCIALOBSERVARCION 503');
-		        },
-				301: function(responseObject, textStatus, errorThrown) {
-		            alert('Los cambios no pudieron ser guardados, por favor intentelo más tarde. CORE CREATEEVALUACIONPARCIALOBSERVARCION 301');
-		        },
-		        200: function(responseObject, textStatus, errorThrown) {
-		        	$("#modalHomeConfig").attr('class', 'modal-dialog');
-		            $("#modalHomeContenido").html('La evaluación parcial ha sido guardada!');
-		            $("#modalHomeBtnCerrar").show();
-		            $("#modalHomeBtnCerrar").text('Cerrar');
-		            $("#modalHomeBtnAccion").hide();
-
+			statusCode: {
+				201: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeContenido").html(responseObject);
+				},
+				202: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeContenido").html(responseObject);
+				},
+				404: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeContenido").html(responseObject);
+				},
+				205: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeContenido").html(responseObject);
+				},
+				206: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeContenido").html(responseObject);
+				},
+				500: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeContenido").html(responseObject);
+				},
+				203: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeContenido").html(responseObject);
+				},
+				200: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeContenido").html(responseObject);
 					$.ajax({
 					    type: 'post',
 					    url: 'core/ListEjecutivosPorAreaQuincenal.php',
 					    data: 'area='+$("#slcArea").val(),
 					    beforeSend: function() {
 					        //inicializando modal que valida sesión de raulí
-					        //$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Buscando ejecutivos del área seleccionada...');
 					    },
+						error: function(XMLHttpRequest, textStatus, errorThrown) {
+						    if (XMLHttpRequest.readyState == 0) {
+								$("#modalHomeConfig").attr('class', 'modal-dialog');
+								$("#modalHome").modal('show');
+								$("#modalHomeTitle").text('Verifique su conexión a internet');
+								$("#modalHomeContenido").attr('align', 'left');
+								$("#modalHomeCerrarVentana").show();
+								$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+								$("#modalHomeBtnCerrar").show();
+								$("#modalHomeBtnCerrar").text('Cerrar');
+								$("#modalHomeBtnAccion").hide();
+						    }
+						},
 					    statusCode: {
 					            404: function(responseObject, textStatus, errorThrown) {
 					            	$("#modalHomeConfig").attr('class', 'modal-dialog');
@@ -1057,6 +1046,7 @@ $("#modalHomeBtnAccion").click(function() {
 					                $("#modalHomeBtnAccion").hide();
 					            },
 					            301: function(responseObject, textStatus, errorThrown) {
+					            	tablaEjecutivos.clear().draw();
 					            	$("#modalHomeConfig").attr('class', 'modal-dialog');
 					            	$("#modalHome").modal('show');
 					                $("#modalHomeTitle").text('Ocurrió un error');
@@ -1073,7 +1063,6 @@ $("#modalHomeBtnAccion").click(function() {
 			                            alert('No hay valores');
 			                        }else{
 			                            var resultado = $.parseJSON(responseObject);
-
 			                            //cargando datos a la tabla
 			                            tablaEjecutivos.clear().draw();
 			                            tablaEjecutivos.destroy();
@@ -1092,27 +1081,32 @@ $("#modalHomeBtnAccion").click(function() {
 									        "columnDefs": [ 
 									        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verFinal" title="evaluación Final"><i class="fas fa-trash"></i> Eliminar</button>'},
 									        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verEjecutivo" title="Descargar Evaluación"><i class="fas fa-file-pdf"></i> Descargar PDF</button>'},
-									        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="crearEval" title="Regenera"><i class="fas fa-sync-alt"></i> Regenerar</button>'}
+									        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="regenerar" title="Regenera"><i class="fas fa-sync-alt"></i> Regenerar</button>'}
 									        ],
 											rowCallback : function(row, data, index) {
 												if(parseFloat(data.nota_quincenal) <= 10 && parseFloat(data.nota_quincenal) >= 9) {
 												 	$(row).find('td:eq(0)').addClass('table-success');
+												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
 												}else if(parseFloat(data.nota_quincenal) >= 8 && parseFloat(data.nota_quincenal) < 9) {
 												 	$(row).find('td:eq(0)').addClass('table-warning');
+												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
 												}else{
 												 	$(row).find('td:eq(0)').addClass('table-danger');
+												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
 												}
 											}
 												
 										});
+
 			                        }
 					            }           
 					        }
-				 	});
-
-
-		       	}
-		    }
+					 });
+				}
+			}
 		});
 	}
 })

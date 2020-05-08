@@ -9,7 +9,7 @@
 		//mediante un mysql_result, debe entregarse un arreglo de tipo asociativo
 		public function __construct($arreglo) {
 			$this->numero_quincenal	= $arreglo['numero_quincenal'];
-			$this->evaluacion_parcial				= $arreglo['evaluacion_parcial'];
+			$this->evaluacion_parcial = $arreglo['numero_evaluacion'];
 
 		}
 

@@ -8,10 +8,11 @@
 	$c 	= new EjecutivoController();
 	$e  = new EvaluacionQuincenalController();
 
-	if(empty(filter_input(INPUT_POST, ("area")))) {
+	/*if(empty(filter_input(INPUT_POST, ("area")))) {
 		http_response_code(500);
 	}else{
-		$area = filter_input(INPUT_POST, ("area"));
+		$area = filter_input(INPUT_POST, ("area")); */
+		$area = 1;
 		$area = preg_replace('/^[a-zA-Z\s]*$/', '', $area);
 		if($area == '') {
 			http_response_code(401);
@@ -33,7 +34,7 @@
 					//obteniendo promedio
 					$obj = $e->listarPorEjecutivo($temp->getrut_ejecutivo(), $_SESSION['current_periodo_work']);
 					if ($obj == null) {
-						echo '"nota_quincenal" : 0.00';
+						echo '"nota_quincenal" : null';
 					}else{
 						echo '"nota_quincenal" : '.number_format($obj[0]->getnota_quincenal(), 2).'';
 					}
@@ -45,5 +46,5 @@
 				http_response_code(200);
 			}
 		}
-	}
+	//}
 ?>

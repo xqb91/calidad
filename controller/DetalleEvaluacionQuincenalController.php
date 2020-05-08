@@ -87,7 +87,7 @@
 
 		public function listarPorNumeroParcial($parcial) {
 			try {
-				$consulta = "SELECT * FROM detalle_evaluacion_quincenal WHERE evaluacion_parcial = ".$parcial."";
+				$consulta = "SELECT * FROM detalle_evaluacion_quincenal WHERE numero_evaluacion = ".$parcial."";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -121,7 +121,7 @@
 				if($obj != null) {
 					//construyendo string
 					$consulta = "INSERT INTO detalle_evaluacion_quincenal ";
-					$consulta = $consulta."(numero_quincenal, evaluacion_parcial) VALUES ";
+					$consulta = $consulta."(numero_quincenal, numero_evaluacion) VALUES ";
 					$consulta = $consulta."(".$obj->getnumero_quincenal().", ".$obj->getevaluacion_parcial()." );";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
