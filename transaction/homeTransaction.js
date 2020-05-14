@@ -1,48 +1,126 @@
 
-
 var tablaEjecutivos;
 
 $(document).ready(function(){
-	$("#slcArea").attr('disabled', 'disabled');
-	$("#slcPeriodo").attr('disabled', 'disabled');
-
 	$.ajax({
-		    type: 'post',
-		    url: 'core/HomeReceiveAreaFromIndex.php',
-		    beforeSend: function() {
-		        //inicializando modal que valida sesión de raulí
-		        $("#modalHomeConfig").attr('class', 'modal-dialog');
-		        $("#modalHome").modal('show');
-				$("#modalHomeTitle").text('Espere un momento');
-				$("#modalHomeBtnCerrar").hide();
-				$("#modalHomeCerrarVentana").hide();
+		type: 'get', 
+		url: 'core/SessionManager.php',
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+		    if (XMLHttpRequest.readyState == 0) {
+				$("#modalHomeConfig").attr('class', 'modal-dialog');
+				$("#modalHomeTitle").text('Verifique su conexión a internet');
+				$("#modalHomeContenido").attr('align', 'left');
+				$("#modalHomeCerrarVentana").show();
+				$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+				$("#modalHomeBtnCerrar").show();
+				$("#modalHomeBtnCerrar").text('Cerrar');
 				$("#modalHomeBtnAccion").hide();
-				$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Recibiendo información...');
-		    },
-		    statusCode: {
-		            404: function(responseObject, textStatus, errorThrown) {
-		            	$("#modalHome").modal('show');
-		                $("#modalHomeTitle").text('Problema al cargar el periodo');
-		                $("#modalHomeContenido").attr('align', 'left');
-		                $("#modalHomeCerrarVentana").show();
-		                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
-		                $("#modalHomeBtnCerrar").show();
-		                $("#modalHomeBtnCerrar").text('Cerrar');
-		                $("#modalHomeBtnAccion").hide();
-		            },
-		            200: function(responseObject, textStatus, errorThrown) {
-		                var resultados = JSON.parse(responseObject);
-		               	$("#slcArea").append('<option value="'+resultados.codigo_area+'">'+resultados.nombre_area+'</option>');
-		               	
-		               	///************************** obtener el periodo que ejecutivo seleccionó para trabajar ****************************************
-						$.ajax({
-						    type: 'post',
-						    url: 'core/HomeReceivePeriodoFromIndex.php',
-						    beforeSend: function() {
-						        //inicializando modal que valida sesión de raulí
-						        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Recibiendo información...');
-						    },
-						    statusCode: {
+				$("#modalHome").modal('show');
+		    }
+		},
+		beforeSend: function() {
+			$("#modalHomeConfig").attr('class', 'modal-dialog');
+				$("#modalHomeTitle").text('Identificando');
+				$("#modalHomeContenido").attr('align', 'left');
+				$("#modalHomeCerrarVentana").show();
+				$("#modalHomeContenido").html('Un momento, por favor...');
+				$("#modalHomeBtnCerrar").hide();
+				$("#modalHomeBtnCerrar").text('Cerrar');
+				$("#modalHomeBtnAccion").text('Iniciar Sesión');
+				$("#modalHomeBtnAccion").hide();
+				$("#modalHome").modal('show');
+		},
+		statusCode : {
+			401: function(responseObject, textStatus, errorThrown) {
+				$("#modalHomeConfig").attr('class', 'modal-dialog');
+				$("#modalHomeTitle").text('Identifiquese nuevamente');
+				$("#modalHomeContenido").attr('align', 'left');
+				$("#modalHomeCerrarVentana").show();
+				$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+				$("#modalHomeBtnCerrar").hide();
+				$("#modalHomeBtnCerrar").text('Cerrar');
+				$("#modalHomeBtnAccion").text('Iniciar Sesión');
+				$("#modalHomeBtnAccion").show();
+				$("#modalHome").modal('show');
+			},
+			403: function(responseObject, textStatus, errorThrown) {
+				$("#modalHomeConfig").attr('class', 'modal-dialog');
+				$("#modalHomeTitle").text('Identifiquese nuevamente');
+				$("#modalHomeContenido").attr('align', 'left');
+				$("#modalHomeCerrarVentana").show();
+				$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+				$("#modalHomeBtnCerrar").hide();
+				$("#modalHomeBtnCerrar").text('Cerrar');
+				$("#modalHomeBtnAccion").text('Iniciar Sesión');
+				$("#modalHomeBtnAccion").show();
+				$("#modalHome").modal('show');
+			},
+			500: function(responseObject, textStatus, errorThrown) {
+				$("#modalHomeConfig").attr('class', 'modal-dialog');
+				$("#modalHomeTitle").text('Acceso Restringido');
+				$("#modalHomeContenido").attr('align', 'left');
+				$("#modalHomeCerrarVentana").show();
+				$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+				$("#modalHomeBtnCerrar").hide();
+				$("#modalHomeBtnCerrar").text('Cerrar');
+				$("#modalHomeBtnAccion").text('Iniciar Sesión');
+				$("#modalHomeBtnAccion").show();
+				$("#modalHome").modal('show');
+			},
+			503: function(responseObject, textStatus, errorThrown) {
+				$("#modalHomeConfig").attr('class', 'modal-dialog');
+				$("#modalHomeTitle").text('Error Crítico');
+				$("#modalHomeContenido").attr('align', 'left');
+				$("#modalHomeCerrarVentana").show();
+				$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+				$("#modalHomeBtnCerrar").hide();
+				$("#modalHomeBtnCerrar").text('Cerrar');
+				$("#modalHomeBtnAccion").text('Iniciar Sesión');
+				$("#modalHomeBtnAccion").show();
+				$("#modalHome").modal('show');
+			},
+			200: function(responseObject, textStatus, errorThrown) {
+
+				$("#slcArea").attr('disabled', 'disabled');
+				$("#slcPeriodo").attr('disabled', 'disabled');
+
+				$.ajax({
+				    type: 'post',
+				    url: 'core/HomeReceiveAreaFromIndex.php',
+				    beforeSend: function() {
+				        //inicializando modal que valida sesión de raulí
+				        $("#modalHomeConfig").attr('class', 'modal-dialog');
+				        $("#modalHome").modal('show');
+						$("#modalHomeTitle").text('Espere un momento');
+						$("#modalHomeBtnCerrar").hide();
+						$("#modalHomeCerrarVentana").hide();
+						$("#modalHomeBtnAccion").hide();
+						$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Recibiendo información...');
+				    },
+				    statusCode: {
+			            404: function(responseObject, textStatus, errorThrown) {
+			            	$("#modalHome").modal('show');
+			                $("#modalHomeTitle").text('Problema al cargar el periodo');
+			                $("#modalHomeContenido").attr('align', 'left');
+			                $("#modalHomeCerrarVentana").show();
+			                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
+			                $("#modalHomeBtnCerrar").show();
+			                $("#modalHomeBtnCerrar").text('Cerrar');
+			                $("#modalHomeBtnAccion").hide();
+			            },
+			            200: function(responseObject, textStatus, errorThrown) {
+			                var resultados = JSON.parse(responseObject);
+			               	$("#slcArea").append('<option value="'+resultados.codigo_area+'">'+resultados.nombre_area+'</option>');
+				               	
+			               	///************************** obtener el periodo que ejecutivo seleccionó para trabajar ****************************************
+							$.ajax({
+							    type: 'post',
+							    url: 'core/HomeReceivePeriodoFromIndex.php',
+							    beforeSend: function() {
+							        //inicializando modal que valida sesión de raulí
+							        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Recibiendo información...');
+							    },
+							    statusCode: {
 						            404: function(responseObject, textStatus, errorThrown) {
 						            	$("#modalHome").modal('show');
 						                $("#modalHomeTitle").text('Problema al cargar el periodo');
@@ -71,35 +149,67 @@ $(document).ready(function(){
 										        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Recuperando áreas del sistema...');
 										    },
 										    statusCode: {
-										            404: function(responseObject, textStatus, errorThrown) {
-										            	$("#modalHome").modal('show');
-										                $("#modalHomeTitle").text('Problema al cargar las áreas');
-										                $("#modalHomeContenido").attr('align', 'left');
-										                $("#modalHomeCerrarVentana").show();
-										                $("#modalHomeContenido").html('No se encontró respuesta del servidor para las áreas disponibles para trabajar<br /><strong>HTTP 404</strong>');
-										                $("#modalHomeBtnCerrar").show();
-										                $("#modalHomeBtnCerrar").text('Cerrar');
-										                $("#modalHomeBtnAccion").hide();
-										            },
-										            200: function(responseObject, textStatus, errorThrown) {
-										                var resultados = JSON.parse(responseObject);
-										                 $.each(resultados, function (index, value) {
-										                    if($("#slcArea :selected").text() != value.nombre_area) {
-										                    	$("#slcArea").append('<option value="'+value.codigo_area+'">'+value.nombre_area+'</option>');
-										                    }
-										                });
-										                $("#slcArea").removeAttr('disabled');
+									            404: function(responseObject, textStatus, errorThrown) {
+									            	$("#modalHome").modal('show');
+									                $("#modalHomeTitle").text('Problema al cargar las áreas');
+									                $("#modalHomeContenido").attr('align', 'left');
+									                $("#modalHomeCerrarVentana").show();
+									                $("#modalHomeContenido").html('No se encontró respuesta del servidor para las áreas disponibles para trabajar<br /><strong>HTTP 404</strong>');
+									                $("#modalHomeBtnCerrar").show();
+									                $("#modalHomeBtnCerrar").text('Cerrar');
+									                $("#modalHomeBtnAccion").hide();
+									            },
+									            200: function(responseObject, textStatus, errorThrown) {
+									                var resultados = JSON.parse(responseObject);
+									                 $.each(resultados, function (index, value) {
+									                    if($("#slcArea :selected").text() != value.nombre_area) {
+									                    	$("#slcArea").append('<option value="'+value.codigo_area+'">'+value.nombre_area+'</option>');
+									                    }
+									                });
+									                $("#slcArea").removeAttr('disabled');
 
-										                // cargar resto de periodos disponibles ************************************************************
-									                	$.ajax({
-															    type: 'post',
-															    url: 'core/ListPeriodosParaEvaluar.php',
-															    beforeSend: function() {
-															        //inicializando modal que valida sesión de raulí
-															        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Obteniendo periodos válidos para trabajar...');
-															    },
-															    statusCode: {
+									                // cargar resto de periodos disponibles ************************************************************
+								                	$.ajax({
+													    type: 'post',
+													    url: 'core/ListPeriodosParaEvaluar.php',
+													    beforeSend: function() {
+													        //inicializando modal que valida sesión de raulí
+													        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Obteniendo periodos válidos para trabajar...');
+													    },
+													    statusCode: {
+												            404: function(responseObject, textStatus, errorThrown) {
+												            	$("#modalHome").modal('show');
+												                $("#modalHomeTitle").text('Problema al cargar el periodo');
+												                $("#modalHomeContenido").attr('align', 'left');
+												                $("#modalHomeCerrarVentana").show();
+												                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
+												                $("#modalHomeBtnCerrar").show();
+												                $("#modalHomeBtnCerrar").text('Cerrar');
+												                $("#modalHomeBtnAccion").hide();
+												            },
+												            200: function(responseObject, textStatus, errorThrown) {
+												                var resultados = JSON.parse(responseObject);
+												               
+												                 $.each(resultados.periodos, function (index, value) {
+												                    if($("#slcPeriodo :selected").text() != value) {
+												                    	$("#slcPeriodo").append('<option value="'+value+'">'+value+'</option>');
+												                    }
+												                }); 
+																$("#slcPeriodo").removeAttr('disabled');
+
+												               // CARGAR EJECUTIVOS SEGUN AREA *******************************************************************
+												                var area 	= $('#slcArea :selected').val();
+												               	$.ajax({
+																    type: 'post',
+																    url: 'core/ListEjecutivosPorArea.php',
+																    data: 'area='+area,
+																    beforeSend: function() {
+																        //inicializando modal que valida sesión de raulí
+																        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Buscando ejecutivos del área seleccionada...');
+																    },
+																    statusCode: {
 															            404: function(responseObject, textStatus, errorThrown) {
+															            	$("#modalHomeConfig").attr('class', 'modal-dialog');
 															            	$("#modalHome").modal('show');
 															                $("#modalHomeTitle").text('Problema al cargar el periodo');
 															                $("#modalHomeContenido").attr('align', 'left');
@@ -109,142 +219,112 @@ $(document).ready(function(){
 															                $("#modalHomeBtnCerrar").text('Cerrar');
 															                $("#modalHomeBtnAccion").hide();
 															            },
+															            500: function(responseObject, textStatus, errorThrown) {
+															            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+															            	$("#modalHome").modal('show');
+															                $("#modalHomeTitle").text('Ocurrió un error');
+															                $("#modalHomeContenido").attr('align', 'left');
+															                $("#modalHomeCerrarVentana").show();
+															                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT EMPTY</strong>');
+															                $("#modalHomeBtnCerrar").show();
+															                $("#modalHomeBtnCerrar").text('Cerrar');
+															                $("#modalHomeBtnAccion").hide();
+															            },
+															            401: function(responseObject, textStatus, errorThrown) {
+															            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+															            	$("#modalHome").modal('show');
+															                $("#modalHomeTitle").text('Ocurrió un error');
+															                $("#modalHomeContenido").attr('align', 'left');
+															                $("#modalHomeCerrarVentana").show();
+															                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT NOT NUMBER</strong>');
+															                $("#modalHomeBtnCerrar").show();
+															                $("#modalHomeBtnCerrar").text('Cerrar');
+															                $("#modalHomeBtnAccion").hide();
+															            },
+															            301: function(responseObject, textStatus, errorThrown) {
+															            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+															            	$("#modalHome").modal('show');
+															                $("#modalHomeTitle").text('Ocurrió un error');
+															                $("#modalHomeContenido").attr('align', 'left');
+															                $("#modalHomeCerrarVentana").show();
+															                $("#modalHomeContenido").html('El área que ha seleccionado no tiene ejecutivos registrados. Por favor contacte a su jefatura para más información<br /><strong>PHP CORE ARRAY CONTROLLER EMPTY</strong>');
+															                $("#modalHomeBtnCerrar").show();
+															                $("#modalHomeBtnCerrar").text('Cerrar');
+															                $("#modalHomeBtnAccion").hide();
+															            },
 															            200: function(responseObject, textStatus, errorThrown) {
 															                var resultados = JSON.parse(responseObject);
-															               
-															                 $.each(resultados.periodos, function (index, value) {
-															                    if($("#slcPeriodo :selected").text() != value) {
-															                    	$("#slcPeriodo").append('<option value="'+value+'">'+value+'</option>');
-															                    }
-															                }); 
-																			$("#slcPeriodo").removeAttr('disabled');
+																			if($.trim(responseObject) == "NULL") {
+													                            alert('No hay valores');
+													                        }else{
+													                            var resultado = $.parseJSON(responseObject);
 
-															               // CARGAR EJECUTIVOS SEGUN AREA *******************************************************************
-															                var area 	= $('#slcArea :selected').val();
-															               	$.ajax({
-																			    type: 'post',
-																			    url: 'core/ListEjecutivosPorArea.php',
-																			    data: 'area='+area,
-																			    beforeSend: function() {
-																			        //inicializando modal que valida sesión de raulí
-																			        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Buscando ejecutivos del área seleccionada...');
-																			    },
-																			    statusCode: {
-																			            404: function(responseObject, textStatus, errorThrown) {
-																			            	$("#modalHomeConfig").attr('class', 'modal-dialog');
-																			            	$("#modalHome").modal('show');
-																			                $("#modalHomeTitle").text('Problema al cargar el periodo');
-																			                $("#modalHomeContenido").attr('align', 'left');
-																			                $("#modalHomeCerrarVentana").show();
-																			                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
-																			                $("#modalHomeBtnCerrar").show();
-																			                $("#modalHomeBtnCerrar").text('Cerrar');
-																			                $("#modalHomeBtnAccion").hide();
-																			            },
-																			            500: function(responseObject, textStatus, errorThrown) {
-																			            	$("#modalHomeConfig").attr('class', 'modal-dialog');
-																			            	$("#modalHome").modal('show');
-																			                $("#modalHomeTitle").text('Ocurrió un error');
-																			                $("#modalHomeContenido").attr('align', 'left');
-																			                $("#modalHomeCerrarVentana").show();
-																			                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT EMPTY</strong>');
-																			                $("#modalHomeBtnCerrar").show();
-																			                $("#modalHomeBtnCerrar").text('Cerrar');
-																			                $("#modalHomeBtnAccion").hide();
-																			            },
-																			            401: function(responseObject, textStatus, errorThrown) {
-																			            	$("#modalHomeConfig").attr('class', 'modal-dialog');
-																			            	$("#modalHome").modal('show');
-																			                $("#modalHomeTitle").text('Ocurrió un error');
-																			                $("#modalHomeContenido").attr('align', 'left');
-																			                $("#modalHomeCerrarVentana").show();
-																			                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT NOT NUMBER</strong>');
-																			                $("#modalHomeBtnCerrar").show();
-																			                $("#modalHomeBtnCerrar").text('Cerrar');
-																			                $("#modalHomeBtnAccion").hide();
-																			            },
-																			            301: function(responseObject, textStatus, errorThrown) {
-																			            	$("#modalHomeConfig").attr('class', 'modal-dialog');
-																			            	$("#modalHome").modal('show');
-																			                $("#modalHomeTitle").text('Ocurrió un error');
-																			                $("#modalHomeContenido").attr('align', 'left');
-																			                $("#modalHomeCerrarVentana").show();
-																			                $("#modalHomeContenido").html('El área que ha seleccionado no tiene ejecutivos registrados. Por favor contacte a su jefatura para más información<br /><strong>PHP CORE ARRAY CONTROLLER EMPTY</strong>');
-																			                $("#modalHomeBtnCerrar").show();
-																			                $("#modalHomeBtnCerrar").text('Cerrar');
-																			                $("#modalHomeBtnAccion").hide();
-																			            },
-																			            200: function(responseObject, textStatus, errorThrown) {
-																			                var resultados = JSON.parse(responseObject);
-																							if($.trim(responseObject) == "NULL") {
-																	                            alert('No hay valores');
-																	                        }else{
-																	                            var resultado = $.parseJSON(responseObject);
+													                            //cargando datos a la tabla
+													                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
+																				    data: resultado,
+																				    columns: [
+																				        { data: 'rut_ejecutivo' },
+																				        { data: 'nombre_ejecutivo' },
+																				        { data: null},
+																				        { data: null},
+																				        { data: null},
+																				    ],
+																				    //añadiendo botones de acción
+																			        "columnDefs": [ 
+																			        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verFinal" title="evaluación Final"><i class="fab fa-font-awesome-flag"></i> Final</button>'},
+																			        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verEjecutivo" title="Detalles de Ejecutivo"><i class="fas fa-eye"></i> Detalle Ejecutivo</button>'},
+																			        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="crearEval" title="Nueva evaluación Parcial"><i class="fas fa-asterisk"></i> Nueva</button>'} 
+																			        ]
+																				});
 
-																	                            //cargando datos a la tabla
-																	                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
-																								    data: resultado,
-																								    columns: [
-																								        { data: 'rut_ejecutivo' },
-																								        { data: 'nombre_ejecutivo' },
-																								        { data: null},
-																								        { data: null},
-																								        { data: null},
-																								    ],
-																								    //añadiendo botones de acción
-																							        "columnDefs": [ 
-																							        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verFinal" title="evaluación Final"><i class="fab fa-font-awesome-flag"></i> Final</button>'},
-																							        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verEjecutivo" title="Detalles de Ejecutivo"><i class="fas fa-eye"></i> Detalle Ejecutivo</button>'},
-																							        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="crearEval" title="Nueva evaluación Parcial"><i class="fas fa-asterisk"></i> Nueva</button>'} 
-																							        ]
-																								});
-
-																								$("#modalHomeBtnCerrar").click();
-																	                        }
-																			            }           
-																			        }
-																		 });
+																				$("#modalHomeBtnCerrar").click();
+													                        }
 															            }           
-															        }
-														 });
-										            }           
-										        }
-									    });
+																    }
+																});
+															}           
+														}
+													});
+									            }           
+									        }
+								   		 });
 										//AQUI FINALIZARÁ EL ANIDADO
-
 						            }           
 						        }
-						});
-		            }           
-		        }
-	 });
+							});
+		            	}           
+		        	}
+			 	});
 
-	//información de evaluador logueado
-	$.ajax({
-        type: 'post',
-        url: 'core/InfoSesionEvaluador.php',
-        beforeSend: function() {
-			$("#modalHome").modal('show');
-            //inicializando modal que valida sesión de raulí
-            $("#lblSaludoUsuario").html('<img src="facade/img/loading2.gif" alt="cargando" />');
-            $("#lblMensajeUsuario").html('Estamos cargando tu información personal.');
+				//información de evaluador logueado
+				$.ajax({
+			        type: 'post',
+			        url: 'core/InfoSesionEvaluador.php',
+			        beforeSend: function() {
+						$("#modalHome").modal('show');
+			            //inicializando modal que valida sesión de raulí
+			            $("#lblSaludoUsuario").html('<img src="facade/img/loading2.gif" alt="cargando" />');
+			            $("#lblMensajeUsuario").html('Estamos cargando tu información personal.');
 
-        },
-        statusCode: {
-                500: function(responseObject, textStatus, errorThrown) {
-	                $("#modalHomeTitle").text('´Problema al cargar el periodo');
-	                $("#modalHomeContenido").attr('align', 'left');
-	                $("#modalHomeCerrarVentana").show();
-	                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
-	                $("#modalHomeBtnCerrar").show();
-	                $("#modalHomeBtnCerrar").text('Cerrar');
-	                $("#modalHomeBtnAccion").hide();
-                },
-                200: function(responseObject, textStatus, errorThrown) {
-                    var resultados = JSON.parse(responseObject);
-                    $("#lblEvaluadorLogin").html('Hola <strong>'+resultados.nombre_evaluador+'!</strong>');
-                    //$("#lblMensajeUsuario").html('Por favor, elige el periodo y área para comenzar a trabajar.');
-				}
+			        },
+			        statusCode: {
+			            500: function(responseObject, textStatus, errorThrown) {
+			                $("#modalHomeTitle").text('´Problema al cargar el periodo');
+			                $("#modalHomeContenido").attr('align', 'left');
+			                $("#modalHomeCerrarVentana").show();
+			                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
+			                $("#modalHomeBtnCerrar").show();
+			                $("#modalHomeBtnCerrar").text('Cerrar');
+			                $("#modalHomeBtnAccion").hide();
+			            },
+			            200: function(responseObject, textStatus, errorThrown) {
+			                var resultados = JSON.parse(responseObject);
+			                $("#lblEvaluadorLogin").html('Hola <strong>'+resultados.nombre_evaluador+'!</strong>');
+			                //$("#lblMensajeUsuario").html('Por favor, elige el periodo y área para comenzar a trabajar.');
+						}
+					}
+				});
+			}
 		}
 	});
 
@@ -255,32 +335,107 @@ $(document).ready(function(){
 //leyendo las acciones según botón presionado de la tabla
 $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 	var data = tablaEjecutivos.row( $(this).parents('tr') ).data();
+	
+		//funcion que determina que botón se presionó y arrancar respuesta
+		if($(this).attr('placetogo') == 'verEjecutivo') {
+			$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+		    $("#modalHome").modal('show');
+			$("#modalHomeTitle").html('<i class="far fa-edit"></i> Información de <strong>'+data.nombre_ejecutivo+'</strong>');
+			$("#modalHomeContenido").load('viewEjecutivoDetail.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
+	    	$("#modalHomeBtnCerrar").show();
+			$("#modalHomeBtnCerrar").text('Cerrar');
+			$("#modalHomeCerrarVentana").show();
+			$("#modalHomeBtnAccion").hide();
+			$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
+		}else if($(this).attr('placetogo') == 'crearEval') {
+		    //var data = tablaEjecutivos.row( $(this).parents('tr') ).data();
+		    
+		    $("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+		    $("#modalHome").modal('show');
+			$("#modalHomeTitle").html('<i class="far fa-edit"></i> Nueva evaluación parcial para <strong>'+data.nombre_ejecutivo+'</strong>');
+			
 
-	//funcion que determina que botón se presionó y arrancar respuesta
-	if($(this).attr('placetogo') == 'verEjecutivo') {
-		$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+			$.ajax({
+		        type: 'post',
+		        url: 'core/CreateEvaluacionParcialCantidad.php',
+		        data: 'periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo,
+		        beforeSend: function() {
+		            //inicializando modal que valida sesión de raulí
+		        },
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+				    if (XMLHttpRequest.readyState == 0) {
+						$("#modalHomeConfig").attr('class', 'modal-dialog');
+						$("#modalHomeTitle").text('Verifique su conexión a internet');
+						$("#modalHomeContenido").attr('align', 'left');
+						$("#modalHomeCerrarVentana").show();
+						$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+						$("#modalHomeBtnCerrar").show();
+						$("#modalHomeBtnCerrar").text('Cerrar');
+						$("#modalHomeBtnAccion").hide();
+				    }
+				},
+		        statusCode: {
+		            401: function(responseObject, textStatus, errorThrown) {
+		                $("#modalIndexTitle").text('Información de Evaluador');
+		                $("#modalIndexContenido").attr('align', 'left');
+		                $("#modalIndexCerrarVentana").show();
+						$("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE CAMBIARPERIODOYAREA INPUT AREA EMPTY</strong>');
+		                $("#modalIndexBtnCerrar").hide();
+		                $("#modalIndexBtnCerrar").text('Cerrar');
+		                $("#modalIndexBtnAccion").hide();
+		            },
+		            301: function(responseObject, textStatus, errorThrown) {
+		                $("#modalHomeContenido").load('creator.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
+		            	$("#modalHomeBtnCerrar").show();
+						$("#modalHomeBtnCerrar").text('Cancelar');
+						$("#modalHomeCerrarVentana").hide();
+						$("#modalHomeBtnAccion").show();
+						$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
+		            },
+		            200: function(responseObject, textStatus, errorThrown) {
+		            	$("#modalHomeContenido").load('todoListoParcial.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
+		            	$("#modalHomeBtnCerrar").show();
+						$("#modalHomeBtnCerrar").text('Cerrar');
+						$("#modalHomeCerrarVentana").show();
+						$("#modalHomeBtnAccion").hide();
+						$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
+		            }
+		        }
+		    });
+		}else{
+			alert('No esta programado');
+		}
+
+} );
+
+
+///// CAMBIO DE PERIODO ******************************************************************************************************
+$("#slcPeriodo").change(function() {
+	var area 	= $('#slcArea :selected').val();
+	var periodo = $('#slcPeriodo :selected').val();
+
+	    $("#modalHomeConfig").attr('class', 'modal-dialog');
 	    $("#modalHome").modal('show');
-		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Información de <strong>'+data.nombre_ejecutivo+'</strong>');
-		$("#modalHomeContenido").load('viewEjecutivoDetail.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
-    	$("#modalHomeBtnCerrar").show();
-		$("#modalHomeBtnCerrar").text('Cerrar');
-		$("#modalHomeCerrarVentana").show();
+		$("#modalHomeTitle").html('Por Favor Espere');
+		$("#modalHomeBtnCerrar").hide();
+		$("#modalHomeBtnCerrar").text('');
+		$("#modalHomeCerrarVentana").hide();
 		$("#modalHomeBtnAccion").hide();
-		$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
-	}else if($(this).attr('placetogo') == 'crearEval') {
-	    //var data = tablaEjecutivos.row( $(this).parents('tr') ).data();
-	    
-	    $("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
-	    $("#modalHome").modal('show');
-		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Nueva evaluación parcial para <strong>'+data.nombre_ejecutivo+'</strong>');
-		
+		$("#modalHomeBtnAccion").text('');
+		$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Recibiendo su solicitud...');
+
 
 		$.ajax({
 	        type: 'post',
-	        url: 'core/CreateEvaluacionParcialCantidad.php',
-	        data: 'periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo,
+	        url: 'core/cambiarPeriodoyArea.php',
+	        data: 'slcArea='+area+'&slcPeriodo='+periodo,
 	        beforeSend: function() {
 	            //inicializando modal que valida sesión de raulí
+	            $("#modalHome").modal('show');
+	            $("#modalHomeTitle").text('Por Favor Espere');
+	            $("#lblSaludoUsuario").html('<img src="facade/img/loading2.gif" alt="cargando" />');
+	            $("#lblMensajeUsuario").html('Procesando su solicitud...');
+
 	        },
 			error: function(XMLHttpRequest, textStatus, errorThrown) {
 			    if (XMLHttpRequest.readyState == 0) {
@@ -304,187 +459,113 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 	                $("#modalIndexBtnCerrar").text('Cerrar');
 	                $("#modalIndexBtnAccion").hide();
 	            },
-	            301: function(responseObject, textStatus, errorThrown) {
-	                $("#modalHomeContenido").load('creator.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
-	            	$("#modalHomeBtnCerrar").show();
-					$("#modalHomeBtnCerrar").text('Cancelar');
-					$("#modalHomeCerrarVentana").hide();
-					$("#modalHomeBtnAccion").show();
-					$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
+	            403: function(responseObject, textStatus, errorThrown) {
+	                $("#modalIndexTitle").text('Información de Evaluador');
+	                $("#modalIndexContenido").attr('align', 'left');
+	                $("#modalIndexCerrarVentana").show();
+					$("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE CAMBIARPERIODOYAREA INPUT AREA EMPTY</strong>');
+	                $("#modalIndexBtnCerrar").hide();
+	                $("#modalIndexBtnCerrar").text('Cerrar');
+	                $("#modalIndexBtnAccion").hide();
 	            },
 	            200: function(responseObject, textStatus, errorThrown) {
-	            	$("#modalHomeContenido").load('todoListoParcial.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
-	            	$("#modalHomeBtnCerrar").show();
-					$("#modalHomeBtnCerrar").text('Cerrar');
-					$("#modalHomeCerrarVentana").show();
-					$("#modalHomeBtnAccion").hide();
-					$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
-	            }
-	        }
-	    });
-	}else{
-		alert('No esta programado');
-	}
-} );
+	                //INICIO DE RELLENO DE DATOS DE NUEVA ÁREA SELECCIONADA
+	                //eliminando valores existentes
+
+					$.ajax({
+					    type: 'post',
+					    url: 'core/HomeReceivePeriodoFromIndex.php',
+					    beforeSend: function() {
+					        //inicializando modal que valida sesión de raulí
+					        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Recibiendo información...');
+					    },
+					    error: function(XMLHttpRequest, textStatus, errorThrown) {
+						    if (XMLHttpRequest.readyState == 0) {
+								$("#modalHomeConfig").attr('class', 'modal-dialog');
+								$("#modalHomeTitle").text('Verifique su conexión a internet');
+								$("#modalHomeContenido").attr('align', 'left');
+								$("#modalHomeCerrarVentana").show();
+								$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+								$("#modalHomeBtnCerrar").show();
+								$("#modalHomeBtnCerrar").text('Cerrar');
+								$("#modalHomeBtnAccion").hide();
+						    }
+						},
+					    statusCode: {
+				            404: function(responseObject, textStatus, errorThrown) {
+				            	$("#modalHome").modal('show');
+				                $("#modalHomeTitle").text('´Problema al cargar el periodo');
+				                $("#modalHomeContenido").attr('align', 'left');
+				                $("#modalHomeCerrarVentana").show();
+				                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
+				                $("#modalHomeBtnCerrar").show();
+				                $("#modalHomeBtnCerrar").text('Cerrar');
+				                $("#modalHomeBtnAccion").hide();
+				            },
+				            200: function(responseObject, textStatus, errorThrown) {
+				                var resultados = JSON.parse(responseObject);
+				                
+				                //eliminando valores existentes
+				                $.each($("#slcPeriodo option"),function(i,v){
+									value = v.value;
+									$("#slcPeriodo option[value="+value+"]").remove();
+								});
+
+				                 $.each(resultados.periodos, function (index, value) {
+				                    $("#slcPeriodo").append('<option value="'+value+'">'+value+'</option>');
+				                });
 
 
-///// CAMBIO DE PERIODO ******************************************************************************************************
-$("#slcPeriodo").change(function() {
-	var area 	= $('#slcArea :selected').val();
-	var periodo = $('#slcPeriodo :selected').val();
+								$.ajax({
+								    type: 'post',
+								    url: 'core/ListPeriodosParaEvaluar.php',
+								    beforeSend: function() {
+								        //inicializando modal que valida sesión de raulí
+								        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Obteniendo periodos válidos para trabajar...');
+								    },
+								    error: function(XMLHttpRequest, textStatus, errorThrown) {
+									    if (XMLHttpRequest.readyState == 0) {
+											$("#modalHomeConfig").attr('class', 'modal-dialog');
+											$("#modalHomeTitle").text('Verifique su conexión a internet');
+											$("#modalHomeContenido").attr('align', 'left');
+											$("#modalHomeCerrarVentana").show();
+											$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+											$("#modalHomeBtnCerrar").show();
+											$("#modalHomeBtnCerrar").text('Cerrar');
+											$("#modalHomeBtnAccion").hide();
+									    }
+									},
+								    statusCode: {
+								        404: function(responseObject, textStatus, errorThrown) {
+								        	$("#modalHome").modal('show');
+								            $("#modalHomeTitle").text('´Problema al cargar el periodo');
+								            $("#modalHomeContenido").attr('align', 'left');
+								            $("#modalHomeCerrarVentana").show();
+								            $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
+								            $("#modalHomeBtnCerrar").show();
+								            $("#modalHomeBtnCerrar").text('Cerrar');
+								            $("#modalHomeBtnAccion").hide();
+								        },
+								        200: function(responseObject, textStatus, errorThrown) {
+								            var resultados = JSON.parse(responseObject);
+								           
+								             $.each(resultados.periodos, function (index, value) {
+								                if($("#slcPeriodo :selected").text() != value) {
+								                	$("#slcPeriodo").append('<option value="'+value+'">'+value+'</option>');
+								                }
+								            });
+				                			
+				                			$("#modalHomeBtnCerrar").click();
 
-    $("#modalHomeConfig").attr('class', 'modal-dialog');
-    $("#modalHome").modal('show');
-	$("#modalHomeTitle").html('Por Favor Espere');
-	$("#modalHomeBtnCerrar").hide();
-	$("#modalHomeBtnCerrar").text('');
-	$("#modalHomeCerrarVentana").hide();
-	$("#modalHomeBtnAccion").hide();
-	$("#modalHomeBtnAccion").text('');
-	$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Recibiendo su solicitud...');
-
-
-	$.ajax({
-        type: 'post',
-        url: 'core/cambiarPeriodoyArea.php',
-        data: 'slcArea='+area+'&slcPeriodo='+periodo,
-        beforeSend: function() {
-            //inicializando modal que valida sesión de raulí
-            $("#modalHome").modal('show');
-            $("#modalHomeTitle").text('Por Favor Espere');
-            $("#lblSaludoUsuario").html('<img src="facade/img/loading2.gif" alt="cargando" />');
-            $("#lblMensajeUsuario").html('Procesando su solicitud...');
-
-        },
-		error: function(XMLHttpRequest, textStatus, errorThrown) {
-		    if (XMLHttpRequest.readyState == 0) {
-				$("#modalHomeConfig").attr('class', 'modal-dialog');
-				$("#modalHomeTitle").text('Verifique su conexión a internet');
-				$("#modalHomeContenido").attr('align', 'left');
-				$("#modalHomeCerrarVentana").show();
-				$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
-				$("#modalHomeBtnCerrar").show();
-				$("#modalHomeBtnCerrar").text('Cerrar');
-				$("#modalHomeBtnAccion").hide();
-		    }
-		},
-        statusCode: {
-            401: function(responseObject, textStatus, errorThrown) {
-                $("#modalIndexTitle").text('Información de Evaluador');
-                $("#modalIndexContenido").attr('align', 'left');
-                $("#modalIndexCerrarVentana").show();
-				$("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE CAMBIARPERIODOYAREA INPUT AREA EMPTY</strong>');
-                $("#modalIndexBtnCerrar").hide();
-                $("#modalIndexBtnCerrar").text('Cerrar');
-                $("#modalIndexBtnAccion").hide();
-            },
-            403: function(responseObject, textStatus, errorThrown) {
-                $("#modalIndexTitle").text('Información de Evaluador');
-                $("#modalIndexContenido").attr('align', 'left');
-                $("#modalIndexCerrarVentana").show();
-				$("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE CAMBIARPERIODOYAREA INPUT AREA EMPTY</strong>');
-                $("#modalIndexBtnCerrar").hide();
-                $("#modalIndexBtnCerrar").text('Cerrar');
-                $("#modalIndexBtnAccion").hide();
-            },
-            200: function(responseObject, textStatus, errorThrown) {
-                //INICIO DE RELLENO DE DATOS DE NUEVA ÁREA SELECCIONADA
-                //eliminando valores existentes
-
-				$.ajax({
-				    type: 'post',
-				    url: 'core/HomeReceivePeriodoFromIndex.php',
-				    beforeSend: function() {
-				        //inicializando modal que valida sesión de raulí
-				        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Recibiendo información...');
-				    },
-				    error: function(XMLHttpRequest, textStatus, errorThrown) {
-					    if (XMLHttpRequest.readyState == 0) {
-							$("#modalHomeConfig").attr('class', 'modal-dialog');
-							$("#modalHomeTitle").text('Verifique su conexión a internet');
-							$("#modalHomeContenido").attr('align', 'left');
-							$("#modalHomeCerrarVentana").show();
-							$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
-							$("#modalHomeBtnCerrar").show();
-							$("#modalHomeBtnCerrar").text('Cerrar');
-							$("#modalHomeBtnAccion").hide();
-					    }
-					},
-				    statusCode: {
-			            404: function(responseObject, textStatus, errorThrown) {
-			            	$("#modalHome").modal('show');
-			                $("#modalHomeTitle").text('´Problema al cargar el periodo');
-			                $("#modalHomeContenido").attr('align', 'left');
-			                $("#modalHomeCerrarVentana").show();
-			                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
-			                $("#modalHomeBtnCerrar").show();
-			                $("#modalHomeBtnCerrar").text('Cerrar');
-			                $("#modalHomeBtnAccion").hide();
-			            },
-			            200: function(responseObject, textStatus, errorThrown) {
-			                var resultados = JSON.parse(responseObject);
-			                
-			                //eliminando valores existentes
-			                $.each($("#slcPeriodo option"),function(i,v){
-								value = v.value;
-								$("#slcPeriodo option[value="+value+"]").remove();
-							});
-
-			                 $.each(resultados.periodos, function (index, value) {
-			                    $("#slcPeriodo").append('<option value="'+value+'">'+value+'</option>');
-			                });
-
-
-							$.ajax({
-							    type: 'post',
-							    url: 'core/ListPeriodosParaEvaluar.php',
-							    beforeSend: function() {
-							        //inicializando modal que valida sesión de raulí
-							        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Obteniendo periodos válidos para trabajar...');
-							    },
-							    error: function(XMLHttpRequest, textStatus, errorThrown) {
-								    if (XMLHttpRequest.readyState == 0) {
-										$("#modalHomeConfig").attr('class', 'modal-dialog');
-										$("#modalHomeTitle").text('Verifique su conexión a internet');
-										$("#modalHomeContenido").attr('align', 'left');
-										$("#modalHomeCerrarVentana").show();
-										$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
-										$("#modalHomeBtnCerrar").show();
-										$("#modalHomeBtnCerrar").text('Cerrar');
-										$("#modalHomeBtnAccion").hide();
+								        }
 								    }
-								},
-							    statusCode: {
-							        404: function(responseObject, textStatus, errorThrown) {
-							        	$("#modalHome").modal('show');
-							            $("#modalHomeTitle").text('´Problema al cargar el periodo');
-							            $("#modalHomeContenido").attr('align', 'left');
-							            $("#modalHomeCerrarVentana").show();
-							            $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
-							            $("#modalHomeBtnCerrar").show();
-							            $("#modalHomeBtnCerrar").text('Cerrar');
-							            $("#modalHomeBtnAccion").hide();
-							        },
-							        200: function(responseObject, textStatus, errorThrown) {
-							            var resultados = JSON.parse(responseObject);
-							           
-							             $.each(resultados.periodos, function (index, value) {
-							                if($("#slcPeriodo :selected").text() != value) {
-							                	$("#slcPeriodo").append('<option value="'+value+'">'+value+'</option>');
-							                }
-							            });
-			                			
-			                			$("#modalHomeBtnCerrar").click();
-
-							        }
-							    }
-							}); 
-			            }
-			        }
-			    });
+								}); 
+				            }
+				        }
+				    });
+				}
 			}
-		}
-	});
+		});
 
 });
 
@@ -851,14 +932,66 @@ $("#slcArea").change(function(){
 
 $("#modalHomeBtnAccion").click(function() {
 	if($("#modalHomeBtnAccion").text() == "Guardar Evaluación Parcial") {
+		if(!$("#infoAudioCargado").is(":visible")) {
+			alert('Debe seleccionar un audio para poder guardar la evaluación parcial');
+			$("#fileAudio").click();
+		}else{ 
+			$.ajax({
+			    type: 'post',
+			    url: 'core/CreateEvaluacionParcialObservacion.php',
+			    data: 'comentarios='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
+			    beforeSend: function() {
+			        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');
+			    },
+			    error: function(XMLHttpRequest, textStatus, errorThrown) {
+				    if (XMLHttpRequest.readyState == 0) {
+						$("#modalHomeConfig").attr('class', 'modal-dialog');
+						$("#modalHomeTitle").text('Verifique su conexión a internet');
+						$("#modalHomeContenido").attr('align', 'left');
+						$("#modalHomeCerrarVentana").show();
+						$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+						$("#modalHomeBtnCerrar").show();
+						$("#modalHomeBtnCerrar").text('Cerrar');
+						$("#modalHomeBtnAccion").hide();
+				    }
+				},
+			    statusCode: {
+			        404: function(responseObject, textStatus, errorThrown) {
+			            alert('No se encontró respuesta del servidor para los periodos a trabajar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 404');
+			        },
+			        500: function(responseObject, textStatus, errorThrown) {
+			            alert('El servidor no encontró el número de evaluación que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 500');
+			        },
+			        501: function(responseObject, textStatus, errorThrown) {
+			            alert('El servidor no encontró los comentarios que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 501');
+			        },
+					503: function(responseObject, textStatus, errorThrown) {
+			            alert('La evaluación no retornó ningun resultado o bien el controller retornó un objeto nulo. CORE CREATEEVALUACIONPARCIALOBSERVARCION 503');
+			        },
+					301: function(responseObject, textStatus, errorThrown) {
+			            alert('Los cambios no pudieron ser guardados, por favor intentelo más tarde. CORE CREATEEVALUACIONPARCIALOBSERVARCION 301');
+			        },
+			        200: function(responseObject, textStatus, errorThrown) {
+			        	$("#modalHomeConfig").attr('class', 'modal-dialog');
+			            $("#modalHomeContenido").html('La evaluación parcial ha sido guardada!');
+			            $("#modalHomeBtnCerrar").show();
+			            $("#modalHomeBtnCerrar").text('Cerrar');
+			            $("#modalHomeBtnAccion").hide();
+			       	}
+			    }
+			});
+		}
+	}else if ($("#modalHomeBtnAccion").text() == "Iniciar Sesión") {
+		window.location.href="index.php";
+	}
+})
+
+	function validarSesionActiva() {
+		var bandera = false;
 		$.ajax({
-		    type: 'post',
-		    url: 'core/CreateEvaluacionParcialObservacion.php',
-		    data: 'comentarios='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
-		    beforeSend: function() {
-		        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');
-		    },
-		    error: function(XMLHttpRequest, textStatus, errorThrown) {
+			type: 'get', 
+			url: 'core/SessionManager.php',
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
 			    if (XMLHttpRequest.readyState == 0) {
 					$("#modalHomeConfig").attr('class', 'modal-dialog');
 					$("#modalHomeTitle").text('Verifique su conexión a internet');
@@ -868,32 +1001,67 @@ $("#modalHomeBtnAccion").click(function() {
 					$("#modalHomeBtnCerrar").show();
 					$("#modalHomeBtnCerrar").text('Cerrar');
 					$("#modalHomeBtnAccion").hide();
+					$("#modalHome").modal('show');
+					bandera = false;
 			    }
 			},
-		    statusCode: {
-		        404: function(responseObject, textStatus, errorThrown) {
-		            alert('No se encontró respuesta del servidor para los periodos a trabajar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 404');
-		        },
-		        500: function(responseObject, textStatus, errorThrown) {
-		            alert('El servidor no encontró el número de evaluación que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 500');
-		        },
-		        501: function(responseObject, textStatus, errorThrown) {
-		            alert('El servidor no encontró los comentarios que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 501');
-		        },
+			statusCode : {
+				401: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identifiquese nuevamente');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+					bandera = false;
+				},
+				403: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identifiquese nuevamente');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+					bandera = false;
+				},
+				500: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Acceso Restringido');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+					bandera = false;
+				},
 				503: function(responseObject, textStatus, errorThrown) {
-		            alert('La evaluación no retornó ningun resultado o bien el controller retornó un objeto nulo. CORE CREATEEVALUACIONPARCIALOBSERVARCION 503');
-		        },
-				301: function(responseObject, textStatus, errorThrown) {
-		            alert('Los cambios no pudieron ser guardados, por favor intentelo más tarde. CORE CREATEEVALUACIONPARCIALOBSERVARCION 301');
-		        },
-		        200: function(responseObject, textStatus, errorThrown) {
-		        	$("#modalHomeConfig").attr('class', 'modal-dialog');
-		            $("#modalHomeContenido").html('La evaluación parcial ha sido guardada!');
-		            $("#modalHomeBtnCerrar").show();
-		            $("#modalHomeBtnCerrar").text('Cerrar');
-		            $("#modalHomeBtnAccion").hide();
-		       	}
-		    }
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Error Crítico');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido enocntrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+					bandera = false;
+				},
+				200: function(responseObject, textStatus, errorThrown) {
+					bandera = true;
+				}
+			}
 		});
+		return bandera;
 	}
-})

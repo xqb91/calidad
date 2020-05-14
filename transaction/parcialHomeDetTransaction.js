@@ -769,124 +769,221 @@ $("#btnGenerarEva").click(function() {
 
 $("#modalHomeBtnAccion").click(function() {
 	if($("#modalHomeBtnAccion").text() == "Guardar Evaluación Parcial") {
-		$.ajax({
-		    type: 'post',
-		    url: 'core/CreateEvaluacionParcialObservacion.php',
-		    data: 'comentarios='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
-		    beforeSend: function() {
-		        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');
-		    },
-		    error: function(XMLHttpRequest, textStatus, errorThrown) {
-			    if (XMLHttpRequest.readyState == 0) {
-					$("#modalHomeConfig").attr('class', 'modal-dialog');
-					$("#modalHomeTitle").text('Verifique su conexión a internet');
-					$("#modalHomeContenido").attr('align', 'left');
-					$("#modalHomeCerrarVentana").show();
-					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
-					$("#modalHomeBtnCerrar").show();
-					$("#modalHomeBtnCerrar").text('Cerrar');
-					$("#modalHomeBtnAccion").hide();
-			    }
-			},
-		    statusCode: {
-		        404: function(responseObject, textStatus, errorThrown) {
-		            alert('No se encontró respuesta del servidor para los periodos a trabajar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 404');
-		        },
-		        500: function(responseObject, textStatus, errorThrown) {
-		            alert('El servidor no encontró el número de evaluación que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 500');
-		        },
-		        501: function(responseObject, textStatus, errorThrown) {
-		            alert('El servidor no encontró los comentarios que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 501');
-		        },
-				503: function(responseObject, textStatus, errorThrown) {
-		            alert('La evaluación no retornó ningun resultado o bien el controller retornó un objeto nulo. CORE CREATEEVALUACIONPARCIALOBSERVARCION 503');
-		        },
-				301: function(responseObject, textStatus, errorThrown) {
-		            alert('Los cambios no pudieron ser guardados, por favor intentelo más tarde. CORE CREATEEVALUACIONPARCIALOBSERVARCION 301');
-		        },
-		        200: function(responseObject, textStatus, errorThrown) {
-		        	$("#modalHomeConfig").attr('class', 'modal-dialog');
-		            $("#modalHomeContenido").html('La evaluación parcial ha sido guardada!');
-		            $("#modalHomeBtnCerrar").show();
-		            $("#modalHomeBtnCerrar").text('Cerrar');
-		            $("#modalHomeBtnAccion").hide();
-		            $("#tablaEvaluacionesGeneradas tr").remove();
-		            $("#modalHomeBtnCerrar").click();
-					$.ajax({
-						type: 'post',
-						url: 'core/ResumenEvaluacionParcialEjecutivo.php',
-						data: 'ejecutivo='+irqljob,
-						beforeSend: function() {
-							$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Obteniendo información del ejecutivo...');
-						},
-						statusCode: {
-							500: function(responseObject, textStatus, errorThrown) {
-							$("#modalHome").modal('show');
-					        $("#modalHomeTitle").text('Ejecutivo no existe');
-					        $("#modalHomeContenido").attr('align', 'left');
-					        $("#modalHomeCerrarVentana").show();
-					        $("#modalHomeContenido").html('El ejecutivo por el cual usted ha consultado (<b>'+irqljob+'</b>) no existe en la base de datos. <br /><strong>HTTP 500</strong>');
-					        $("#modalHomeBtnCerrar").show();
-					        $("#modalHomeBtnCerrar").text('Cerrar');
-					        $("#modalHomeBtnAccion").hide();
+		if(!$("#infoAudioCargado").is(":visible")) {
+			alert('Debe seleccionar un audio para poder guardar la evaluación parcial');
+			$("#fileAudio").click();
+		}else{ 	
+			$.ajax({
+			    type: 'post',
+			    url: 'core/CreateEvaluacionParcialObservacion.php',
+			    data: 'comentarios='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
+			    beforeSend: function() {
+			        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');
+			    },
+			    error: function(XMLHttpRequest, textStatus, errorThrown) {
+				    if (XMLHttpRequest.readyState == 0) {
+						$("#modalHomeConfig").attr('class', 'modal-dialog');
+						$("#modalHomeTitle").text('Verifique su conexión a internet');
+						$("#modalHomeContenido").attr('align', 'left');
+						$("#modalHomeCerrarVentana").show();
+						$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+						$("#modalHomeBtnCerrar").show();
+						$("#modalHomeBtnCerrar").text('Cerrar');
+						$("#modalHomeBtnAccion").hide();
+				    }
+				},
+			    statusCode: {
+			        404: function(responseObject, textStatus, errorThrown) {
+			            alert('No se encontró respuesta del servidor para los periodos a trabajar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 404');
+			        },
+			        500: function(responseObject, textStatus, errorThrown) {
+			            alert('El servidor no encontró el número de evaluación que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 500');
+			        },
+			        501: function(responseObject, textStatus, errorThrown) {
+			            alert('El servidor no encontró los comentarios que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 501');
+			        },
+					503: function(responseObject, textStatus, errorThrown) {
+			            alert('La evaluación no retornó ningun resultado o bien el controller retornó un objeto nulo. CORE CREATEEVALUACIONPARCIALOBSERVARCION 503');
+			        },
+					301: function(responseObject, textStatus, errorThrown) {
+			            alert('Los cambios no pudieron ser guardados, por favor intentelo más tarde. CORE CREATEEVALUACIONPARCIALOBSERVARCION 301');
+			        },
+			        200: function(responseObject, textStatus, errorThrown) {
+			        	$("#modalHomeConfig").attr('class', 'modal-dialog');
+			            $("#modalHomeContenido").html('La evaluación parcial ha sido guardada!');
+			            $("#modalHomeBtnCerrar").show();
+			            $("#modalHomeBtnCerrar").text('Cerrar');
+			            $("#modalHomeBtnAccion").hide();
+			            $("#tablaEvaluacionesGeneradas tr").remove();
+			            $("#modalHomeBtnCerrar").click();
+						$.ajax({
+							type: 'post',
+							url: 'core/ResumenEvaluacionParcialEjecutivo.php',
+							data: 'ejecutivo='+irqljob,
+							beforeSend: function() {
+								$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Obteniendo información del ejecutivo...');
 							},
-							301: function(responseObject, textStatus, errorThrown) {
-							$("#modalHome").modal('show');
-					        $("#modalHomeTitle").text('Error crítico');
-					        $("#modalHomeContenido").attr('align', 'left');
-					        $("#modalHomeCerrarVentana").show();
-					        $("#modalHomeContenido").html('El parámetro para ejecutar su consulta no fue recibido provocando este error crítico. <br /><strong>HTTP 301</strong>');
-					        $("#modalHomeBtnCerrar").show();
-					        $("#modalHomeBtnCerrar").text('Cerrar');
-					        $("#modalHomeBtnAccion").hide();
-							},
-							200: function(responseObject, textStatus, errorThrown) {
-								var resultado = JSON.parse(responseObject);
+							statusCode: {
+								500: function(responseObject, textStatus, errorThrown) {
+								$("#modalHome").modal('show');
+						        $("#modalHomeTitle").text('Ejecutivo no existe');
+						        $("#modalHomeContenido").attr('align', 'left');
+						        $("#modalHomeCerrarVentana").show();
+						        $("#modalHomeContenido").html('El ejecutivo por el cual usted ha consultado (<b>'+irqljob+'</b>) no existe en la base de datos. <br /><strong>HTTP 500</strong>');
+						        $("#modalHomeBtnCerrar").show();
+						        $("#modalHomeBtnCerrar").text('Cerrar');
+						        $("#modalHomeBtnAccion").hide();
+								},
+								301: function(responseObject, textStatus, errorThrown) {
+								$("#modalHome").modal('show');
+						        $("#modalHomeTitle").text('Error crítico');
+						        $("#modalHomeContenido").attr('align', 'left');
+						        $("#modalHomeCerrarVentana").show();
+						        $("#modalHomeContenido").html('El parámetro para ejecutar su consulta no fue recibido provocando este error crítico. <br /><strong>HTTP 301</strong>');
+						        $("#modalHomeBtnCerrar").show();
+						        $("#modalHomeBtnCerrar").text('Cerrar');
+						        $("#modalHomeBtnAccion").hide();
+								},
+								200: function(responseObject, textStatus, errorThrown) {
+									var resultado = JSON.parse(responseObject);
 
-								if(resultado.parciales == null) {
-									$("#tblEjecutivoCantidad").html('Ninguna Evaluación Parcial');
-								}else{
-									$("#tblEjecutivoCantidad").html(resultado.parciales.length);
-								}
-								
-								if(resultado.efinal == null) {
-									$("#tblEjecutivoFinal").html('No Generada');
-								}else{
-									$("#tblEjecutivoFinal").html(parseFloat(resultado.efinal.nota).toFixed(2));
-								}
+									if(resultado.parciales == null) {
+										$("#tblEjecutivoCantidad").html('Ninguna Evaluación Parcial');
+									}else{
+										$("#tblEjecutivoCantidad").html(resultado.parciales.length);
+									}
+									
+									if(resultado.efinal == null) {
+										$("#tblEjecutivoFinal").html('No Generada');
+									}else{
+										$("#tblEjecutivoFinal").html(parseFloat(resultado.efinal.nota).toFixed(2));
+									}
 
-								if(resultado.quincenal == null) {
-									$("#tblEjecutivoQuincenal").html('No Generada');
-								}else{
-									$("#tblEjecutivoQuincenal").html(parseFloat(resultado.quincenal.nota).toFixed(2));
-								}
+									if(resultado.quincenal == null) {
+										$("#tblEjecutivoQuincenal").html('No Generada');
+									}else{
+										$("#tblEjecutivoQuincenal").html(parseFloat(resultado.quincenal.nota).toFixed(2));
+									}
 
-								if(resultado.parciales == null)  {
-									var fila = '';
-									fila = fila + '<tr>';
-								fila = fila + '<td colspan="6">No se han ingresado evaluaciones para este ejecutivo</td>';
-									fila = fila + '</tr>';
-									$("#tablaEvaluacionesGeneradas").append(fila);
-								}else{
-									$.each(resultado.parciales, function(i,v) {
+									if(resultado.parciales == null)  {
 										var fila = '';
-										fila = fila +'<tr evaluacion="'+v.evaluacion+'">';
-					                fila = fila +'<td>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</td>';
-					                fila = fila +'<td scope="row col-9" style="width: 40%;">Evaluación #'+v.evaluacion+'</th>';
-					                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
-					                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
-					                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';
-					                fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
-					              	fila = fila +'</tr>';
-					              	$("#tablaEvaluacionesGeneradas").append(fila);
-									});
+										fila = fila + '<tr>';
+									fila = fila + '<td colspan="6">No se han ingresado evaluaciones para este ejecutivo</td>';
+										fila = fila + '</tr>';
+										$("#tablaEvaluacionesGeneradas").append(fila);
+									}else{
+										$.each(resultado.parciales, function(i,v) {
+											var fila = '';
+											fila = fila +'<tr evaluacion="'+v.evaluacion+'">';
+						                fila = fila +'<td>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</td>';
+						                fila = fila +'<td scope="row col-9" style="width: 40%;">Evaluación #'+v.evaluacion+'</th>';
+						                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
+						                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
+						                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';
+						                fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
+						              	fila = fila +'</tr>';
+						              	$("#tablaEvaluacionesGeneradas").append(fila);
+										});
+									}
+
+//elementos clickeados en la tabla para mostrar los datos en el card del lado derecho
+								$('#tablaEvaluacionesGeneradas tr').click(function() {
+									var evalclicked = $(this).attr('evaluacion');
+									$.ajax({
+					             		type: 'post',
+					             		url: 'core/infoEvaluacionParcial.php',
+					             		data: 'evaluacion='+evalclicked,
+					             		beforeSend: function() {
+					             			$("#tblInfoEvaluacion").hide();
+					             			$("#lblInfoEvaluacion").show();
+					             			$("#btnDownloadAudioEvalClicked").hide();
+											$("#btnDownloadPDFEvalClicked").hide();
+					             			$("#lblInfoEvaluacion").html('<img src="facade/img/loading.gif" /><br />Cargando Información de la evaluación parcial...');
+					             		},
+					             		statusCode: {
+					             			301: function(responseObject, textStatus, errorThrown) {
+												$("#modalHome").modal('show');
+								                $("#modalHomeTitle").text('Ejecutivo no existe');
+								                $("#modalHomeContenido").attr('align', 'left');
+								                $("#modalHomeCerrarVentana").show();
+								                $("#modalHomeContenido").html('El ejecutivo por el cual usted ha consultado (<b>'+irqljob+'</b>) no existe en la base de datos. <br /><strong>HTTP 500</strong>');
+								                $("#modalHomeBtnCerrar").show();
+								                $("#modalHomeBtnCerrar").text('Cerrar');
+								                $("#modalHomeBtnAccion").hide();
+					             			},
+					             			200: function(responseObject, textStatus, errorThrown) {
+					             				var resultado = JSON.parse(responseObject);
+					             				if(resultado[0] == null) {
+					             					$("#lblInfoEvaluacion").show();
+					             					$("#lblInfoEvaluacion").html('La evaluación esta generada pero sus items no han sido evaluados');
+					             					$("#tblInfoEvaluacion").hide();
+					             					$("#btnDownloadAudioEvalClicked").hide();
+													$("#btnDownloadPDFEvalClicked").hide();
+					             				}else{
+					             					$("#lblInfoEvaluacion").hide();
+					             					$("#tblInfoEvaluacionT1").html(resultado[0].nombre_categoria);
+					             					$("#tblInfoEvaluacionT2").html(resultado[1].nombre_categoria);
+					             					$("#tblInfoEvaluacionT3").html(resultado[2].nombre_categoria);
+
+					             					$("#tblInfoEvaluacionV1").html(resultado[0].nota_categoria);
+					             					$("#tblInfoEvaluacionV2").html(resultado[1].nota_categoria);
+					             					$("#tblInfoEvaluacionV3").html(resultado[2].nota_categoria);
+					             					$("#tblInfoEvaluacionVNF").html(resultado[0].nota_parcial);
+
+													$("#btnDownloadAudioEvalClicked").show();
+													$("#linkBtnDownloadAudioEvalClicked").attr('href', 'files/audio/'+resultado[0].audio);
+													
+													$("#btnDownloadPDFEvalClicked").show();
+
+					             					$("#tblInfoEvaluacion").show();
+					             				}
+					             			}
+					             		}
+					             	});
+								});
+
+
+								//Editar Evaluación/eliminar evaluacion / PDF
+								$('#tablaEvaluacionesGeneradas tr').on('click', 'button', function(a) { 
+									var eval = $(this).attr('evaluacion');
+									if($(this).attr('role') == 'editar') {
+										//ejecutar edición
+										$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+										$("#modalHomeTitle").html('<i class="far fa-edit"></i> Edición de Evaluación Parcial #'+eval);
+										$("#modalHomeContenido").load('editor.php?evaluacion='+eval);
+						            	$("#modalHomeBtnCerrar").show();
+										$("#modalHomeBtnCerrar").text('Cancelar');
+										$("#modalHomeCerrarVentana").hide();
+										$("#modalHomeBtnAccion").show();
+										$("#modalHomeBtnAccion").text('Finalizar Edición');
+										$("#modalHome").modal('show');
+									}else if($(this).attr('role') == 'eliminar'){
+										//ejecutar eliminación
+										$("#modalHomeConfig").attr('class', 'modal-dialog');
+										$("#modalHomeTitle").html('<i class="far fa-trash-alt"></i> Atención');
+										$("#modalHomeContenido").html('¿Esta usted seguro de eliminar la evaluación número '+eval+'? <strong>Esta acción no podrá deshacerse una vez se apruebe.</strong>');
+						            	$("#modalHomeBtnCerrar").show();
+										$("#modalHomeBtnCerrar").text('Cancelar');
+										$("#modalHomeCerrarVentana").hide();
+										$("#modalHomeBtnAccion").show();
+										$("#modalHomeBtnAccion").attr('evaluacion', eval);
+										$("#modalHomeBtnAccion").text('Eliminar Evaluación');
+										$("#modalHome").modal('show');
+									}else{
+										//generar PDF
+										alert('Generar PDF');
+									}
+								});
+
+
+
 								}
 							}
-						}
-					});
-		       	}
-		    }
-		});
+						});
+			       	}
+			    }
+			});
+		}
 	}else if($("#modalHomeBtnAccion").text() == "Eliminar Evaluación") {
 		$.ajax({
 		    type: 'post',
@@ -916,6 +1013,13 @@ $("#modalHomeBtnAccion").click(function() {
 		        },
 		        501: function(responseObject, textStatus, errorThrown) {
 		            $("#modalHomeContenido").html('<strong>Crítico</strong>: No se recibió el número de evaluación a eliminar...');
+		        },
+		        206: function(responseObject, textStatus, errorThrown) {
+		        	$("#modalHomeTitle").html('<i class="fas fa-exclamation-triangle"></i> Evaluación Bloqueada');
+		        	$("#modalHomeContenido").html('Esta evaluación esta siendo utilizada por la <strong>evaluación quincenal '+responseObject+'</strong>. Por favor elimine la evaluación quincenal antes de proceder a eliminar esta evaluación parcial o bien, regenere la evaluación quincenal quitando la evaluación parcial '+$("#modalHomeBtnAccion").attr('evaluacion')+' del las evaluaciones que componen la quincenal.');
+		        	$("#modalHomeBtnCerrar").show();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").hide();
 		        },
 		        200: function(responseObject, textStatus, errorThrown) {
 		        	$("#modalHomeConfig").attr('class', 'modal-dialog');
@@ -1089,213 +1193,218 @@ $("#modalHomeBtnAccion").click(function() {
 		    }
 		});
 	}else if($("#modalHomeBtnAccion").text() == "Finalizar Edición") {
-		$.ajax({
-		    type: 'post',
-		    url: 'core/CreateEvaluacionParcialObservacion.php',
-		    data: 'comentarios='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
-		    beforeSend: function() {
-		        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');
-		    },
-		    error: function(XMLHttpRequest, textStatus, errorThrown) {
-			    if (XMLHttpRequest.readyState == 0) {
-					$("#modalHomeConfig").attr('class', 'modal-dialog');
-					$("#modalHomeTitle").text('Verifique su conexión a internet');
-					$("#modalHomeContenido").attr('align', 'left');
-					$("#modalHomeCerrarVentana").show();
-					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
-					$("#modalHomeBtnCerrar").show();
-					$("#modalHomeBtnCerrar").text('Cerrar');
-					$("#modalHomeBtnAccion").hide();
-			    }
-			},
-		    statusCode: {
-		        404: function(responseObject, textStatus, errorThrown) {
-		            alert('No se encontró respuesta del servidor para los periodos a trabajar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 404');
-		        },
-		        500: function(responseObject, textStatus, errorThrown) {
-		            alert('El servidor no encontró el número de evaluación que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 500');
-		        },
-		        501: function(responseObject, textStatus, errorThrown) {
-		            alert('El servidor no encontró los comentarios que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 501');
-		        },
-				503: function(responseObject, textStatus, errorThrown) {
-		            alert('La evaluación no retornó ningun resultado o bien el controller retornó un objeto nulo. CORE CREATEEVALUACIONPARCIALOBSERVARCION 503');
-		        },
-				301: function(responseObject, textStatus, errorThrown) {
-		            alert('Los cambios no pudieron ser guardados, por favor intentelo más tarde. CORE CREATEEVALUACIONPARCIALOBSERVARCION 301');
-		        },
-		        200: function(responseObject, textStatus, errorThrown) {
-		        	$("#modalHomeConfig").attr('class', 'modal-dialog');
-		            $("#modalHomeContenido").html('La evaluación parcial ha sido actualizada!');
-		            $("#modalHomeBtnCerrar").show();
-		            $("#modalHomeBtnCerrar").text('Cerrar');
-		            $("#modalHomeBtnAccion").hide();
-		            $("#tablaEvaluacionesGeneradas tr").remove();
-					$.ajax({
-						type: 'post',
-						url: 'core/ResumenEvaluacionParcialEjecutivo.php',
-						data: 'ejecutivo='+irqljob,
-						beforeSend: function() {
-							//$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Obteniendo información del ejecutivo...');
-						},
-						statusCode: {
-							500: function(responseObject, textStatus, errorThrown) {
-							$("#modalHome").modal('show');
-					        $("#modalHomeTitle").text('Ejecutivo no existe');
-					        $("#modalHomeContenido").attr('align', 'left');
-					        $("#modalHomeCerrarVentana").show();
-					        $("#modalHomeContenido").html('El ejecutivo por el cual usted ha consultado (<b>'+irqljob+'</b>) no existe en la base de datos. <br /><strong>HTTP 500</strong>');
-					        $("#modalHomeBtnCerrar").show();
-					        $("#modalHomeBtnCerrar").text('Cerrar');
-					        $("#modalHomeBtnAccion").hide();
+		if(!$("#infoAudioCargado").is(":visible")) {
+			alert('Debe seleccionar un audio para poder guardar la evaluación parcial');
+			$("#fileAudio").click();
+		}else{ 
+			$.ajax({
+			    type: 'post',
+			    url: 'core/CreateEvaluacionParcialObservacion.php',
+			    data: 'comentarios='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
+			    beforeSend: function() {
+			        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');
+			    },
+			    error: function(XMLHttpRequest, textStatus, errorThrown) {
+				    if (XMLHttpRequest.readyState == 0) {
+						$("#modalHomeConfig").attr('class', 'modal-dialog');
+						$("#modalHomeTitle").text('Verifique su conexión a internet');
+						$("#modalHomeContenido").attr('align', 'left');
+						$("#modalHomeCerrarVentana").show();
+						$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+						$("#modalHomeBtnCerrar").show();
+						$("#modalHomeBtnCerrar").text('Cerrar');
+						$("#modalHomeBtnAccion").hide();
+				    }
+				},
+			    statusCode: {
+			        404: function(responseObject, textStatus, errorThrown) {
+			            alert('No se encontró respuesta del servidor para los periodos a trabajar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 404');
+			        },
+			        500: function(responseObject, textStatus, errorThrown) {
+			            alert('El servidor no encontró el número de evaluación que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 500');
+			        },
+			        501: function(responseObject, textStatus, errorThrown) {
+			            alert('El servidor no encontró los comentarios que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 501');
+			        },
+					503: function(responseObject, textStatus, errorThrown) {
+			            alert('La evaluación no retornó ningun resultado o bien el controller retornó un objeto nulo. CORE CREATEEVALUACIONPARCIALOBSERVARCION 503');
+			        },
+					301: function(responseObject, textStatus, errorThrown) {
+			            alert('Los cambios no pudieron ser guardados, por favor intentelo más tarde. CORE CREATEEVALUACIONPARCIALOBSERVARCION 301');
+			        },
+			        200: function(responseObject, textStatus, errorThrown) {
+			        	$("#modalHomeConfig").attr('class', 'modal-dialog');
+			            $("#modalHomeContenido").html('La evaluación parcial ha sido actualizada!');
+			            $("#modalHomeBtnCerrar").show();
+			            $("#modalHomeBtnCerrar").text('Cerrar');
+			            $("#modalHomeBtnAccion").hide();
+			            $("#tablaEvaluacionesGeneradas tr").remove();
+						$.ajax({
+							type: 'post',
+							url: 'core/ResumenEvaluacionParcialEjecutivo.php',
+							data: 'ejecutivo='+irqljob,
+							beforeSend: function() {
+								//$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Obteniendo información del ejecutivo...');
 							},
-							301: function(responseObject, textStatus, errorThrown) {
-							$("#modalHome").modal('show');
-					        $("#modalHomeTitle").text('Error crítico');
-					        $("#modalHomeContenido").attr('align', 'left');
-					        $("#modalHomeCerrarVentana").show();
-					        $("#modalHomeContenido").html('El parámetro para ejecutar su consulta no fue recibido provocando este error crítico. <br /><strong>HTTP 301</strong>');
-					        $("#modalHomeBtnCerrar").show();
-					        $("#modalHomeBtnCerrar").text('Cerrar');
-					        $("#modalHomeBtnAccion").hide();
-							},
-							200: function(responseObject, textStatus, errorThrown) {
-								var resultado = JSON.parse(responseObject);
+							statusCode: {
+								500: function(responseObject, textStatus, errorThrown) {
+								$("#modalHome").modal('show');
+						        $("#modalHomeTitle").text('Ejecutivo no existe');
+						        $("#modalHomeContenido").attr('align', 'left');
+						        $("#modalHomeCerrarVentana").show();
+						        $("#modalHomeContenido").html('El ejecutivo por el cual usted ha consultado (<b>'+irqljob+'</b>) no existe en la base de datos. <br /><strong>HTTP 500</strong>');
+						        $("#modalHomeBtnCerrar").show();
+						        $("#modalHomeBtnCerrar").text('Cerrar');
+						        $("#modalHomeBtnAccion").hide();
+								},
+								301: function(responseObject, textStatus, errorThrown) {
+								$("#modalHome").modal('show');
+						        $("#modalHomeTitle").text('Error crítico');
+						        $("#modalHomeContenido").attr('align', 'left');
+						        $("#modalHomeCerrarVentana").show();
+						        $("#modalHomeContenido").html('El parámetro para ejecutar su consulta no fue recibido provocando este error crítico. <br /><strong>HTTP 301</strong>');
+						        $("#modalHomeBtnCerrar").show();
+						        $("#modalHomeBtnCerrar").text('Cerrar');
+						        $("#modalHomeBtnAccion").hide();
+								},
+								200: function(responseObject, textStatus, errorThrown) {
+									var resultado = JSON.parse(responseObject);
 
-								if(resultado.parciales == null) {
-									$("#tblEjecutivoCantidad").html('Ninguna Evaluación Parcial');
-								}else{
-									$("#tblEjecutivoCantidad").html(resultado.parciales.length);
-								}
-								
-								if(resultado.efinal == null) {
-									$("#tblEjecutivoFinal").html('No Generada');
-								}else{
-									$("#tblEjecutivoFinal").html(parseFloat(resultado.efinal.nota).toFixed(2));
-								}
-
-								if(resultado.quincenal == null) {
-									$("#tblEjecutivoQuincenal").html('No Generada');
-								}else{
-									$("#tblEjecutivoQuincenal").html(parseFloat(resultado.quincenal.nota).toFixed(2));
-								}
-
-								if(resultado.parciales == null)  {
-									var fila = '';
-									fila = fila + '<tr>';
-								fila = fila + '<td colspan="6">No se han ingresado evaluaciones para este ejecutivo</td>';
-									fila = fila + '</tr>';
-									$("#tablaEvaluacionesGeneradas").append(fila);
-								}else{
-									$.each(resultado.parciales, function(i,v) {
-										var fila = '';
-										fila = fila +'<tr evaluacion="'+v.evaluacion+'">';
-					                fila = fila +'<td>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</td>';
-					                fila = fila +'<td scope="row col-9" style="width: 40%;">Evaluación #'+v.evaluacion+'</th>';
-					                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
-					                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
-					                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';
-					                fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
-					              	fila = fila +'</tr>';
-					              	$("#tablaEvaluacionesGeneradas").append(fila);
-									});
-								}
-
-								//elementos clickeados en la tabla para mostrar los datos en el card del lado derecho
-								$('#tablaEvaluacionesGeneradas tr').click(function() {
-									var evalclicked = $(this).attr('evaluacion');
-									$.ajax({
-					             		type: 'post',
-					             		url: 'core/infoEvaluacionParcial.php',
-					             		data: 'evaluacion='+evalclicked,
-					             		beforeSend: function() {
-					             			$("#tblInfoEvaluacion").hide();
-					             			$("#lblInfoEvaluacion").show();
-					             			$("#btnDownloadAudioEvalClicked").hide();
-											$("#btnDownloadPDFEvalClicked").hide();
-					             			$("#lblInfoEvaluacion").html('<img src="facade/img/loading.gif" /><br />Cargando Información de la evaluación parcial...');
-					             		},
-					             		statusCode: {
-					             			301: function(responseObject, textStatus, errorThrown) {
-												$("#modalHome").modal('show');
-								                $("#modalHomeTitle").text('Ejecutivo no existe');
-								                $("#modalHomeContenido").attr('align', 'left');
-								                $("#modalHomeCerrarVentana").show();
-								                $("#modalHomeContenido").html('El ejecutivo por el cual usted ha consultado (<b>'+irqljob+'</b>) no existe en la base de datos. <br /><strong>HTTP 500</strong>');
-								                $("#modalHomeBtnCerrar").show();
-								                $("#modalHomeBtnCerrar").text('Cerrar');
-								                $("#modalHomeBtnAccion").hide();
-					             			},
-					             			200: function(responseObject, textStatus, errorThrown) {
-					             				var resultado = JSON.parse(responseObject);
-					             				if(resultado[0] == null) {
-					             					$("#lblInfoEvaluacion").show();
-					             					$("#lblInfoEvaluacion").html('La evaluación esta generada pero sus items no han sido evaluados');
-					             					$("#tblInfoEvaluacion").hide();
-					             					$("#btnDownloadAudioEvalClicked").hide();
-													$("#btnDownloadPDFEvalClicked").hide();
-					             				}else{
-					             					$("#lblInfoEvaluacion").hide();
-					             					$("#tblInfoEvaluacionT1").html(resultado[0].nombre_categoria);
-					             					$("#tblInfoEvaluacionT2").html(resultado[1].nombre_categoria);
-					             					$("#tblInfoEvaluacionT3").html(resultado[2].nombre_categoria);
-
-					             					$("#tblInfoEvaluacionV1").html(resultado[0].nota_categoria);
-					             					$("#tblInfoEvaluacionV2").html(resultado[1].nota_categoria);
-					             					$("#tblInfoEvaluacionV3").html(resultado[2].nota_categoria);
-					             					$("#tblInfoEvaluacionVNF").html(resultado[0].nota_parcial);
-
-													$("#btnDownloadAudioEvalClicked").show();
-													$("#linkBtnDownloadAudioEvalClicked").attr('href', 'files/audio/'+resultado[0].audio);
-													
-													$("#btnDownloadPDFEvalClicked").show();
-
-					             					$("#tblInfoEvaluacion").show();
-					             				}
-					             			}
-					             		}
-					             	});
-								});
-
-
-								//Editar Evaluación/eliminar evaluacion / PDF
-								$('#tablaEvaluacionesGeneradas tr').on('click', 'button', function(a) { 
-									var eval = $(this).attr('evaluacion');
-									if($(this).attr('role') == 'editar') {
-										//ejecutar edición
-										$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
-										$("#modalHomeTitle").html('<i class="far fa-edit"></i> Edición de Evaluación Parcial #'+eval);
-										$("#modalHomeContenido").load('editor.php?evaluacion='+eval);
-						            	$("#modalHomeBtnCerrar").show();
-										$("#modalHomeBtnCerrar").text('Cancelar');
-										$("#modalHomeCerrarVentana").hide();
-										$("#modalHomeBtnAccion").show();
-										$("#modalHomeBtnAccion").text('Finalizar Edición');
-										$("#modalHome").modal('show');
-									}else if($(this).attr('role') == 'eliminar'){
-										//ejecutar eliminación
-										$("#modalHomeConfig").attr('class', 'modal-dialog');
-										$("#modalHomeTitle").html('<i class="far fa-trash-alt"></i> Atención');
-										$("#modalHomeContenido").html('¿Esta usted seguro de eliminar la evaluación número '+eval+'? <strong>Esta acción no podrá deshacerse una vez se apruebe.</strong>');
-						            	$("#modalHomeBtnCerrar").show();
-										$("#modalHomeBtnCerrar").text('Cancelar');
-										$("#modalHomeCerrarVentana").hide();
-										$("#modalHomeBtnAccion").show();
-										$("#modalHomeBtnAccion").attr('evaluacion', eval);
-										$("#modalHomeBtnAccion").text('Eliminar Evaluación');
-										$("#modalHome").modal('show');
+									if(resultado.parciales == null) {
+										$("#tblEjecutivoCantidad").html('Ninguna Evaluación Parcial');
 									}else{
-										//generar PDF
-										alert('Generar PDF');
+										$("#tblEjecutivoCantidad").html(resultado.parciales.length);
 									}
-								});
+									
+									if(resultado.efinal == null) {
+										$("#tblEjecutivoFinal").html('No Generada');
+									}else{
+										$("#tblEjecutivoFinal").html(parseFloat(resultado.efinal.nota).toFixed(2));
+									}
 
+									if(resultado.quincenal == null) {
+										$("#tblEjecutivoQuincenal").html('No Generada');
+									}else{
+										$("#tblEjecutivoQuincenal").html(parseFloat(resultado.quincenal.nota).toFixed(2));
+									}
+
+									if(resultado.parciales == null)  {
+										var fila = '';
+										fila = fila + '<tr>';
+									fila = fila + '<td colspan="6">No se han ingresado evaluaciones para este ejecutivo</td>';
+										fila = fila + '</tr>';
+										$("#tablaEvaluacionesGeneradas").append(fila);
+									}else{
+										$.each(resultado.parciales, function(i,v) {
+											var fila = '';
+											fila = fila +'<tr evaluacion="'+v.evaluacion+'">';
+						                fila = fila +'<td>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</td>';
+						                fila = fila +'<td scope="row col-9" style="width: 40%;">Evaluación #'+v.evaluacion+'</th>';
+						                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
+						                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
+						                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';
+						                fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
+						              	fila = fila +'</tr>';
+						              	$("#tablaEvaluacionesGeneradas").append(fila);
+										});
+									}
+
+									//elementos clickeados en la tabla para mostrar los datos en el card del lado derecho
+									$('#tablaEvaluacionesGeneradas tr').click(function() {
+										var evalclicked = $(this).attr('evaluacion');
+										$.ajax({
+						             		type: 'post',
+						             		url: 'core/infoEvaluacionParcial.php',
+						             		data: 'evaluacion='+evalclicked,
+						             		beforeSend: function() {
+						             			$("#tblInfoEvaluacion").hide();
+						             			$("#lblInfoEvaluacion").show();
+						             			$("#btnDownloadAudioEvalClicked").hide();
+												$("#btnDownloadPDFEvalClicked").hide();
+						             			$("#lblInfoEvaluacion").html('<img src="facade/img/loading.gif" /><br />Cargando Información de la evaluación parcial...');
+						             		},
+						             		statusCode: {
+						             			301: function(responseObject, textStatus, errorThrown) {
+													$("#modalHome").modal('show');
+									                $("#modalHomeTitle").text('Ejecutivo no existe');
+									                $("#modalHomeContenido").attr('align', 'left');
+									                $("#modalHomeCerrarVentana").show();
+									                $("#modalHomeContenido").html('El ejecutivo por el cual usted ha consultado (<b>'+irqljob+'</b>) no existe en la base de datos. <br /><strong>HTTP 500</strong>');
+									                $("#modalHomeBtnCerrar").show();
+									                $("#modalHomeBtnCerrar").text('Cerrar');
+									                $("#modalHomeBtnAccion").hide();
+						             			},
+						             			200: function(responseObject, textStatus, errorThrown) {
+						             				var resultado = JSON.parse(responseObject);
+						             				if(resultado[0] == null) {
+						             					$("#lblInfoEvaluacion").show();
+						             					$("#lblInfoEvaluacion").html('La evaluación esta generada pero sus items no han sido evaluados');
+						             					$("#tblInfoEvaluacion").hide();
+						             					$("#btnDownloadAudioEvalClicked").hide();
+														$("#btnDownloadPDFEvalClicked").hide();
+						             				}else{
+						             					$("#lblInfoEvaluacion").hide();
+						             					$("#tblInfoEvaluacionT1").html(resultado[0].nombre_categoria);
+						             					$("#tblInfoEvaluacionT2").html(resultado[1].nombre_categoria);
+						             					$("#tblInfoEvaluacionT3").html(resultado[2].nombre_categoria);
+
+						             					$("#tblInfoEvaluacionV1").html(resultado[0].nota_categoria);
+						             					$("#tblInfoEvaluacionV2").html(resultado[1].nota_categoria);
+						             					$("#tblInfoEvaluacionV3").html(resultado[2].nota_categoria);
+						             					$("#tblInfoEvaluacionVNF").html(resultado[0].nota_parcial);
+
+														$("#btnDownloadAudioEvalClicked").show();
+														$("#linkBtnDownloadAudioEvalClicked").attr('href', 'files/audio/'+resultado[0].audio);
+														
+														$("#btnDownloadPDFEvalClicked").show();
+
+						             					$("#tblInfoEvaluacion").show();
+						             				}
+						             			}
+						             		}
+						             	});
+									});
+
+
+									//Editar Evaluación/eliminar evaluacion / PDF
+									$('#tablaEvaluacionesGeneradas tr').on('click', 'button', function(a) { 
+										var eval = $(this).attr('evaluacion');
+										if($(this).attr('role') == 'editar') {
+											//ejecutar edición
+											$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+											$("#modalHomeTitle").html('<i class="far fa-edit"></i> Edición de Evaluación Parcial #'+eval);
+											$("#modalHomeContenido").load('editor.php?evaluacion='+eval);
+							            	$("#modalHomeBtnCerrar").show();
+											$("#modalHomeBtnCerrar").text('Cancelar');
+											$("#modalHomeCerrarVentana").hide();
+											$("#modalHomeBtnAccion").show();
+											$("#modalHomeBtnAccion").text('Finalizar Edición');
+											$("#modalHome").modal('show');
+										}else if($(this).attr('role') == 'eliminar'){
+											//ejecutar eliminación
+											$("#modalHomeConfig").attr('class', 'modal-dialog');
+											$("#modalHomeTitle").html('<i class="far fa-trash-alt"></i> Atención');
+											$("#modalHomeContenido").html('¿Esta usted seguro de eliminar la evaluación número '+eval+'? <strong>Esta acción no podrá deshacerse una vez se apruebe.</strong>');
+							            	$("#modalHomeBtnCerrar").show();
+											$("#modalHomeBtnCerrar").text('Cancelar');
+											$("#modalHomeCerrarVentana").hide();
+											$("#modalHomeBtnAccion").show();
+											$("#modalHomeBtnAccion").attr('evaluacion', eval);
+											$("#modalHomeBtnAccion").text('Eliminar Evaluación');
+											$("#modalHome").modal('show');
+										}else{
+											//generar PDF
+											alert('Generar PDF');
+										}
+									});
+
+								}
 							}
-						}
-					});
-		       	}
-		    }
-		});
+						});
+			       	}
+			    }
+			});
+		}
 	}
 })
 

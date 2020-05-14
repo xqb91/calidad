@@ -1003,159 +1003,164 @@ $("#slcArea").change(function(){
 
 $("#modalHomeBtnAccion").click(function() {
 	if($("#modalHomeBtnAccion").text() == "Guardar Evaluación Parcial") {
-		$.ajax({
-		    type: 'post',
-		    url: 'core/CreateEvaluacionParcialObservacion.php',
-		    data: 'comentarios='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
-		    beforeSend: function() {
-		        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');
-		    },
-		    error: function(XMLHttpRequest, textStatus, errorThrown) {
-			    if (XMLHttpRequest.readyState == 0) {
-					$("#modalHomeConfig").attr('class', 'modal-dialog');
-					$("#modalHomeTitle").text('Verifique su conexión a internet');
-					$("#modalHomeContenido").attr('align', 'left');
-					$("#modalHomeCerrarVentana").show();
-					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
-					$("#modalHomeBtnCerrar").show();
-					$("#modalHomeBtnCerrar").text('Cerrar');
-					$("#modalHomeBtnAccion").hide();
+		if(!$("#infoAudioCargado").is(":visible")) {
+			alert('Debe seleccionar un audio para poder guardar la evaluación parcial');
+			$("#fileAudio").click();
+		}else{ 
+			$.ajax({
+			    type: 'post',
+			    url: 'core/CreateEvaluacionParcialObservacion.php',
+			    data: 'comentarios='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
+			    beforeSend: function() {
+			        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');
+			    },
+			    error: function(XMLHttpRequest, textStatus, errorThrown) {
+				    if (XMLHttpRequest.readyState == 0) {
+						$("#modalHomeConfig").attr('class', 'modal-dialog');
+						$("#modalHomeTitle").text('Verifique su conexión a internet');
+						$("#modalHomeContenido").attr('align', 'left');
+						$("#modalHomeCerrarVentana").show();
+						$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+						$("#modalHomeBtnCerrar").show();
+						$("#modalHomeBtnCerrar").text('Cerrar');
+						$("#modalHomeBtnAccion").hide();
+				    }
+				},
+			    statusCode: {
+			        404: function(responseObject, textStatus, errorThrown) {
+			            alert('No se encontró respuesta del servidor para los periodos a trabajar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 404');
+			        },
+			        500: function(responseObject, textStatus, errorThrown) {
+			            alert('El servidor no encontró el número de evaluación que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 500');
+			        },
+			        501: function(responseObject, textStatus, errorThrown) {
+			            alert('El servidor no encontró los comentarios que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 501');
+			        },
+					503: function(responseObject, textStatus, errorThrown) {
+			            alert('La evaluación no retornó ningun resultado o bien el controller retornó un objeto nulo. CORE CREATEEVALUACIONPARCIALOBSERVARCION 503');
+			        },
+					301: function(responseObject, textStatus, errorThrown) {
+			            alert('Los cambios no pudieron ser guardados, por favor intentelo más tarde. CORE CREATEEVALUACIONPARCIALOBSERVARCION 301');
+			        },
+			        200: function(responseObject, textStatus, errorThrown) {
+			        	$("#modalHomeConfig").attr('class', 'modal-dialog');
+			            $("#modalHomeContenido").html('La evaluación parcial ha sido guardada!');
+			            $("#modalHomeBtnCerrar").show();
+			            $("#modalHomeBtnCerrar").text('Cerrar');
+			            $("#modalHomeBtnAccion").hide();
+
+						$.ajax({
+						    type: 'post',
+						    url: 'core/ListEjecutivosPorAreaParciales.php',
+						    data: 'area='+$("#slcArea").val(),
+						    beforeSend: function() {
+						        //inicializando modal que valida sesión de raulí
+						        //$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Buscando ejecutivos del área seleccionada...');
+						    },
+						    statusCode: {
+						            404: function(responseObject, textStatus, errorThrown) {
+						            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+						            	$("#modalHome").modal('show');
+						                $("#modalHomeTitle").text('Problema al cargar el periodo');
+						                $("#modalHomeContenido").attr('align', 'left');
+						                $("#modalHomeCerrarVentana").show();
+						                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
+						                $("#modalHomeBtnCerrar").show();
+						                $("#modalHomeBtnCerrar").text('Cerrar');
+						                $("#modalHomeBtnAccion").hide();
+						            },
+						            500: function(responseObject, textStatus, errorThrown) {
+						            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+						            	$("#modalHome").modal('show');
+						                $("#modalHomeTitle").text('Ocurrió un error');
+						                $("#modalHomeContenido").attr('align', 'left');
+						                $("#modalHomeCerrarVentana").show();
+						                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT EMPTY</strong>');
+						                $("#modalHomeBtnCerrar").show();
+						                $("#modalHomeBtnCerrar").text('Cerrar');
+						                $("#modalHomeBtnAccion").hide();
+						            },
+						            401: function(responseObject, textStatus, errorThrown) {
+						            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+						            	$("#modalHome").modal('show');
+						                $("#modalHomeTitle").text('Ocurrió un error');
+						                $("#modalHomeContenido").attr('align', 'left');
+						                $("#modalHomeCerrarVentana").show();
+						                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT NOT NUMBER</strong>');
+						                $("#modalHomeBtnCerrar").show();
+						                $("#modalHomeBtnCerrar").text('Cerrar');
+						                $("#modalHomeBtnAccion").hide();
+						            },
+						            301: function(responseObject, textStatus, errorThrown) {
+						            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+						            	$("#modalHome").modal('show');
+						                $("#modalHomeTitle").text('Ocurrió un error');
+						                $("#modalHomeContenido").attr('align', 'left');
+						                $("#modalHomeCerrarVentana").show();
+						                $("#modalHomeContenido").html('El área que ha seleccionado no tiene ejecutivos registrados. Por favor contacte a su jefatura para más información<br /><strong>PHP CORE ARRAY CONTROLLER EMPTY</strong>');
+						                $("#modalHomeBtnCerrar").show();
+						                $("#modalHomeBtnCerrar").text('Cerrar');
+						                $("#modalHomeBtnAccion").hide();
+						            },
+						            200: function(responseObject, textStatus, errorThrown) {
+						                var resultados = JSON.parse(responseObject);
+										if($.trim(responseObject) == "NULL") {
+				                            alert('No hay valores');
+				                        }else{
+				                            var resultado = $.parseJSON(responseObject);
+
+				                            //cargando datos a la tabla
+				                            tablaEjecutivos.clear().draw();
+				                            tablaEjecutivos.destroy();
+				                            tablaEjecutivos = null;
+				                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
+											    data: resultado,
+											    columns: [
+											    	{ data: 'promedio_ejecutivo'},
+											    	{ data: 'cantidad_evaluaciones'},
+											        { data: 'rut_ejecutivo' },
+											        { data: 'nombre_ejecutivo' },
+											        { data: null},
+											        { data: null},
+											        { data: null},
+											    ],
+											    //añadiendo botones de acción
+										        "columnDefs": [ 
+										        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verFinal" title="evaluación Final"><i class="fab fa-font-awesome-flag"></i> Final</button>'},
+										        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verEjecutivo" title="Detalles de Ejecutivo"><i class="fas fa-history"></i> Ver Evaluaciones</button>'},
+										        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="crearEval" title="Nueva evaluación Parcial"><i class="fas fa-asterisk"></i> Nueva</button>'}
+										        ],
+												rowCallback : function(row, data, index) {
+													if(parseFloat(data.promedio_ejecutivo) <= 10 && parseFloat(data.promedio_ejecutivo) >= 9) {
+													 	$(row).find('td:eq(0)').addClass('table-success');
+													}else if(parseFloat(data.promedio_ejecutivo) >= 8 && parseFloat(data.promedio_ejecutivo) < 9) {
+													 	$(row).find('td:eq(0)').addClass('table-warning');
+													}else{
+													 	$(row).find('td:eq(0)').addClass('table-danger');
+													}
+
+													//bloqueo de botones
+													if (data.cantidad_evaluaciones == 0) {
+														$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+														$(row).find('button.btn.btn-info.btn-sm').prop('disabled', true);
+													}else{
+														$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+														$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);
+													}
+
+												}
+													
+											});
+
+				                        }
+						            }           
+						        }
+					 	});
+
+
+			       	}
 			    }
-			},
-		    statusCode: {
-		        404: function(responseObject, textStatus, errorThrown) {
-		            alert('No se encontró respuesta del servidor para los periodos a trabajar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 404');
-		        },
-		        500: function(responseObject, textStatus, errorThrown) {
-		            alert('El servidor no encontró el número de evaluación que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 500');
-		        },
-		        501: function(responseObject, textStatus, errorThrown) {
-		            alert('El servidor no encontró los comentarios que debe actualizar. CORE CREATEEVALUACIONPARCIALOBSERVARCION 501');
-		        },
-				503: function(responseObject, textStatus, errorThrown) {
-		            alert('La evaluación no retornó ningun resultado o bien el controller retornó un objeto nulo. CORE CREATEEVALUACIONPARCIALOBSERVARCION 503');
-		        },
-				301: function(responseObject, textStatus, errorThrown) {
-		            alert('Los cambios no pudieron ser guardados, por favor intentelo más tarde. CORE CREATEEVALUACIONPARCIALOBSERVARCION 301');
-		        },
-		        200: function(responseObject, textStatus, errorThrown) {
-		        	$("#modalHomeConfig").attr('class', 'modal-dialog');
-		            $("#modalHomeContenido").html('La evaluación parcial ha sido guardada!');
-		            $("#modalHomeBtnCerrar").show();
-		            $("#modalHomeBtnCerrar").text('Cerrar');
-		            $("#modalHomeBtnAccion").hide();
-
-					$.ajax({
-					    type: 'post',
-					    url: 'core/ListEjecutivosPorAreaParciales.php',
-					    data: 'area='+$("#slcArea").val(),
-					    beforeSend: function() {
-					        //inicializando modal que valida sesión de raulí
-					        //$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Buscando ejecutivos del área seleccionada...');
-					    },
-					    statusCode: {
-					            404: function(responseObject, textStatus, errorThrown) {
-					            	$("#modalHomeConfig").attr('class', 'modal-dialog');
-					            	$("#modalHome").modal('show');
-					                $("#modalHomeTitle").text('Problema al cargar el periodo');
-					                $("#modalHomeContenido").attr('align', 'left');
-					                $("#modalHomeCerrarVentana").show();
-					                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
-					                $("#modalHomeBtnCerrar").show();
-					                $("#modalHomeBtnCerrar").text('Cerrar');
-					                $("#modalHomeBtnAccion").hide();
-					            },
-					            500: function(responseObject, textStatus, errorThrown) {
-					            	$("#modalHomeConfig").attr('class', 'modal-dialog');
-					            	$("#modalHome").modal('show');
-					                $("#modalHomeTitle").text('Ocurrió un error');
-					                $("#modalHomeContenido").attr('align', 'left');
-					                $("#modalHomeCerrarVentana").show();
-					                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT EMPTY</strong>');
-					                $("#modalHomeBtnCerrar").show();
-					                $("#modalHomeBtnCerrar").text('Cerrar');
-					                $("#modalHomeBtnAccion").hide();
-					            },
-					            401: function(responseObject, textStatus, errorThrown) {
-					            	$("#modalHomeConfig").attr('class', 'modal-dialog');
-					            	$("#modalHome").modal('show');
-					                $("#modalHomeTitle").text('Ocurrió un error');
-					                $("#modalHomeContenido").attr('align', 'left');
-					                $("#modalHomeCerrarVentana").show();
-					                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT NOT NUMBER</strong>');
-					                $("#modalHomeBtnCerrar").show();
-					                $("#modalHomeBtnCerrar").text('Cerrar');
-					                $("#modalHomeBtnAccion").hide();
-					            },
-					            301: function(responseObject, textStatus, errorThrown) {
-					            	$("#modalHomeConfig").attr('class', 'modal-dialog');
-					            	$("#modalHome").modal('show');
-					                $("#modalHomeTitle").text('Ocurrió un error');
-					                $("#modalHomeContenido").attr('align', 'left');
-					                $("#modalHomeCerrarVentana").show();
-					                $("#modalHomeContenido").html('El área que ha seleccionado no tiene ejecutivos registrados. Por favor contacte a su jefatura para más información<br /><strong>PHP CORE ARRAY CONTROLLER EMPTY</strong>');
-					                $("#modalHomeBtnCerrar").show();
-					                $("#modalHomeBtnCerrar").text('Cerrar');
-					                $("#modalHomeBtnAccion").hide();
-					            },
-					            200: function(responseObject, textStatus, errorThrown) {
-					                var resultados = JSON.parse(responseObject);
-									if($.trim(responseObject) == "NULL") {
-			                            alert('No hay valores');
-			                        }else{
-			                            var resultado = $.parseJSON(responseObject);
-
-			                            //cargando datos a la tabla
-			                            tablaEjecutivos.clear().draw();
-			                            tablaEjecutivos.destroy();
-			                            tablaEjecutivos = null;
-			                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
-										    data: resultado,
-										    columns: [
-										    	{ data: 'promedio_ejecutivo'},
-										    	{ data: 'cantidad_evaluaciones'},
-										        { data: 'rut_ejecutivo' },
-										        { data: 'nombre_ejecutivo' },
-										        { data: null},
-										        { data: null},
-										        { data: null},
-										    ],
-										    //añadiendo botones de acción
-									        "columnDefs": [ 
-									        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verFinal" title="evaluación Final"><i class="fab fa-font-awesome-flag"></i> Final</button>'},
-									        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verEjecutivo" title="Detalles de Ejecutivo"><i class="fas fa-history"></i> Ver Evaluaciones</button>'},
-									        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="crearEval" title="Nueva evaluación Parcial"><i class="fas fa-asterisk"></i> Nueva</button>'}
-									        ],
-											rowCallback : function(row, data, index) {
-												if(parseFloat(data.promedio_ejecutivo) <= 10 && parseFloat(data.promedio_ejecutivo) >= 9) {
-												 	$(row).find('td:eq(0)').addClass('table-success');
-												}else if(parseFloat(data.promedio_ejecutivo) >= 8 && parseFloat(data.promedio_ejecutivo) < 9) {
-												 	$(row).find('td:eq(0)').addClass('table-warning');
-												}else{
-												 	$(row).find('td:eq(0)').addClass('table-danger');
-												}
-
-												//bloqueo de botones
-												if (data.cantidad_evaluaciones == 0) {
-													$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
-													$(row).find('button.btn.btn-info.btn-sm').prop('disabled', true);
-												}else{
-													$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
-													$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);
-												}
-
-											}
-												
-										});
-
-			                        }
-					            }           
-					        }
-				 	});
-
-
-		       	}
-		    }
-		});
+			});
+		}
 	}
 })

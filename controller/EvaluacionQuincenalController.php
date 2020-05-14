@@ -377,6 +377,46 @@
 			}
 		}
 
+		public function actualizar($param) {
+			try {
+				//objeto
+				$obj = $param;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "UPDATE evaluacion_quincenal SET "; 
+					$consulta = $consulta."fecha_creacion='".$obj->getfecha_creacion()."', ";
+					$consulta = $consulta."rut_evaluador=".$obj->getrut_evaluador().", ";
+					$consulta = $consulta."nota_quincenal=".$obj->getnota_quincenal()." "; 
+					$consulta = $consulta."WHERE ";
+					$consulta = $consulta."numero_quincenal=".$obj->getnumero_quincenal();
+
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultado == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
+							return 1;
+						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
+							return 0;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - actualizar: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - actualizar: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+
 		public function eliminar($param) {
 			try {
 				//objeto

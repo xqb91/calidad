@@ -1,13 +1,33 @@
-<?php
-    if(isset($_GET["ejecutivo"])) {
-      $rut = filter_input(INPUT_GET, ("ejecutivo"));
-      if($rut == "") {
-        die();
-      }
-    }else{
-      $rut = null;
+<?php 
+  session_start();
+  if(!isset($_SESSION['rauliUser'] )) {
+    header('Location: index.php');
+    exit;
+  }
+  if(!isset($_SESSION['lastActivity'] )) {
+    header('Location: index.php');
+    exit;
+  }
+
+  if(!isset($_SESSION['current_area_work'])) {
+    header('Location: index.php');
+    exit;
+  }
+
+  if(!isset($_SESSION['current_periodo_work'])) {
+    header('Location: index.php');
+    exit;
+  }
+
+  if(isset($_GET["ejecutivo"])) {
+    $rut = filter_input(INPUT_GET, ("ejecutivo"));
+    if($rut == "") {
       die();
     }
+  }else{
+    $rut = null;
+    die();
+  }
 ?>
 <!DOCTYPE html>
 <html lang="ES">

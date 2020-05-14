@@ -491,7 +491,7 @@
 				$consulta = $consulta."CAST(avg(a.nota_final) as decimal(16,2)) as nota_parcial, ";
 				$consulta = $consulta."d.nombre_categoria, ";
 				$consulta = $consulta."CAST(avg(d.peso_categoria) as Integer) as peso_categoria, ";
-				$consulta = $consulta."CAST(avg(b.nota) as decimal(16,2)) as nota_categoria, ";
+				$consulta = $consulta."CAST(avg(CASE WHEN b.nota <> -1 THEN b.nota END) as decimal(16,2)) as nota_categoria, ";
 				$consulta = $consulta."(SELECT z.nombre_audio FROM audio z WHERE z.numero_evaluacion = a.numero_evaluacion) as audio ";
 				$consulta = $consulta."FROM ";
 				$consulta = $consulta."evaluacion_parcial a ";

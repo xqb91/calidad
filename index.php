@@ -5,7 +5,18 @@
   $_SESSION['rauliUser'] = 'ntoro';
   //---- NO OLVIDAR SETEAR ESTA VARIABLE DE SESION CUANDO INICIE EN EL SISTEMA VIEJO!!!!!!!!!
   $_SESSION['lastActivity'] = date('Y-m-d H:i:s');
+
+  if(isset($_SESSION['current_area_work'])) {
+    header('Location: home.php');
+    exit;
+  }
+
+  if(isset($_SESSION['current_periodo_work'])) {
+    header('Location: home.php');
+    exit;
+  }
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 

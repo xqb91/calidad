@@ -94,12 +94,11 @@
 					$consulta = $consulta."(fecha, usuario, numero_evaluacion, fecha_evaluacion,rut_ejecutivo,rut_evaluador,nota_final,observacion,codigo_area) VALUES ";
 					
 					$consulta = $consulta."('".date('Y-m-d H:i:s')."','"
-					        .$obj->getusuario()."', ".$obj->getnumero_evaluacion().",'".$bj->getfecha_evaluacion()."',".$obj->getrut_ejecutivo().", ".$obj->getrut_evaluador().", ".$obj->getnota_final().",'".$obj->getobservacion()."', ".$obj->getcodigo_area()." );";
-					
+					        .$obj->getusuario()."', ".$obj->getnumero_evaluacion().",'".$obj->getfecha_evaluacion()."',".$obj->getrut_ejecutivo().", ".$obj->getrut_evaluador().", ".$obj->getnota_final().",'".$obj->getobservacion()."', ".$obj->getcodigo_area()." );";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
-						if($resultados == true) {
+						if($resultado == true) {
 							$this->databaseTransaction->confirmar();
 							$this->databaseTransaction->cerrar();
 							return 1;

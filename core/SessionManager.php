@@ -3,11 +3,11 @@
 	include("../config/basicos.php");
 	include(dirController."EvaluadorController.php");
 	session_start();
-	sleep(2);
+	sleep(1);
 	if(isset($_SESSION["rauliUser"])) {
 		if(isset($_SESSION['loginUser']) && isset($_SESSION['lastActivity'])) {
 			//Sesiones iniciadas... Validando tiempo de inactividad
-			$usuario 	=	$_SESSION['loginUser'];
+			$usuario 	=	$_SESSION['rauliUser'];
 			$actividad  = 	$_SESSION['lastActivity'];
 
 			if($usuario == null) {
@@ -21,8 +21,7 @@
 					$last 		= new DateTime($actividad);
 					$now 		= new DateTime(date('Y-m-d H:i:s'));
 					if($last->diff($now)->i <= maxTiempoInactividad) {
-						$_SESSION['lastActivity'] = date('Y-m-d H:i:s');
-						http_response_code(200);
+							http_response_code(200);
 					}else{
 						session_destroy();
 						http_response_code(401);

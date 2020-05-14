@@ -88,7 +88,7 @@
 		public function ingresar($LogAudio) {
 			try {
 				//objeto
-				$obj = $Adjunto;
+				$obj = $LogAudio;
 				if($obj != null) {
 					//construyendo string
 					$consulta = "INSERT INTO log_audio ";
@@ -97,7 +97,7 @@
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
-						if($resultados == true) {
+						if($resultado == true) {
 							$this->databaseTransaction->confirmar();
 							$this->databaseTransaction->cerrar();
 							return 1;

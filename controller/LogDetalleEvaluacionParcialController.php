@@ -1,6 +1,6 @@
 <?php
 
-	include(dirModel."Ciclo.php");
+	include(dirModel."LogDetalleEvaluacionParcial.php");
 	class LogDetallelEvaluacionParcialController {
 
 		private $databaseTransaction;
@@ -88,19 +88,19 @@
 		public function ingresar($LogDetalleEvaluacionParcial) {
 			try {
 				//objeto
-				$obj = $LogEvaluacionParcial;
+				$obj = $LogDetalleEvaluacionParcial;
 				if($obj != null) {
 					//construyendo string
 					$consulta = "INSERT INTO log_detalle_evaluacion_parcial ";
 					$consulta = $consulta."(fecha, usuario, numero_evaluacion, codigo_item,nota) VALUES ";
 					
 					$consulta = $consulta."('".date('Y-m-d H:i:s')."','"
-					        .$obj->getusuario()."',".$bj->getnumero_evaluacion().",".$obj->getcodigo_item().", ".$obj->getnota().", ".$obj->getnota_final().",'".$obj->getobservacion()."', ".$obj->getcodigo_area()." );";
+					        .$obj->getusuario()."',".$obj->getnumero_evaluacion().",".$obj->getcodigo_item().", ".$obj->getnota().");";
 					
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
-						if($resultados == true) {
+						if($resultado == true) {
 							$this->databaseTransaction->confirmar();
 							$this->databaseTransaction->cerrar();
 							return 1;

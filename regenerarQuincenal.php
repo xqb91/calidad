@@ -1,4 +1,24 @@
-<?php
+<?php 
+  session_start();
+  if(!isset($_SESSION['rauliUser'] )) {
+    header('Location: index.php');
+    exit;
+  }
+  if(!isset($_SESSION['lastActivity'] )) {
+    header('Location: index.php');
+    exit;
+  }
+
+  if(!isset($_SESSION['current_area_work'])) {
+    header('Location: index.php');
+    exit;
+  }
+
+  if(!isset($_SESSION['current_periodo_work'])) {
+    header('Location: index.php');
+    exit;
+  }
+
   if(isset($_GET["ejecutivo"]) && isset($_GET["area"])) {
     $irqljob  = filter_input(INPUT_GET, ("ejecutivo"));
     $irqlarea = filter_input(INPUT_GET, ("area"));

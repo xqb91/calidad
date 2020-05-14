@@ -144,6 +144,65 @@
 			}
 		}
 
+
+		public function listarPorPeriodo($periodo) {
+			try {
+				$consulta = "SELECT * FROM evaluaciones_area WHERE periodo = '".$periodo."'";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionesArea($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionesAreaController - listarPorCodigoAreaPeriodo: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+		public function ultimoPeriodoActivo() {
+			try {
+				$consulta = "SELECT * FROM evaluaciones_area WHERE periodo = (SELECT max(periodo) FROM  evaluaciones_area)";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionesArea($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionesAreaController - listarPorCodigoAreaPeriodo: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
 		public function ingresar($param) {
 			try {
 				//objeto
@@ -151,8 +210,8 @@
 				if($obj != null) {
 					//construyendo string
 					$consulta = "INSERT INTO evaluaciones_area ";
-					$consulta = $consulta."(codigo_area, periodo, cantidad_quincenales, cantidadd_finales) VALUES ";
-					$consulta = $consulta."(".$obj->getcodigo_area().", '".$obj->getperiodo()."', '".$obj->getcantidad_quincenales()."', ".$obj->cantidad_finales()." );";
+					$consulta = $consulta."(codigo_area, periodo, cantidad_quincenales, cantidad_finales) VALUES ";
+					$consulta = $consulta."(".$obj->getcodigo_area().", '".$obj->getperiodo()."', ".$obj->getcantidad_quincenales().", ".$obj->getcantidad_finales()." );";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -186,7 +245,7 @@
 				if($obj != null) {
 					//construyendo string
 					$consulta = "UPDATE evaluaciones_area ";
-					$consulta = $consulta."SET codigo_area = ".$obj->getcodigo_area().", periodo = '".$obj->getperiodo()."', cantidad_quincenales = ".$obj->getcantidad_quincenales().", cantidadd_finales = ".$obj->cantidad_finales()." ";
+					$consulta = $consulta."SET codigo_area = ".$obj->getcodigo_area().", periodo = '".$obj->getperiodo()."', cantidad_quincenales = ".$obj->getcantidad_quincenales().", cantidadd_finales = ".$obj->getcantidad_finales()." ";
 					$consulta = $consulta."WHERE id = ".$obj->getid().";";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
