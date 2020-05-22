@@ -530,5 +530,56 @@
 			}
 		}
 
+
+		public function detallePorItemPDF($evaluacion) {
+			try {			
+				$string = "SELECT ";
+				$string = $string."d.codigo_categoria, ";
+				$string = $string."d.nombre_categoria, ";
+				$string = $string."d.peso_categoria, ";
+				$string = $string."(SELECT count(*) FROM item_evaluacion cc INNER JOIN categoria dd ON cc.codigo_categoria = dd.codigo_categoria WHERE dd.codigo_categoria = d.codigo_categoria) cantidad_items, ";
+				$string = $string."c.codigo_item, ";
+				$string = $string."c.nombre_item, ";
+				$string = $string."b.nota ";
+				$string = $string."FROM  ";
+				$string = $string."evaluacion_parcial a  ";
+				$string = $string."INNER JOIN detalle_evaluacion_parcial b ON a.numero_evaluacion = b.numero_evaluacion ";
+				$string = $string."INNER JOIN item_evaluacion c on b.codigo_item = c.codigo_item ";
+				$string = $string."INNER JOIN categoria d ON c.codigo_categoria = d.codigo_categoria ";
+				$string = $string."WHERE  ";
+				$string = $string."a.numero_evaluacion = ".$evaluacion." ";
+				$string = $string."GROUP BY ";
+				$string = $string."d.codigo_categoria, ";
+				$string = $string."d.nombre_categoria, ";
+				$string = $string."d.peso_categoria, ";
+				$string = $string."c.codigo_item, ";
+				$string = $string."c.nombre_item, ";
+				$string = $string."b.nota ";
+
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($string);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$arreglo = null;
+						$i = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$arreglo[$i] = $registro;
+							$i++;
+						}
+						return $arreglo;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionParcialController - detalleTotalEvaluacionParcial: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo "Error Crítico: ".$e->getMessage(); }
+				return false;
+			}
+		}
+
 	}
 ?>

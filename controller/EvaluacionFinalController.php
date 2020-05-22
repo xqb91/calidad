@@ -114,6 +114,35 @@
 			}
 		}
 
+		public function listarPorPeriodo($periodo) {
+			try {
+				$consulta = "SELECT * FROM evaluacion_final WHERE periodo = '".$periodo."' ORDER BY numero_final DESC";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionFinal($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionFinalController - listarPorCodigo: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
 		public function ingresar($param) {
 			try {
 				//objeto
@@ -121,8 +150,8 @@
 				if($obj != null) {
 					//construyendo string
 					$consulta = "INSERT INTO evaluacion_final ";
-					$consulta = $consulta."(fecha_creacion, periodo, rut_ejecutivo, rut_evaluador, codigo_area, observaciones) VALUES ";
-					$consulta = $consulta."('".date('Y-m-d H:i:s')."', '".$obj->getperiodo()."', ".$obj->getejecutivo_rut_ejecutivo().", ".$obj->getevaluador_rut_evaluador().", ".$obj->getejecutivo_codigo_area().", '".$obj->getobservaciones()."'' );";
+					$consulta = $consulta."(fecha_creacion, periodo, rut_ejecutivo, rut_evaluador, codigo_area, observaciones, nota_final) VALUES ";
+					$consulta = $consulta."('".date('Y-m-d H:i:s')."', '".$obj->getperiodo()."', ".$obj->getejecutivo_rut_ejecutivo().", ".$obj->getevaluador_rut_evaluador().", ".$obj->getejecutivo_codigo_area().", '".$obj->getobservaciones()."', ".$obj->getnotafinal()." );";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -218,5 +247,70 @@
 			}
 		}
 
+		public function calcularNotaFinal($ejecutivo = null, $periodo = null) {
+			try {
+				if($ejecutivo != null) {
+					if($periodo != null) {
+						//construyendo string
+						$consulta = "SELECT ";
+						$consulta = $consulta."nombre_categoria, ";
+						$consulta = $consulta."CAST(AVG(promedio) as double(19,2)) as promedio, ";
+						$consulta = $consulta."CAST(AVG(peso_categoria) as double(19,2)) as peso, ";
+						$consulta = $consulta."CAST(AVG(nota_final) as double(19,2)) as final ";
+						$consulta = $consulta."FROM ( ";
+						$consulta = $consulta."SELECT ";
+						$consulta = $consulta."a.numero_evaluacion, ";
+						$consulta = $consulta."d.nombre_categoria, ";
+						$consulta = $consulta."CAST(AVG(CASE WHEN b.nota <> -1 THEN b.nota END) as double(19,2)) as promedio, ";
+						$consulta = $consulta."CAST(AVG(d.peso_categoria) as integer) as peso_categoria, ";
+						$consulta = $consulta."CAST(AVG(a.nota_final) as double(19,2)) as nota_final ";
+						$consulta = $consulta."FROM ";
+						$consulta = $consulta."evaluacion_parcial a ";
+						$consulta = $consulta."INNER JOIN detalle_evaluacion_parcial b ON a.numero_evaluacion = b.numero_evaluacion ";
+						$consulta = $consulta."INNER JOIN item_evaluacion c ON b.codigo_item = c.codigo_item ";
+						$consulta = $consulta."INNER JOIN categoria d ON c.codigo_categoria = d.codigo_categoria ";
+						$consulta = $consulta."WHERE ";
+						$consulta = $consulta."a.rut_ejecutivo = ".$ejecutivo." AND ";
+						$consulta = $consulta."a.periodo = '".$periodo."' ";
+						$consulta = $consulta."GROUP BY ";
+						$consulta = $consulta."a.numero_evaluacion, ";
+						$consulta = $consulta."d.nombre_categoria ";
+						$consulta = $consulta.")xx ";
+						$consulta = $consulta."GROUP BY ";
+						$consulta = $consulta."nombre_categoria";
+						//ejecutando la consulta
+						if($this->databaseTransaction != null) {
+							$resultado = $this->databaseTransaction->ejecutar($consulta);
+							if($this->databaseTransaction->cantidadResultados() == 0) {
+								$this->databaseTransaction->cerrar();
+								return null;
+							}else{
+								$array = null;
+								$i 	   = 0;
+								while($registro = $this->databaseTransaction->resultados()) {
+									$array[$i] = $registro;
+									$i++;
+								}
+								$this->databaseTransaction->cerrar();
+								return $array;
+							}
+						}else{
+							if(ambiente == 'DEV') { echo "EvaluacionFinalController - calcularNotaFinal: El objeto DatabaseTransaction se encuentra nulo"; }
+							return false;
+						}
+
+					}else{
+						if(ambiente == 'DEV') { echo "EvaluacionFinalController - calcularNotaFinal: El parammetro periodo se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionFinalController - calcularNotaFinal: El parametro ejecutivo se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
 	}
 ?>

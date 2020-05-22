@@ -58,7 +58,7 @@
 
 		public function listarPorNumeroQUincenal($quincenal) {
 			try {
-				$consulta = "SELECT * FROM detalle_evaluacion_quincenal WHERE numero_quincenal = ".$quincenal."  ORDER BY numero_quincenal DESC, fecha_creacion DESC";
+				$consulta = "SELECT * FROM detalle_evaluacion_quincenal WHERE numero_quincenal = ".$quincenal."  ORDER BY numero_quincenal DESC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);

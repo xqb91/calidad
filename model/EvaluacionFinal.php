@@ -42,6 +42,14 @@
 			}
 		}
 		
+		public function getevaluador_rut_evaluador() {
+			try {
+				return $this->evaluador_rut_evaluador;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
 		public function getperiodo() {
 			try {
 				return $this->periodo;
@@ -71,6 +79,15 @@
 				return $this->observaciones;
 			}catch(Exception $e) {
 				return null;
+			}
+		}
+
+		public function setobservaciones($observaciones) {
+			try {
+				$this->observaciones = $observaciones;
+				return true;
+			}catch(Exception $e) {
+				return false;
 			}
 		}
 

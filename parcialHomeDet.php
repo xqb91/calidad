@@ -105,7 +105,7 @@
 
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item" id="btn-evafinal">
-        <a class="nav-link collapsed" href="#" aria-expanded="true" aria-controls="collapsePages">
+        <a class="nav-link collapsed" href="finalHome.php" aria-expanded="true" aria-controls="collapsePages">
           <i class="fas fa-flag"></i>
           <span>Finales</span>
         </a>

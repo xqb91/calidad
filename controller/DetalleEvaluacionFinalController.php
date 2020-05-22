@@ -1,7 +1,7 @@
 <?php
 	//Controlador OK: 09.04.2020
-	include(dirModel."DetalleEvaluadorFinal.php");
-	class DetalleEvaluadorFinalController {
+	include(dirModel."DetalleEvaluacionFinal.php");
+	class DetalleEvaluacionFinalController {
 
 		private $databaseTransaction;
 
@@ -122,18 +122,18 @@
 					//construyendo string
 					$consulta = "INSERT INTO detalle_evaluacion_final ";
 					$consulta = $consulta."(numero_evaluacion, numero_final) VALUES ";
-					$consulta = $consulta."('".$obj->getnumero_evaluacion()."', '".$obj->numero_final()."' );";
+					$consulta = $consulta."('".$obj->getnumero_evaluacion()."', '".$obj->getnumero_final()."' );";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
 						if($resultado == true) {
 							$this->databaseTransaction->confirmar();
 							$this->databaseTransaction->cerrar();
-							return 1;
+							return true;
 						}else{
 							$this->databaseTransaction->deshacer();
 							$this->databaseTransaction->cerrar();
-							return 0;
+							return false;
 						}
 					}else{
 						if(ambiente == 'DEV') { echo "CicloController - ingresar: El objeto DatabaseTransaction se encuentra nulo"; }
@@ -183,6 +183,41 @@
 				return false;
 			}
 		}
+
+		public function eliminarPorFinal($param) {
+			try {
+				//objeto
+				$obj = $param;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "DELETE FROM detalle_evaluacion_final ";
+					$consulta = $consulta."WHERE numero_final = ".$obj."";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultado == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
+							return 1;
+						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
+							return 0;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "CicloController - eliminar: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "CicloController - eliminar: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
 
 		public function eliminarPorParcial($param) {
 			try {

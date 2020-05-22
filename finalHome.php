@@ -20,7 +20,7 @@
   }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
 
@@ -66,7 +66,7 @@
       <li class="nav-item" id="btn-inicio">
         <a class="nav-link" href="home.php">
           <i class="fas fa-home"></i>
-          <span>Inicio</span></a> 
+          <span>Inicio</span></a>
       </li>
 
       <!-- Divider -->
@@ -74,27 +74,27 @@
 
       <!-- Heading -->
       <div class="sidebar-heading">
-        Nota A
+        Evaluaciones
       </div>
 
       <!-- Nav Item - Utilities Collapse Menu -->
-      <li  class="nav-item no-active" id="btn-evaparcial">
-        <a class="nav-link collapsed" href="#" aria-expanded="true" aria-controls="collapseUtilities">
+      <li class="nav-item"  id="btn-evaparcial">
+        <a class="nav-link collapsed" href="parcialHome.php" aria-expanded="true" aria-controls="collapseUtilities">
           <i class="far fa-edit"></i>
-          <span>Nota B</span>
+          <span>Parciales</span>
         </a>
       </li>
 
       <!-- Nav Item - Utilities Collapse Menu -->
       <li class="nav-item" id="btn-evaquincenal">
-        <a class="nav-link collapsed" href="#" aria-expanded="true" aria-controls="collapseUtilities">
+        <a class="nav-link collapsed" href="quincenalHome.php" aria-expanded="true" aria-controls="collapseUtilities">
           <i class="far fa-calendar-check"></i>
           <span>Quincenales</span>
         </a>
       </li>
 
       <!-- Nav Item - Pages Collapse Menu -->
-      <li class="nav-item active" class="nav-item" id="btn-evafinal">
+      <li class="nav-item active" id="btn-evafinal">
         <a class="nav-link collapsed" href="#" aria-expanded="true" aria-controls="collapsePages">
           <i class="fas fa-flag"></i>
           <span>Finales</span>
@@ -171,11 +171,6 @@
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Cierre Temprano
-                </a>
-                <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                   Salir del sistema de Calidad
@@ -189,66 +184,84 @@
         <!-- End of Topbar -->
 
         <!-- Begin Page Content -->
-
         <div class="container-fluid">
           <div >
           <!-- Content Row -->
             <div class="row">
 <!-- Area Chart -->
-              <div class="col-xl-12 col-lg-12"> 
-                <div class="card shadow mb-2">
-                <!-- Card Header - Dropdown -->
-                  <!--<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary"></h6>
-                  </div>-->
-                <!-- Card Body -->
-                      <table class="table table-striped">
-                        <thead>
-                          <tr>
-                            <th scope="col" style="width: 30%;">Ejecutivo</th> 
-                            <th scope="col">Area</th>
-                            <th scope="col">Periodo</th>
-                            <th scope="col">Nota A</th>
-                            <th scope="col">Nota B</th>
-                            <th scope="col">Nota C</th>                            
-                            <th scope="col">Nota Final</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <th scope="row col-9">Gonzalo</th>
-                            <td>Cobranza</td>
-                            <td>2020-05</td>
-                            <td>10</td>
-                            <td>0.00</td>
-                            <td>0.00</td>
-                            <td>0.00</td>
-                          </tr>
-                        </tbody>
-                      </table>  
-                </div>
-              </div>
-
-
-              <div class="col-xl-12 col-lg-10">
+              <div class="col-xl-9 col-lg-10">
                 <div class="card shadow mb-2">
                 <!-- Card Header - Dropdown -->
                   <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Obervaciones</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Listado de Ejecutivos</h6>
                   </div>
                 <!-- Card Body -->
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      
-                    </div>
-                    <textarea  rows="10" cols="20" minlength="15" maxlength="10" class="form-control" aria-label="With textarea"></textarea>
-                  </div>
+                  <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-bordered" id="tablaEjecutivos" width="100%" cellspacing="0">
+                          <thead>
+                            <tr>
+                              <th><i class="fas fa-calculator"></i></i></th>
+                              <th>Rut de Ejecutivo</th>
+                              <th>Nombre de Ejecutivo</th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tfoot>
+                            <tr>
+                              <th><i class="fas fa-calculator"></i></i></th>
+                              <th>Rut de Ejecutivo</th>
+                              <th>Nombre de Ejecutivo</th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                            </tr>
+                          </tfoot>
+                          <tbody>
+                          </tbody>
+                        </table>
+                      </div>
+                </div>
               </div>
-              <button type="button" class="btn btn-primary">Guardar</button>
-              <button type="button" class="btn btn-primary">Cancelar</button>
             </div>
 
             <!-- Pie Chart -->
+            <div class="col-xl-3 col-lg-2">
+              <div class="card shadow mb-2">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Estadisticas</h6>
+                </div>
+
+                <!-- Card Body -->
+                <div class="card-body">
+                   <ul class="list-group list-group-vertical-sm">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Cobranza
+                       <span class="badge badge-primary badge-pill">14</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Calidad Del Dato
+                       <span class="badge badge-primary badge-pill">10</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      SAC
+                       <span class="badge badge-primary badge-pill">6</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Informatica
+                       <span class="badge badge-primary badge-pill">1</span>
+                    </li>  
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                      Avatar
+                      <span class="badge badge-primary badge-pill">1</span>
+                    </li>    
+                  </ul>                  
+                </div>
+              </div>
+            </div>
 
             </div>
           </div>
@@ -274,25 +287,25 @@
 
 
 
-    <div class="modal fade bd-example-modal-xl" id="modalHome" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-      <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document" id="modalHomeConfig">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalHomeTitle">Modal title</h5>
-            <button type="button" id="modalHomeCerrarVentana" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body" id="modalHomeContenido">
-            ...
-          </div>
-          <div class="modal-footer">
-            <button type="button" id="modalHomeBtnCerrar" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-            <button type="button" id="modalHomeBtnAccion" class="btn btn-primary btn-sm">Save changes</button>
-          </div>
-        </div>
+<div class="modal fade bd-example-modal-xl" id="modalHome" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document" id="modalHomeConfig">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalHomeTitle">Modal title</h5>
+        <button type="button" id="modalHomeCerrarVentana" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modalHomeContenido">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="modalHomeBtnCerrar" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+        <button type="button" id="modalHomeBtnAccion" class="btn btn-primary btn-sm">Save changes</button>
       </div>
     </div>
+  </div>
+</div>
 
 
 
@@ -318,9 +331,11 @@
   <script src="facade/js/sb-admin-2.min.js"></script>
 
   <!-- Page level plugins -->
+  <script src="facade/vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="facade/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
   <!-- Page level custom scripts -->
-  
+  <script src="transaction/finalHomeTransaction.js"></script>
 
 </body>
 

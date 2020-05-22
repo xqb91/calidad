@@ -2,16 +2,16 @@
 	include("../config/Globales.php");
 	include("../config/basicos.php");
 	include(dirController."EjecutivoController.php");
-	include(dirController."EvaluacionQuincenalController.php");
+	include(dirController."EvaluacionFinalController.php");
 	session_start();
 	
 	$c 	= new EjecutivoController();
-	$e  = new EvaluacionQuincenalController();
+	$e  = new EvaluacionFinalController();
 
 	if(empty(filter_input(INPUT_POST, ("area")))) {
 		http_response_code(500);
 	}else{
-		$area = filter_input(INPUT_POST, ("area"));
+		$area = filter_input(INPUT_POST, ("area")); 
 		$area = preg_replace('/^[a-zA-Z\s]*$/', '', $area);
 		if($area == '') {
 			http_response_code(401);
@@ -33,9 +33,9 @@
 					//obteniendo promedio
 					$obj = $e->listarPorEjecutivo($temp->getrut_ejecutivo(), $_SESSION['current_periodo_work']);
 					if ($obj == null) {
-						echo '"nota_quincenal" : null, "evaluacion" : null';
+						echo '"nota_final" : null, "evaluacion" : null';
 					}else{
-						echo '"nota_quincenal" : '.number_format($obj[0]->getnota_quincenal(), 2).', "evaluacion" : '.$obj[0]->getnumero_quincenal().'';
+						echo '"nota_final" : '.number_format($obj[0]->getnotafinal(), 2).', "evaluacion" : '.$obj[0]->getnumero_final().'';
 					}
 					echo '}';
 

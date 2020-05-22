@@ -424,7 +424,7 @@
 				if($obj != null) {
 					//construyendo string
 					$consulta = "DELETE FROM evaluacion_quincenal ";
-					$consulta = $consulta."WHERE numero_quincenal = ".$obj->getnumero_quinncenal().";";
+					$consulta = $consulta."WHERE numero_quincenal = ".$obj->getnumero_quincenal().";";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -466,6 +466,57 @@
 						$i 	   = 0;
 						while($registro = $this->databaseTransaction->resultados()) {
 							$array[$i] = new EvaluacionQuincenal($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionParcialController - listarPorNumero: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+
+		public function resumenEvaluacionQuincenalPDF($evaluacion) {
+			try {
+				$consulta = "SELECT  ";
+				$consulta = $consulta."a.numero_quincenal, ";
+				$consulta = $consulta."c.numero_evaluacion, ";
+				$consulta = $consulta."f.codigo_categoria, ";
+				$consulta = $consulta."f.nombre_categoria, ";
+				$consulta = $consulta."f.peso_categoria, ";
+				$consulta = $consulta."cast(avg(CASE WHEN d.nota <> -1 THEN d.nota END) as double(12,2)) as promedio ";
+				$consulta = $consulta."FROM ";
+				$consulta = $consulta."evaluacion_quincenal a  ";
+				$consulta = $consulta."INNER JOIN detalle_evaluacion_quincenal b ON a.numero_quincenal = b.numero_quincenal ";
+				$consulta = $consulta."INNER JOIN evaluacion_parcial c ON b.numero_evaluacion = c.numero_evaluacion ";
+				$consulta = $consulta."INNER JOIN detalle_evaluacion_parcial d ON c.numero_evaluacion = d.numero_evaluacion  ";
+				$consulta = $consulta."INNER JOIN item_evaluacion e ON d.codigo_item = e.codigo_item ";
+				$consulta = $consulta."INNER JOIN categoria f ON e.codigo_categoria = f.codigo_categoria ";
+				$consulta = $consulta."WHERE  ";
+				$consulta = $consulta."a.numero_quincenal = ".$evaluacion." ";
+				$consulta = $consulta."GROUP BY  ";
+				$consulta = $consulta."a.numero_quincenal, ";
+				$consulta = $consulta."c.numero_evaluacion, ";
+				$consulta = $consulta."f.codigo_categoria, ";
+				$consulta = $consulta."f.nombre_categoria, ";
+				$consulta = $consulta."f.peso_categoria ";
+			//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = $registro;
 							$i++;
 						}
 						$this->databaseTransaction->cerrar();

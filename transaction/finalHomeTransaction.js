@@ -123,7 +123,7 @@ $(document).ready(function(){
 															                var area 	= $('#slcArea :selected').val();
 															               	$.ajax({
 																			    type: 'post',
-																			    url: 'core/ListEjecutivosPorAreaQuincenal.php',
+																			    url: 'core/ListEjecutivosPorAreaFinal.php',
 																			    data: 'area='+area,
 																			    beforeSend: function() {
 																			        //inicializando modal que valida sesión de raulí
@@ -184,7 +184,7 @@ $(document).ready(function(){
 																	                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																								    data: resultado,
 																								    columns: [
-																								    	{ data: 'nota_quincenal'},
+																								    	{ data: 'nota_final'},
 																								        { data: 'rut_ejecutivo' },
 																								        { data: 'nombre_ejecutivo' },
 																								        { data: null},
@@ -195,17 +195,30 @@ $(document).ready(function(){
 																							        "columnDefs": [ 
 																							        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" placetogo="eliminar" title="Eliminar Evaluación Quincenal"><i class="fas fa-trash"></i> Eliminar</button>'},
 																							        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="pdf" title="Descargar PDF"><i class="fas fa-file-pdf"></i> Descargar PDF</button>'},
-																							        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="regenerar" title="Regenera"><i class="fas fa-sync-alt"></i> Regenerar</button>'}
+																							        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="final" title="Generar Evaluación Final"><i class="fas fa-flag"></i> Evaluación Final</button>'}
 																							        ],
 																									rowCallback : function(row, data, index) {
-																										if(parseFloat(data.nota_quincenal) <= 10 && parseFloat(data.nota_quincenal) >= 9) {
+																										if(parseFloat(data.nota_final) <= 10 && parseFloat(data.nota_final) >= 9) {
 																										 	$(row).find('td:eq(0)').addClass('table-success');
 																										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 																										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
-																										}else if(parseFloat(data.nota_quincenal) >= 8 && parseFloat(data.nota_quincenal) < 9) {
+																										 	$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+																										 	$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+																										 	$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+																										}else if(parseFloat(data.nota_final) >= 8 && parseFloat(data.nota_final) < 9) {
 																										 	$(row).find('td:eq(0)').addClass('table-warning');
 																										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 																										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+																											$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+																											$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+																											$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+																										}else if(parseFloat(data.nota_final) > 0 && parseFloat(data.nota_final) < 8) {
+																										 	$(row).find('td:eq(0)').addClass('table-danger');
+																										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+																											$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+																											$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+																											$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
 																										}else{
 																										 	$(row).find('td:eq(0)').addClass('table-danger');
 																										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
@@ -273,181 +286,188 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 	var data = tablaEjecutivos.row( $(this).parents('tr') ).data();
 
 	//funcion que determina que botón se presionó y arrancar respuesta
-	if($(this).attr('placetogo') == 'verEjecutivo') {
+	if($(this).attr('placetogo') == 'final') {
 		$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
 	    $("#modalHome").modal('show');
-		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Información de <strong>'+data.nombre_ejecutivo+'</strong>');
-		$("#modalHomeContenido").load('viewEjecutivoDetail.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
+		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Crear Evaluación Final para <strong>'+data.nombre_ejecutivo+'</strong>');
+		$("#modalHomeContenido").load('finalCreator.php?ejecutivo='+data.rut_ejecutivo);
     	$("#modalHomeBtnCerrar").show();
 		$("#modalHomeBtnCerrar").text('Cerrar');
 		$("#modalHomeCerrarVentana").show();
 		$("#modalHomeBtnAccion").hide();
 		$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');
-	}else if($(this).attr('placetogo') == 'regenerar') {
-		$("#modalHomeConfig").attr('class', 'modal-dialog modal-lg');
+	}else if($(this).attr('placetogo') == 'editar') {
+		$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
 	    $("#modalHome").modal('show');
-		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Regenerar Evaluación Quincenal de <strong>'+data.nombre_ejecutivo+'</strong>');
-		$("#modalHomeContenido").load('regenerarQuincenal.php?ejecutivo='+data.rut_ejecutivo+'&area='+$("#slcArea :selected").val());
+		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Editar Evaluación Final de <strong>'+data.nombre_ejecutivo+'</strong>');
+		$("#modalHomeContenido").load('finalEditor.php?evaluacion='+data.evaluacion);
     	$("#modalHomeBtnCerrar").show();
 		$("#modalHomeBtnCerrar").text('Cerrar');
 		$("#modalHomeCerrarVentana").show();
 		$("#modalHomeBtnAccion").show();
-		$("#modalHomeBtnAccion").attr('disabled', true);
-		$("#modalHomeBtnAccion").text('Regenerar Quincenal');
-		$("#modalHomeBtnAccion").attr('ejecutivo', data.rut_ejecutivo);
-		$('#modalHome').click( function() {
-			if(parseInt(localStorage.getItem('bandeQuincenal')) == 1) {
-				$("#modalHomeBtnAccion").attr('disabled', false);
-			}else{
-				$("#modalHomeBtnAccion").attr('disabled', true);
-			}
-		});
+		$("#modalHomeBtnAccion").text('Finalizar Edición');
+		$("#modalHomeBtnAccion").attr('evaluacion', data.evaluacion);
 	}else if($(this).attr('placetogo') == 'pdf') {
 		alert('PDF');
-	}else{ 
-		var respuesta = confirm('Esta a punto de eliminar la evaluación quincenal #'+data.evaluacion+' de '+data.nombre_ejecutivo+' para el periodo '+$("#slcPeriodo :selected").val()+'. ¿Esta usted seguro de proceder?');
+	}else if($(this).attr('placetogo') == 'eliminar'){ 
+		var respuesta = confirm('Esta a punto de eliminar la evaluación final #'+data.evaluacion+' de '+data.nombre_ejecutivo+' para el periodo '+$("#slcPeriodo :selected").val()+'. ¿Esta usted seguro de proceder?');
 		if(respuesta) {
 			$.ajax({
-				url: 'core/EliminarEvaluacionQuincenal.php',
+				url: 'core/EliminarEvaluacionFinal.php',
 				type: 'POST',
 				data: 'evaluacion='+data.evaluacion,
 				beforeSend: function() {
 					$("#modalHomeConfig").attr('class', 'modal-dialog');
-				    $("#modalHome").modal('show');
-					$("#modalHomeTitle").html('<i class="fas fa-trash"></i> Eliminación de Evaluación Quincenal #<strong>'+data.evaluacion+'</strong>');
-					$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud');
-			    	$("#modalHomeBtnCerrar").hide();
-					$("#modalHomeBtnCerrar").text('Cerrar');
+			        $("#modalHome").modal('show');
+					$("#modalHomeTitle").text('Espere un momento');
+					$("#modalHomeBtnCerrar").hide();
 					$("#modalHomeCerrarVentana").hide();
 					$("#modalHomeBtnAccion").hide();
-					$("#modalHomeBtnAccion").attr('disabled', true);
-					$("#modalHomeBtnAccion").text('Regenerar Quincenal');
-					$("#modalHomeBtnAccion").attr('ejecutivo', data.rut_ejecutivo);
+					$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Recibiendo información...');
 				},
 				statusCode: {
-					500: function(responseObject, textStatus, errorThrown) {
-						$("#modalHomeContenido").html('La evaluación no fue encontrada, posiblemente ya fue eliminada por otro evaluador [EMPTY PARAMETER] HTTP 500');
-				    	$("#modalHomeBtnCerrar").show();
-						$("#modalHomeBtnCerrar").text('Cerrar');
-						$("#modalHomeCerrarVentana").hide();
-						$("#modalHomeBtnAccion").hide();
+					301: function(responseObject, textStatus, errorThrown) {
+						$("#modalHomeTitle").text('Error');
+						$("#modalHomeBtnCerrar").show();
+						$("#modalHomeCerrarVentana").show();
+						$("#modalHomeContenido").html('No se ha podido ejecutar su solicitud porque el sistema no recibió los parámetros necesarios para poder llevarla a cabo. HTTP 301');
 					},
-					501: function(responseObject, textStatus, errorThrown) {
-						$("#modalHomeContenido").html('Ha ocurrido un error al procesar su solicitud [EMPTY PARAMETER] HTTP 501');
-				    	$("#modalHomeBtnCerrar").show();
-						$("#modalHomeBtnCerrar").text('Cerrar');
-						$("#modalHomeCerrarVentana").hide();
-						$("#modalHomeBtnAccion").hide();
+					302: function(responseObject, textStatus, errorThrown) {
+						$("#modalHomeTitle").text('Error');
+						$("#modalHomeBtnCerrar").show();
+						$("#modalHomeCerrarVentana").show();
+						$("#modalHomeContenido").html('La evaluación posiblemente ya fué eliminada por otro evaluador o bien no existe en el sistema. HTTP 302');
+					},
+					201: function(responseObject, textStatus, errorThrown) {
+						$("#modalHomeTitle").text('Error');
+						$("#modalHomeBtnCerrar").show();
+						$("#modalHomeCerrarVentana").show();
+						$("#modalHomeContenido").html('Ocurrió un error al intentar eliminar la evaluación final. HTTP 201');
 					},
 					200: function(responseObject, textStatus, errorThrown) {
+						$("#modalHomeTitle").text('Error');
+						$("#modalHomeBtnCerrar").show();
+						$("#modalHomeCerrarVentana").show();
 						$("#modalHomeContenido").html(responseObject);
-				    	$("#modalHomeBtnCerrar").show();
-						$("#modalHomeBtnCerrar").text('Cerrar');
-						$("#modalHomeCerrarVentana").hide();
-						$("#modalHomeBtnAccion").hide();
+
 						$.ajax({
 						    type: 'post',
-						    url: 'core/ListEjecutivosPorAreaQuincenal.php',
-						    data: 'area='+$("#slcArea :selected").val(),
+						    url: 'core/ListEjecutivosPorAreaFinal.php',
+						    data: 'area='+$("#slcArea").val(),
 						    beforeSend: function() {
 						        //inicializando modal que valida sesión de raulí
 						    },
 						    statusCode: {
-						        404: function(responseObject, textStatus, errorThrown) {
-						        	$("#modalHomeConfig").attr('class', 'modal-dialog');
-						        	$("#modalHome").modal('show');
-						            $("#modalHomeTitle").text('Problema al cargar el periodo');
-						            $("#modalHomeContenido").attr('align', 'left');
-						            $("#modalHomeCerrarVentana").show();
-						            $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
-						            $("#modalHomeBtnCerrar").show();
-						            $("#modalHomeBtnCerrar").text('Cerrar');
-						            $("#modalHomeBtnAccion").hide();
-						        },
-						        500: function(responseObject, textStatus, errorThrown) {
-						        	$("#modalHomeConfig").attr('class', 'modal-dialog');
-						        	$("#modalHome").modal('show');
-						            $("#modalHomeTitle").text('Ocurrió un error');
-						            $("#modalHomeContenido").attr('align', 'left');
-						            $("#modalHomeCerrarVentana").show();
-						            $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT EMPTY</strong>');
-						            $("#modalHomeBtnCerrar").show();
-						            $("#modalHomeBtnCerrar").text('Cerrar');
-						            $("#modalHomeBtnAccion").hide();
-						        },
-						        401: function(responseObject, textStatus, errorThrown) {
-						        	$("#modalHomeConfig").attr('class', 'modal-dialog');
-						        	$("#modalHome").modal('show');
-						            $("#modalHomeTitle").text('Ocurrió un error');
-						            $("#modalHomeContenido").attr('align', 'left');
-						            $("#modalHomeCerrarVentana").show();
-						            $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT NOT NUMBER</strong>');
-						            $("#modalHomeBtnCerrar").show();
-						            $("#modalHomeBtnCerrar").text('Cerrar');
-						            $("#modalHomeBtnAccion").hide();
-						        },
-						        301: function(responseObject, textStatus, errorThrown) {
-						        	$("#modalHomeConfig").attr('class', 'modal-dialog');
-						        	$("#modalHome").modal('show');
-						            $("#modalHomeTitle").text('Ocurrió un error');
-						            $("#modalHomeContenido").attr('align', 'left');
-						            $("#modalHomeCerrarVentana").show();
-						            $("#modalHomeContenido").html('El área que ha seleccionado no tiene ejecutivos registrados. Por favor contacte a su jefatura para más información<br /><strong>PHP CORE ARRAY CONTROLLER EMPTY</strong>');
-						            $("#modalHomeBtnCerrar").show();
-						            $("#modalHomeBtnCerrar").text('Cerrar');
-						            $("#modalHomeBtnAccion").hide();
-						        },
-						        200: function(responseObject, textStatus, errorThrown) {
-						            var resultados = JSON.parse(responseObject);
-									if($.trim(responseObject) == "NULL") {
-						                alert('No hay valores');
-						            }else{
-						                var resultado = $.parseJSON(responseObject);
+						            404: function(responseObject, textStatus, errorThrown) {
+						            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+						            	$("#modalHome").modal('show');
+						                $("#modalHomeTitle").text('Problema al cargar el periodo');
+						                $("#modalHomeContenido").attr('align', 'left');
+						                $("#modalHomeCerrarVentana").show();
+						                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
+						                $("#modalHomeBtnCerrar").show();
+						                $("#modalHomeBtnCerrar").text('Cerrar');
+						                $("#modalHomeBtnAccion").hide();
+						            },
+						            500: function(responseObject, textStatus, errorThrown) {
+						            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+						            	$("#modalHome").modal('show');
+						                $("#modalHomeTitle").text('Ocurrió un error');
+						                $("#modalHomeContenido").attr('align', 'left');
+						                $("#modalHomeCerrarVentana").show();
+						                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT EMPTY</strong>');
+						                $("#modalHomeBtnCerrar").show();
+						                $("#modalHomeBtnCerrar").text('Cerrar');
+						                $("#modalHomeBtnAccion").hide();
+						            },
+						            401: function(responseObject, textStatus, errorThrown) {
+						            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+						            	$("#modalHome").modal('show');
+						                $("#modalHomeTitle").text('Ocurrió un error');
+						                $("#modalHomeContenido").attr('align', 'left');
+						                $("#modalHomeCerrarVentana").show();
+						                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT NOT NUMBER</strong>');
+						                $("#modalHomeBtnCerrar").show();
+						                $("#modalHomeBtnCerrar").text('Cerrar');
+						                $("#modalHomeBtnAccion").hide();
+						            },
+						            301: function(responseObject, textStatus, errorThrown) {
+						            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+						            	$("#modalHome").modal('show');
+						                $("#modalHomeTitle").text('Ocurrió un error');
+						                $("#modalHomeContenido").attr('align', 'left');
+						                $("#modalHomeCerrarVentana").show();
+						                $("#modalHomeContenido").html('El área que ha seleccionado no tiene ejecutivos registrados. Por favor contacte a su jefatura para más información<br /><strong>PHP CORE ARRAY CONTROLLER EMPTY</strong>');
+						                $("#modalHomeBtnCerrar").show();
+						                $("#modalHomeBtnCerrar").text('Cerrar');
+						                $("#modalHomeBtnAccion").hide();
+						            },
+						            200: function(responseObject, textStatus, errorThrown) {
+						                var resultados = JSON.parse(responseObject);
+										if($.trim(responseObject) == "NULL") {
+				                            alert('No hay valores');
+				                        }else{
+				                            var resultado = $.parseJSON(responseObject);
 
-						                //cargando datos a la tabla
-						                tablaEjecutivos.clear().draw();
-						                tablaEjecutivos.destroy();
-						                tablaEjecutivos = null;
-						                tablaEjecutivos = $("#tablaEjecutivos").DataTable({
-										    data: resultado,
-										    columns: [
-										    	{ data: 'nota_quincenal'},
-										        { data: 'rut_ejecutivo' },
-										        { data: 'nombre_ejecutivo' },
-										        { data: null},
-										        { data: null},
-										        { data: null},
-										    ],
-										    //añadiendo botones de acción
-									        "columnDefs": [ 
-									        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" placetogo="eliminar" title="Eliminar Evaluación Quincenal"><i class="fas fa-trash"></i> Eliminar</button>'},
-									        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="pdf" title="Descargar PDF"><i class="fas fa-file-pdf"></i> Descargar PDF</button>'},
-									        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="regenerar" title="Regenera"><i class="fas fa-sync-alt"></i> Regenerar</button>'}
-									        ],
-											rowCallback : function(row, data, index) {
-												if(parseFloat(data.nota_quincenal) <= 10 && parseFloat(data.nota_quincenal) >= 9) {
-												 	$(row).find('td:eq(0)').addClass('table-success');
-												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
-												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
-												}else if(parseFloat(data.nota_quincenal) >= 8 && parseFloat(data.nota_quincenal) < 9) {
-												 	$(row).find('td:eq(0)').addClass('table-warning');
-												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
-												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
-												}else{
-												 	$(row).find('td:eq(0)').addClass('table-danger');
-												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
-												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+				                            //cargando datos a la tabla
+				                            tablaEjecutivos.clear().draw();
+				                            tablaEjecutivos.destroy();
+				                            tablaEjecutivos = null;
+				                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
+											    data: resultado,
+											    columns: [
+											    	{ data: 'nota_final'},
+											        { data: 'rut_ejecutivo' },
+											        { data: 'nombre_ejecutivo' },
+											        { data: null},
+											        { data: null},
+											        { data: null},
+											    ],
+											    //añadiendo botones de acción
+										        "columnDefs": [ 
+										        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" placetogo="eliminar" title="Eliminar Evaluación Quincenal"><i class="fas fa-trash"></i> Eliminar</button>'},
+										        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="pdf" title="Descargar PDF"><i class="fas fa-file-pdf"></i> Descargar PDF</button>'},
+										        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="final" title="Generar Evaluación Final"><i class="fas fa-flag"></i> Evaluación Final</button>'}
+										        ],
+												rowCallback : function(row, data, index) {
+													if(parseFloat(data.nota_final) <= 10 && parseFloat(data.nota_final) >= 9) {
+													 	$(row).find('td:eq(0)').addClass('table-success');
+													 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+													 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+													 	$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+													 	$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+													 	$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+													}else if(parseFloat(data.nota_final) >= 8 && parseFloat(data.nota_final) < 9) {
+													 	$(row).find('td:eq(0)').addClass('table-warning');
+													 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+													 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+														$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+														$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+														$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+													}else if(parseFloat(data.nota_final) > 0 && parseFloat(data.nota_final) < 8) {
+													 	$(row).find('td:eq(0)').addClass('table-danger');
+													 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+													 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+														$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+														$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+														$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+													}else{
+													 	$(row).find('td:eq(0)').addClass('table-danger');
+													 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+													 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+													}
 												}
-											}		
-										});
 
-						            }
-						        }           
-						    }
-						});
+													
+											});
+
+				                        }
+						            }           
+						        }
+					 	});
 					}
 				}
-			})
+			});
 		}
 	}
 } );
@@ -601,7 +621,7 @@ $("#slcPeriodo").change(function() {
 			                			
 										$.ajax({
 										    type: 'post',
-										    url: 'core/ListEjecutivosPorAreaQuincenal.php',
+										    url: 'core/ListEjecutivosPorAreaFinal.php',
 										    data: 'area='+area,
 										    beforeSend: function() {
 										        //inicializando modal que valida sesión de raulí
@@ -666,7 +686,7 @@ $("#slcPeriodo").change(function() {
 								                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 															    data: resultado,
 															    columns: [
-															    	{ data: 'nota_quincenal'},
+															    	{ data: 'nota_final'},
 															        { data: 'rut_ejecutivo' },
 															        { data: 'nombre_ejecutivo' },
 															        { data: null},
@@ -677,23 +697,37 @@ $("#slcPeriodo").change(function() {
 														        "columnDefs": [ 
 														        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" placetogo="eliminar" title="Eliminar Evaluación Quincenal"><i class="fas fa-trash"></i> Eliminar</button>'},
 														        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="pdf" title="Descargar PDF"><i class="fas fa-file-pdf"></i> Descargar PDF</button>'},
-														        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="regenerar" title="Regenera"><i class="fas fa-sync-alt"></i> Regenerar</button>'}
+														        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="final" title="Generar Evaluación Final"><i class="fas fa-flag"></i> Evaluación Final</button>'}
 														        ],
 																rowCallback : function(row, data, index) {
-																	if(parseFloat(data.nota_quincenal) <= 10 && parseFloat(data.nota_quincenal) >= 9) {
+																	if(parseFloat(data.nota_final) <= 10 && parseFloat(data.nota_final) >= 9) {
 																	 	$(row).find('td:eq(0)').addClass('table-success');
 																	 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 																	 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
-																	}else if(parseFloat(data.nota_quincenal) >= 8 && parseFloat(data.nota_quincenal) < 9) {
+																	 	$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+																	 	$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+																	 	$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+																	}else if(parseFloat(data.nota_final) >= 8 && parseFloat(data.nota_final) < 9) {
 																	 	$(row).find('td:eq(0)').addClass('table-warning');
 																	 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 																	 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+																		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+																		$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+																		$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+																	}else if(parseFloat(data.nota_final) > 0 && parseFloat(data.nota_final) < 8) {
+																	 	$(row).find('td:eq(0)').addClass('table-danger');
+																	 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																	 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+																		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+																		$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+																		$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
 																	}else{
 																	 	$(row).find('td:eq(0)').addClass('table-danger');
 																	 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
 																	 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
 																	}
 																}
+
 																	
 															});
 
@@ -957,7 +991,7 @@ $("#slcArea").change(function(){
 																//---- INICIO DE CAMBIO DE EJECUTIVOS EN LISTADO
 																	$.ajax({
 																		    type: 'post',
-																		    url: 'core/ListEjecutivosPorAreaQuincenal.php',
+																		    url: 'core/ListEjecutivosPorAreaFinal.php',
 																		    data: 'area='+area,
 																		    beforeSend: function() {
 																		        //inicializando modal que valida sesión de raulí
@@ -1040,7 +1074,7 @@ $("#slcArea").change(function(){
 																                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																							    data: resultado,
 																							    columns: [
-																							    	{ data: 'nota_quincenal'},
+																							    	{ data: 'nota_final'},
 																							        { data: 'rut_ejecutivo' },
 																							        { data: 'nombre_ejecutivo' },
 																							        { data: null},
@@ -1051,23 +1085,37 @@ $("#slcArea").change(function(){
 																						        "columnDefs": [ 
 																						        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" placetogo="eliminar" title="Eliminar Evaluación Quincenal"><i class="fas fa-trash"></i> Eliminar</button>'},
 																						        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="pdf" title="Descargar PDF"><i class="fas fa-file-pdf"></i> Descargar PDF</button>'},
-																						        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="regenerar" title="Regenera"><i class="fas fa-sync-alt"></i> Regenerar</button>'}
+																						        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="final" title="Generar Evaluación Final"><i class="fas fa-flag"></i> Evaluación Final</button>'}
 																						        ],
 																								rowCallback : function(row, data, index) {
-																									if(parseFloat(data.nota_quincenal) <= 10 && parseFloat(data.nota_quincenal) >= 9) {
+																									if(parseFloat(data.nota_final) <= 10 && parseFloat(data.nota_final) >= 9) {
 																									 	$(row).find('td:eq(0)').addClass('table-success');
 																									 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 																									 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
-																									}else if(parseFloat(data.nota_quincenal) >= 8 && parseFloat(data.nota_quincenal) < 9) {
+																									 	$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+																									 	$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+																									 	$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+																									}else if(parseFloat(data.nota_final) >= 8 && parseFloat(data.nota_final) < 9) {
 																									 	$(row).find('td:eq(0)').addClass('table-warning');
 																									 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 																									 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+																										$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+																										$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+																										$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+																									}else if(parseFloat(data.nota_final) > 0 && parseFloat(data.nota_final) < 8) {
+																									 	$(row).find('td:eq(0)').addClass('table-danger');
+																									 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																									 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+																										$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+																										$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+																										$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
 																									}else{
 																									 	$(row).find('td:eq(0)').addClass('table-danger');
 																									 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
 																									 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
 																									}
 																								}
+
 
 																									
 																							});
@@ -1097,157 +1145,327 @@ $("#slcArea").change(function(){
 
 
 $("#modalHomeBtnAccion").click(function() {
-	if($("#modalHomeBtnAccion").text() == "Regenerar Quincenal") {
-		var array = [];
-		$('input[type=checkbox]:checked').each(function() {
-			array.push($(this).val());
-		});
+	if($("#modalHomeBtnAccion").text() == "Guardar Evaluación Final") {
 		$.ajax({
-			type: 'post',
-			url: 'core/QuincenalManualGen.php',
-			data: 'evas='+JSON.stringify(array)+'&ejecutivo='+$("#modalHomeBtnAccion").attr('ejecutivo')+'&area='+$("#slcArea").val(),
+			url: 'core/CreateEvaluacionFinalObservacion.php',
+			type: 'POST',
+			data: 'comentario='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
 			beforeSend: function() {
-				$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');	
-				$("#modalHomeBtnAccion").hide();
+				$.ajax({
+				    type: 'post',
+				    url: 'core/ListEjecutivosPorAreaFinal.php',
+				    data: 'area='+$("#slcArea").val(),
+				    beforeSend: function() {
+				        //inicializando modal que valida sesión de raulí
+				        $("#modalHome").modal('show');
+				        $("#modalHomeTitle").text('Por Favor Espere');
+				        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Espere un momento...');
+				        $("#modalHomeBtnCerrar").hide();
+						$("#modalHomeBtnAccion").hide();
+						$("#modalHomeCerrarVentana").hide();
+				    },
+					error: function(XMLHttpRequest, textStatus, errorThrown) {
+					    if (XMLHttpRequest.readyState == 0) {
+							$("#modalHomeConfig").attr('class', 'modal-dialog');
+							$("#modalHome").modal('show');
+							$("#modalHomeTitle").text('Verifique su conexión a internet');
+							$("#modalHomeContenido").attr('align', 'left');
+							$("#modalHomeCerrarVentana").show();
+							$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+							$("#modalHomeBtnCerrar").show();
+							$("#modalHomeBtnCerrar").text('Cerrar');
+							$("#modalHomeBtnAccion").hide();
+					    }
+					},
+				    statusCode: {
+			            404: function(responseObject, textStatus, errorThrown) {
+			            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+			            	$("#modalHome").modal('show');
+			                $("#modalHomeTitle").text('Problema al cargar el periodo');
+			                $("#modalHomeContenido").attr('align', 'left');
+			                $("#modalHomeCerrarVentana").show();
+			                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
+			                $("#modalHomeBtnCerrar").show();
+			                $("#modalHomeBtnCerrar").text('Cerrar');
+			                $("#modalHomeBtnAccion").hide();
+			            },
+			            500: function(responseObject, textStatus, errorThrown) {
+			            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+			            	$("#modalHome").modal('show');
+			                $("#modalHomeTitle").text('Ocurrió un error');
+			                $("#modalHomeContenido").attr('align', 'left');
+			                $("#modalHomeCerrarVentana").show();
+			                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT EMPTY</strong>');
+			                $("#modalHomeBtnCerrar").show();
+			                $("#modalHomeBtnCerrar").text('Cerrar');
+			                $("#modalHomeBtnAccion").hide();
+			            },
+			            401: function(responseObject, textStatus, errorThrown) {
+			            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+			            	$("#modalHome").modal('show');
+			                $("#modalHomeTitle").text('Ocurrió un error');
+			                $("#modalHomeContenido").attr('align', 'left');
+			                $("#modalHomeCerrarVentana").show();
+			                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT NOT NUMBER</strong>');
+			                $("#modalHomeBtnCerrar").show();
+			                $("#modalHomeBtnCerrar").text('Cerrar');
+			                $("#modalHomeBtnAccion").hide();
+			            },
+			            301: function(responseObject, textStatus, errorThrown) {
+			            	tablaEjecutivos.clear().draw();
+			            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+			            	$("#modalHome").modal('show');
+			                $("#modalHomeTitle").text('Ocurrió un error');
+			                $("#modalHomeContenido").attr('align', 'left');
+			                $("#modalHomeCerrarVentana").show();
+			                $("#modalHomeContenido").html('El área que ha seleccionado no tiene ejecutivos registrados. Por favor contacte a su jefatura para más información<br /><strong>PHP CORE ARRAY CONTROLLER EMPTY</strong>');
+			                $("#modalHomeBtnCerrar").show();
+			                $("#modalHomeBtnCerrar").text('Cerrar');
+			                $("#modalHomeBtnAccion").hide();
+			            },
+			            200: function(responseObject, textStatus, errorThrown) {
+			                var resultados = JSON.parse(responseObject);
+							if($.trim(responseObject) == "NULL") {
+	                            alert('No hay valores');
+	                        }else{
+	                            var resultado = $.parseJSON(responseObject);
+	                            //cargando datos a la tabla
+	                            tablaEjecutivos.clear().draw();
+	                            tablaEjecutivos.destroy();
+	                            tablaEjecutivos = null;
+	                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
+								    data: resultado,
+								    columns: [
+								    	{ data: 'nota_final'},
+								        { data: 'rut_ejecutivo' },
+								        { data: 'nombre_ejecutivo' },
+								        { data: null},
+								        { data: null},
+								        { data: null},
+								    ],
+								    //añadiendo botones de acción
+							        "columnDefs": [ 
+							        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" placetogo="eliminar" title="Eliminar Evaluación Quincenal"><i class="fas fa-trash"></i> Eliminar</button>'},
+							        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="pdf" title="Descargar PDF"><i class="fas fa-file-pdf"></i> Descargar PDF</button>'},
+							        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="final" title="Generar Evaluación Final"><i class="fas fa-flag"></i> Evaluación Final</button>'}
+							        ],
+									rowCallback : function(row, data, index) {
+										if(parseFloat(data.nota_final) <= 10 && parseFloat(data.nota_final) >= 9) {
+										 	$(row).find('td:eq(0)').addClass('table-success');
+										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+										 	$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+										 	$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+										 	$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+										}else if(parseFloat(data.nota_final) >= 8 && parseFloat(data.nota_final) < 9) {
+										 	$(row).find('td:eq(0)').addClass('table-warning');
+										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+											$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+											$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+											$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+										}else if(parseFloat(data.nota_final) > 0 && parseFloat(data.nota_final) < 8) {
+										 	$(row).find('td:eq(0)').addClass('table-danger');
+										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+											$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+											$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+											$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+										}else{
+										 	$(row).find('td:eq(0)').addClass('table-danger');
+										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+										}
+									}	
+								});
+
+								$("#modalHomeBtnCerrar").click();
+	                        }
+			            }           
+			        }
+		 		});
 			},
 			statusCode: {
-				201: function(responseObject, textStatus, errorThrown) {
-					$("#modalHomeContenido").html(responseObject);
+				302: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeTitle").text('Error al guardar la observación');
+					$("#modalHomeContenido").html('No se recibió uno de los parámetros para poder guardar la observación. La evaluación final esta guardada pero editela para ingresar nuevamente su observación.<br /><strong>HTTP 302</strong>');
+					$("#modalHomeBtnAccion").hide();
 				},
-				202: function(responseObject, textStatus, errorThrown) {
-					$("#modalHomeContenido").html(responseObject);
+				301: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeTitle").text('Error al guardar la observación');
+					$("#modalHomeContenido").html('No se recibió uno de los parámetros para poder guardar la observación. La evaluación final esta guardada pero editela para ingresar nuevamente su observación.<br /><strong>HTTP 301</strong>');
+					$("#modalHomeBtnAccion").hide();
 				},
-				404: function(responseObject, textStatus, errorThrown) {
-					$("#modalHomeContenido").html(responseObject);
-				},
-				205: function(responseObject, textStatus, errorThrown) {
-					$("#modalHomeContenido").html(responseObject);
-				},
-				206: function(responseObject, textStatus, errorThrown) {
-					$("#modalHomeContenido").html(responseObject);
-				},
-				500: function(responseObject, textStatus, errorThrown) {
-					$("#modalHomeContenido").html(responseObject);
-				},
-				203: function(responseObject, textStatus, errorThrown) {
-					$("#modalHomeContenido").html(responseObject);
+				204: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeTitle").text('Error al guardar la observación');
+					$("#modalHomeContenido").html('Ocurrió un error al guardar la observación... Por favor intentelo más tarde.<br /><strong>HTTP 204</strong>');
+					$("#modalHomeBtnAccion").hide();
 				},
 				200: function(responseObject, textStatus, errorThrown) {
-					$("#modalHomeContenido").html(responseObject);
-					$.ajax({
-					    type: 'post',
-					    url: 'core/ListEjecutivosPorAreaQuincenal.php',
-					    data: 'area='+$("#slcArea").val(),
-					    beforeSend: function() {
-					        //inicializando modal que valida sesión de raulí
-					    },
-						error: function(XMLHttpRequest, textStatus, errorThrown) {
-						    if (XMLHttpRequest.readyState == 0) {
-								$("#modalHomeConfig").attr('class', 'modal-dialog');
-								$("#modalHome").modal('show');
-								$("#modalHomeTitle").text('Verifique su conexión a internet');
-								$("#modalHomeContenido").attr('align', 'left');
-								$("#modalHomeCerrarVentana").show();
-								$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
-								$("#modalHomeBtnCerrar").show();
-								$("#modalHomeBtnCerrar").text('Cerrar');
-								$("#modalHomeBtnAccion").hide();
-						    }
-						},
-					    statusCode: {
-					            404: function(responseObject, textStatus, errorThrown) {
-					            	$("#modalHomeConfig").attr('class', 'modal-dialog');
-					            	$("#modalHome").modal('show');
-					                $("#modalHomeTitle").text('Problema al cargar el periodo');
-					                $("#modalHomeContenido").attr('align', 'left');
-					                $("#modalHomeCerrarVentana").show();
-					                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
-					                $("#modalHomeBtnCerrar").show();
-					                $("#modalHomeBtnCerrar").text('Cerrar');
-					                $("#modalHomeBtnAccion").hide();
-					            },
-					            500: function(responseObject, textStatus, errorThrown) {
-					            	$("#modalHomeConfig").attr('class', 'modal-dialog');
-					            	$("#modalHome").modal('show');
-					                $("#modalHomeTitle").text('Ocurrió un error');
-					                $("#modalHomeContenido").attr('align', 'left');
-					                $("#modalHomeCerrarVentana").show();
-					                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT EMPTY</strong>');
-					                $("#modalHomeBtnCerrar").show();
-					                $("#modalHomeBtnCerrar").text('Cerrar');
-					                $("#modalHomeBtnAccion").hide();
-					            },
-					            401: function(responseObject, textStatus, errorThrown) {
-					            	$("#modalHomeConfig").attr('class', 'modal-dialog');
-					            	$("#modalHome").modal('show');
-					                $("#modalHomeTitle").text('Ocurrió un error');
-					                $("#modalHomeContenido").attr('align', 'left');
-					                $("#modalHomeCerrarVentana").show();
-					                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT NOT NUMBER</strong>');
-					                $("#modalHomeBtnCerrar").show();
-					                $("#modalHomeBtnCerrar").text('Cerrar');
-					                $("#modalHomeBtnAccion").hide();
-					            },
-					            301: function(responseObject, textStatus, errorThrown) {
-					            	tablaEjecutivos.clear().draw();
-					            	$("#modalHomeConfig").attr('class', 'modal-dialog');
-					            	$("#modalHome").modal('show');
-					                $("#modalHomeTitle").text('Ocurrió un error');
-					                $("#modalHomeContenido").attr('align', 'left');
-					                $("#modalHomeCerrarVentana").show();
-					                $("#modalHomeContenido").html('El área que ha seleccionado no tiene ejecutivos registrados. Por favor contacte a su jefatura para más información<br /><strong>PHP CORE ARRAY CONTROLLER EMPTY</strong>');
-					                $("#modalHomeBtnCerrar").show();
-					                $("#modalHomeBtnCerrar").text('Cerrar');
-					                $("#modalHomeBtnAccion").hide();
-					            },
-					            200: function(responseObject, textStatus, errorThrown) {
-					                var resultados = JSON.parse(responseObject);
-									if($.trim(responseObject) == "NULL") {
-			                            alert('No hay valores');
-			                        }else{
-			                            var resultado = $.parseJSON(responseObject);
-			                            //cargando datos a la tabla
-			                            tablaEjecutivos.clear().draw();
-			                            tablaEjecutivos.destroy();
-			                            tablaEjecutivos = null;
-			                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
-										    data: resultado,
-										    columns: [
-										    	{ data: 'nota_quincenal'},
-										        { data: 'rut_ejecutivo' },
-										        { data: 'nombre_ejecutivo' },
-										        { data: null},
-										        { data: null},
-										        { data: null},
-										    ],
-										    //añadiendo botones de acción
-									        "columnDefs": [ 
-									        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" placetogo="eliminar" title="Eliminar Evaluación Quincenal"><i class="fas fa-trash"></i> Eliminar</button>'},
-									        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="pdf" title="Descargar PDF"><i class="fas fa-file-pdf"></i> Descargar PDF</button>'},
-									        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="regenerar" title="Regenera"><i class="fas fa-sync-alt"></i> Regenerar</button>'}
-									        ],
-											rowCallback : function(row, data, index) {
-												if(parseFloat(data.nota_quincenal) <= 10 && parseFloat(data.nota_quincenal) >= 9) {
-												 	$(row).find('td:eq(0)').addClass('table-success');
-												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
-												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
-												}else if(parseFloat(data.nota_quincenal) >= 8 && parseFloat(data.nota_quincenal) < 9) {
-												 	$(row).find('td:eq(0)').addClass('table-warning');
-												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
-												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
-												}else{
-												 	$(row).find('td:eq(0)').addClass('table-danger');
-												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
-												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
-												}
-											}
-												
-										});
+					$("#modalHomeContenido").html('<strong>Evaluación guardada con éxito</strong>');
+					$("#modalHomeBtnAccion").hide();
+				}
+			}
+		});
+	} else if($("#modalHomeBtnAccion").text() == "Finalizar Edición") {
+		$.ajax({
+			url: 'core/CreateEvaluacionFinalObservacion.php',
+			type: 'POST',
+			data: 'comentario='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
+			beforeSend: function() {
+				$.ajax({
+				    type: 'post',
+				    url: 'core/ListEjecutivosPorAreaFinal.php',
+				    data: 'area='+$("#slcArea").val(),
+				    beforeSend: function() {
+				        //inicializando modal que valida sesión de raulí
+				        $("#modalHome").modal('show');
+				        $("#modalHomeTitle").text('Por Favor Espere');
+				        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Espere un momento...');
+				        $("#modalHomeBtnCerrar").hide();
+						$("#modalHomeBtnAccion").hide();
+						$("#modalHomeCerrarVentana").hide();
+				    },
+					error: function(XMLHttpRequest, textStatus, errorThrown) {
+					    if (XMLHttpRequest.readyState == 0) {
+							$("#modalHomeConfig").attr('class', 'modal-dialog');
+							$("#modalHome").modal('show');
+							$("#modalHomeTitle").text('Verifique su conexión a internet');
+							$("#modalHomeContenido").attr('align', 'left');
+							$("#modalHomeCerrarVentana").show();
+							$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+							$("#modalHomeBtnCerrar").show();
+							$("#modalHomeBtnCerrar").text('Cerrar');
+							$("#modalHomeBtnAccion").hide();
+					    }
+					},
+				    statusCode: {
+			            404: function(responseObject, textStatus, errorThrown) {
+			            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+			            	$("#modalHome").modal('show');
+			                $("#modalHomeTitle").text('Problema al cargar el periodo');
+			                $("#modalHomeContenido").attr('align', 'left');
+			                $("#modalHomeCerrarVentana").show();
+			                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
+			                $("#modalHomeBtnCerrar").show();
+			                $("#modalHomeBtnCerrar").text('Cerrar');
+			                $("#modalHomeBtnAccion").hide();
+			            },
+			            500: function(responseObject, textStatus, errorThrown) {
+			            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+			            	$("#modalHome").modal('show');
+			                $("#modalHomeTitle").text('Ocurrió un error');
+			                $("#modalHomeContenido").attr('align', 'left');
+			                $("#modalHomeCerrarVentana").show();
+			                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT EMPTY</strong>');
+			                $("#modalHomeBtnCerrar").show();
+			                $("#modalHomeBtnCerrar").text('Cerrar');
+			                $("#modalHomeBtnAccion").hide();
+			            },
+			            401: function(responseObject, textStatus, errorThrown) {
+			            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+			            	$("#modalHome").modal('show');
+			                $("#modalHomeTitle").text('Ocurrió un error');
+			                $("#modalHomeContenido").attr('align', 'left');
+			                $("#modalHomeCerrarVentana").show();
+			                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT NOT NUMBER</strong>');
+			                $("#modalHomeBtnCerrar").show();
+			                $("#modalHomeBtnCerrar").text('Cerrar');
+			                $("#modalHomeBtnAccion").hide();
+			            },
+			            301: function(responseObject, textStatus, errorThrown) {
+			            	tablaEjecutivos.clear().draw();
+			            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+			            	$("#modalHome").modal('show');
+			                $("#modalHomeTitle").text('Ocurrió un error');
+			                $("#modalHomeContenido").attr('align', 'left');
+			                $("#modalHomeCerrarVentana").show();
+			                $("#modalHomeContenido").html('El área que ha seleccionado no tiene ejecutivos registrados. Por favor contacte a su jefatura para más información<br /><strong>PHP CORE ARRAY CONTROLLER EMPTY</strong>');
+			                $("#modalHomeBtnCerrar").show();
+			                $("#modalHomeBtnCerrar").text('Cerrar');
+			                $("#modalHomeBtnAccion").hide();
+			            },
+			            200: function(responseObject, textStatus, errorThrown) {
+			                var resultados = JSON.parse(responseObject);
+							if($.trim(responseObject) == "NULL") {
+	                            alert('No hay valores');
+	                        }else{
+	                            var resultado = $.parseJSON(responseObject);
+	                            //cargando datos a la tabla
+	                            tablaEjecutivos.clear().draw();
+	                            tablaEjecutivos.destroy();
+	                            tablaEjecutivos = null;
+	                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
+								    data: resultado,
+								    columns: [
+								    	{ data: 'nota_final'},
+								        { data: 'rut_ejecutivo' },
+								        { data: 'nombre_ejecutivo' },
+								        { data: null},
+								        { data: null},
+								        { data: null},
+								    ],
+								    //añadiendo botones de acción
+							        "columnDefs": [ 
+							        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" placetogo="eliminar" title="Eliminar Evaluación Quincenal"><i class="fas fa-trash"></i> Eliminar</button>'},
+							        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="pdf" title="Descargar PDF"><i class="fas fa-file-pdf"></i> Descargar PDF</button>'},
+							        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="final" title="Generar Evaluación Final"><i class="fas fa-flag"></i> Evaluación Final</button>'}
+							        ],
+									rowCallback : function(row, data, index) {
+										if(parseFloat(data.nota_final) <= 10 && parseFloat(data.nota_final) >= 9) {
+										 	$(row).find('td:eq(0)').addClass('table-success');
+										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+										 	$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+										 	$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+										 	$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+										}else if(parseFloat(data.nota_final) >= 8 && parseFloat(data.nota_final) < 9) {
+										 	$(row).find('td:eq(0)').addClass('table-warning');
+										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+											$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+											$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+											$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+										}else if(parseFloat(data.nota_final) > 0 && parseFloat(data.nota_final) < 8) {
+										 	$(row).find('td:eq(0)').addClass('table-danger');
+										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+											$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-pencil-alt"></i> Editar Evaluación');
+											$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Editar Evaluación Final');
+											$(row).find('button.btn.btn-warning.btn-sm').attr('placetogo', 'editar');
+										}else{
+										 	$(row).find('td:eq(0)').addClass('table-danger');
+										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+										}
+									}	
+								});
 
-			                        }
-					            }           
-					        }
-					 });
+								$("#modalHomeBtnCerrar").click();
+	                        }
+			            }           
+			        }
+		 		});
+			},
+			statusCode: {
+				302: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeTitle").text('Error al guardar la observación');
+					$("#modalHomeContenido").html('No se recibió uno de los parámetros para poder guardar la observación. La evaluación final esta guardada pero editela para ingresar nuevamente su observación.<br /><strong>HTTP 302</strong>');
+					$("#modalHomeBtnAccion").hide();
+				},
+				301: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeTitle").text('Error al guardar la observación');
+					$("#modalHomeContenido").html('No se recibió uno de los parámetros para poder guardar la observación. La evaluación final esta guardada pero editela para ingresar nuevamente su observación.<br /><strong>HTTP 301</strong>');
+					$("#modalHomeBtnAccion").hide();
+				},
+				204: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeTitle").text('Error al guardar la observación');
+					$("#modalHomeContenido").html('Ocurrió un error al guardar la observación... Por favor intentelo más tarde.<br /><strong>HTTP 204</strong>');
+					$("#modalHomeBtnAccion").hide();
+				},
+				200: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeContenido").html('<strong>Evaluación guardada con éxito</strong>');
+					$("#modalHomeBtnAccion").hide();
 				}
 			}
 		});
