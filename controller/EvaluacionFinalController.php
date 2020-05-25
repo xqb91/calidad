@@ -312,5 +312,116 @@
 				return false;
 			}
 		}
+
+
+		public function datosReportePDF($evaluacion = null) {
+			try {
+				if($evaluacion != null) {
+					//construyendo string
+					$consulta = "SELECT ";
+					$consulta = $consulta."a.numero_final, ";
+					$consulta = $consulta."c.numero_evaluacion as parcial, ";
+					$consulta = $consulta."f.nombre_categoria, ";
+					$consulta = $consulta."f.codigo_categoria, ";
+					$consulta = $consulta."f.peso_categoria, ";
+					$consulta = $consulta."CAST(AVG(CASE WHEN d.nota <> -1 THEN d.nota END) as double(12,2)) as promedio ";
+					$consulta = $consulta."FROM  ";
+					$consulta = $consulta."evaluacion_final a ";
+					$consulta = $consulta."INNER JOIN detalle_evaluacion_final b ON a.numero_final = b.numero_final ";
+					$consulta = $consulta."INNER JOIN evaluacion_parcial c ON b.numero_evaluacion = c.numero_evaluacion ";
+					$consulta = $consulta."INNER JOIN detalle_evaluacion_parcial d ON c.numero_evaluacion = d.numero_evaluacion ";
+					$consulta = $consulta."INNER JOIN item_evaluacion e ON d.codigo_item = e.codigo_item ";
+					$consulta = $consulta."INNER JOIN categoria f on e.codigo_categoria = f.codigo_categoria ";
+					$consulta = $consulta."WHERE  ";
+					$consulta = $consulta."a.numero_final = ".$evaluacion." ";
+					$consulta = $consulta."GROUP BY  ";
+					$consulta = $consulta."a.numero_final, ";
+					$consulta = $consulta."c.numero_evaluacion, ";
+					$consulta = $consulta."f.nombre_categoria, ";
+					$consulta = $consulta."f.codigo_categoria, ";
+					$consulta = $consulta."f.peso_categoria ";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($this->databaseTransaction->cantidadResultados() == 0) {
+							$this->databaseTransaction->cerrar();
+							return null;
+						}else{
+							$array = null;
+							$i 	   = 0;
+							while($registro = $this->databaseTransaction->resultados()) {
+								$array[$i] = $registro;
+								$i++;
+							}
+							$this->databaseTransaction->cerrar();
+							return $array;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "EvaluacionFinalController - calcularNotaFinal: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionFinalController - calcularNotaFinal: El parametro ejecutivo se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+		public function resumenReportePDF($evaluacion = null) {
+			try {
+				if($evaluacion != null) {
+					//construyendo string
+					$consulta = "SELECT ";
+					$consulta = $consulta."a.numero_final, ";
+					$consulta = $consulta."f.nombre_categoria, ";
+					$consulta = $consulta."f.peso_categoria, ";
+					$consulta = $consulta."CAST(AVG(CASE WHEN d.nota <> -1 THEN d.nota END) as double(12,2)) as promedio ";
+					$consulta = $consulta."FROM  ";
+					$consulta = $consulta."evaluacion_final a ";
+					$consulta = $consulta."INNER JOIN detalle_evaluacion_final b ON a.numero_final = b.numero_final ";
+					$consulta = $consulta."INNER JOIN evaluacion_parcial c ON b.numero_evaluacion = c.numero_evaluacion ";
+					$consulta = $consulta."INNER JOIN detalle_evaluacion_parcial d ON c.numero_evaluacion = d.numero_evaluacion ";
+					$consulta = $consulta."INNER JOIN item_evaluacion e ON d.codigo_item = e.codigo_item ";
+					$consulta = $consulta."INNER JOIN categoria f on e.codigo_categoria = f.codigo_categoria ";
+					$consulta = $consulta."WHERE  ";
+					$consulta = $consulta."a.numero_final = ".$evaluacion." ";
+					$consulta = $consulta."GROUP BY  ";
+					$consulta = $consulta."a.numero_final, ";
+					$consulta = $consulta."f.nombre_categoria, ";
+					$consulta = $consulta."f.peso_categoria ";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($this->databaseTransaction->cantidadResultados() == 0) {
+							$this->databaseTransaction->cerrar();
+							return null;
+						}else{
+							$array = null;
+							$i 	   = 0;
+							while($registro = $this->databaseTransaction->resultados()) {
+								$array[$i] = $registro;
+								$i++;
+							}
+							$this->databaseTransaction->cerrar();
+							return $array;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "EvaluacionFinalController - calcularNotaFinal: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionFinalController - calcularNotaFinal: El parametro ejecutivo se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+
 	}
 ?>

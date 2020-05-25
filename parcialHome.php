@@ -1,4 +1,5 @@
 <?php 
+  include("model/Evaluador.php");
   session_start();
   if(!isset($_SESSION['rauliUser'] )) {
     header('Location: index.php');
@@ -17,6 +18,13 @@
   if(!isset($_SESSION['current_periodo_work'])) {
     header('Location: index.php');
     exit;
+  }
+
+  if(!isset($_SESSION['loginUser'])) {
+      header('Location: index.php');
+      exit;
+  }else{
+    $evaluador = $_SESSION['loginUser'];
   }
 ?>
 <!DOCTYPE html>
@@ -100,7 +108,8 @@
           <span>Finales</span>
         </a>
       </li>
-
+      
+      <?php if($evaluador->getAdmin() == 1) { ?>
       <!-- Divider -->
       <hr class="sidebar-divider">
 
@@ -121,7 +130,7 @@
           <i class="fas fa-cog"></i>
           <span>Ajustes</span></a>
       </li>
-
+      <?php  } ?>
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
 
@@ -171,7 +180,7 @@
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                <a class="dropdown-item" href="logout.php">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                   Salir del sistema de Calidad
                 </a>
@@ -239,7 +248,7 @@
 
                 <!-- Card Body -->
                 <div class="card-body">
-                   <ul class="list-group list-group-vertical-sm">
+                   <ul class="list-group list-group-vertical-sm" id="estadisticas">
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                       Cobranza
                        <span class="badge badge-primary badge-pill">14</span>

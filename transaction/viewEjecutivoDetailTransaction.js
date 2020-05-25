@@ -17,7 +17,6 @@ $(document).ready(function() {
 	            },
 	            200: function(responseObject, textStatus, errorThrown) {
 	            	var respuesta = JSON.parse(responseObject);
-	            	console.log(respuesta);
 
 	            	//datos de evaluacion quincenal
 	            	if(respuesta.quincenal == null) {
@@ -30,6 +29,7 @@ $(document).ready(function() {
 	            		var fecha = respuesta.quincenal.fecha_creacion.split('-');
 	            		$("#fechaQuincenal").html('Generada el '+fecha[2]+'/'+fecha[1]+'/'+fecha[0]);
 	            		$("#notaQuincenal").html('<strong>'+parseFloat(respuesta.quincenal.nota).toFixed(2)+'</strong>');
+	            		$("#linkQuincenal").prop('href', 'core/pdfGenerate.php?evaluacion='+respuesta.quincenal.evaluacion+'&tipo=quincenal&accion=descargar');
 	            		$("#linkQuincenal").show();
 	            	}
 
@@ -42,9 +42,11 @@ $(document).ready(function() {
 	            		$("#linkFinal").hide();
 	            	}else{
 	            		$("#titleFinal").html('Evaluacion Final '+respuesta.efinal.periodo);
+	            		console.log(respuesta.efinal);
 	            		var fecha = respuesta.efinal.fecha_creacion.split('-');
 	            		$("#fechaFinal").html('Generada el '+fecha[2]+'/'+fecha[1]+'/'+fecha[0]);
 	            		$("#notFinal").html('<strong>'+parseFloat(respuesta.efinal.nota).toFixed(2)+'</strong>');
+	            		$("#linkFinal").prop('href', 'core/pdfGenerate.php?evaluacion='+respuesta.efinal.evaluaucion+'&tipo=final&accion=descargar');
 	            		$("#linkFinal").show();
 	            	}
 
@@ -57,7 +59,6 @@ $(document).ready(function() {
                       	fila = fila+'</tr>';
                       	$("#tablaParciales tbody").append(fila);
 	            	}else{
-	            		$("#titleEvalPar").html('<strong>Evaluaciones Parciales</strong>');
 		            	$.each(respuesta.parciales, function(i,v){
 							var fila = '';
 							fila = fila+'<tr>';
@@ -65,8 +66,10 @@ $(document).ready(function() {
 	                        fila = fila+'<td>'+v.periodo+'</td>';
 	                        fila = fila+'<td>'+v.fecha_evaluacion+'</td>';
 		                    fila = fila+'<td>'+v.nota+'</td>';
+		                     fila = fila+'<td><a href="core/pdfGenerate.php?evaluacion='+v.evaluacion+'&tipo=parcial&accion=descargar">descarga</a>r</td>';
 	                      	fila = fila+'</tr>';
 	                      	$("#tablaParciales tbody").append(fila);
+	                      	$("#linkEditarParciales").prop('href', 'parcialHomeDet.php?ejecutivo='+ejecutivo);
 						});
 		            }
 	            }

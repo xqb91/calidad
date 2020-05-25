@@ -284,6 +284,7 @@ $(document).ready(function(){
 																													$("#linkBtnDownloadAudioEvalClicked").attr('href', 'files/audio/'+resultado[0].audio);
 																													
 																													$("#btnDownloadPDFEvalClicked").show();
+																													$("#btnDownloadPDFEvalClicked").attr('evaluacion', evalclicked);
 
 																					             					$("#tblInfoEvaluacion").show();
 																					             				}
@@ -321,7 +322,17 @@ $(document).ready(function(){
 																										$("#modalHome").modal('show');
 																									}else{
 																										//generar PDF
-																										alert('Generar PDF');
+																										$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																										$("#modalHomeTitle").html('<i class="far fa-edit"></i> Edición de Evaluación Parcial #'+eval);
+																										//$("#modalHomeContenido").load('core/pdfGenerate.php?evaluacion='+eval+'&tipo=quincenal');
+																										$("#modalHomeContenido").html('<iframe src="core/pdfGenerate.php?evaluacion='+eval+'&tipo=parcial" width="100%" height="600px" />');
+																						            	$("#modalHomeBtnCerrar").show();
+																										$("#modalHomeBtnCerrar").text('Cerrar');
+																										$("#modalHomeCerrarVentana").hide();
+																										$("#modalHomeBtnAccion").show();
+																										$("#modalHomeBtnAccion").attr('evaluacion', eval);
+																										$("#modalHomeBtnAccion").text('Descargar Documento PDF');
+																										$("#modalHome").modal('show');
 																									}
 																								});
 
@@ -707,6 +718,10 @@ $("#slcPeriodo").change(function() {
 
 });
 
+
+$("#btnDownloadPDFEvalClicked").click(function() {
+	window.location.href = "core/pdfGenerate.php?evaluacion="+$("#btnDownloadPDFEvalClicked").attr('evaluacion')+"&tipo=parcial&accion=descargar";
+});
 
 /// CLICK generar nueva evaluacion
 $("#btnGenerarEva").click(function() {
@@ -1405,6 +1420,8 @@ $("#modalHomeBtnAccion").click(function() {
 			    }
 			});
 		}
+	}else if($("#modalHomeBtnAccion").text() == "Descargar Documento PDF") {
+		window.location.href="core/pdfGenerate.php?evaluacion="+$("#modalHomeBtnAccion").attr('evaluacion')+"&tipo=parcial&accion=descargar";
 	}
 })
 

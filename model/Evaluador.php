@@ -7,6 +7,7 @@
 		private $contrasena;
 		private $fecha_creacion;
 		private $estado; 
+		private $admin;
 
 
 		//Constructor
@@ -19,6 +20,7 @@
 			$this->contrasena		= $arreglo['contrasena'];
 			$this->fecha_creacion	= $arreglo['fecha_creacion'];
 			$this->estado			= $arreglo['estado'];
+			$this->admin 			= $arreglo['admin'];
 		}
 
 		//accesadores
@@ -67,6 +69,18 @@
 				return $this->estado;
 			}catch(Exception $e) {
 				return null;
+			}
+		}
+
+		public function getAdmin() {
+			try {
+				if($this->admin == 1) {
+					return true;
+				}else{
+					return false;
+				}
+			}catch(Exception $e) {
+				return false;
 			}
 		}
 
@@ -119,6 +133,16 @@
 		public function setestado($estado) {
 			try {
 				$this->estado = $estado;
+				return true;
+			}catch(Exception $e) {
+				return false;
+			}
+		}
+
+		public function setAdmin($admin) {
+			try 
+			{
+				$this->admin = $admin;
 				return true;
 			}catch(Exception $e) {
 				return false;

@@ -129,8 +129,8 @@
 				if($obj != null) {
 					//construyendo string
 					$consulta = "INSERT INTO evaluador ";
-					$consulta = $consulta."(rut_evaluador, nombre_evaluador, usuario, contrasena, fecha_creacion, estado) VALUES ";
-					$consulta = $consulta."(".$obj->getrut_evaluador().", '".$obj->getnombre_evaluador()."', '".$obj->getusuario()."', '".$obj->getcontrasena()."', '".date('Y-m-d H:i:s')."', ".$obj->getestado()." );";
+					$consulta = $consulta."(rut_evaluador, nombre_evaluador, usuario, contrasena, fecha_creacion, estado, admin) VALUES ";
+					$consulta = $consulta."(".$obj->getrut_evaluador().", '".$obj->getnombre_evaluador()."', '".$obj->getusuario()."', '".$obj->getcontrasena()."', '".date('Y-m-d H:i:s')."', ".$obj->getestado().", ".$obj->getAdmin()." );";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -164,7 +164,7 @@
 				if($obj != null) {
 					//construyendo string
 					$consulta = "UPDATE evaluador ";
-					$consulta = $consulta."SET nombre_evaluador= '".$obj->getnombre_evaluador()."', usuario = '".$obj->getusuario()."', contrasena = '".$obj->getcontrasena."', estado = ".$obj->getestado()."  ";
+					$consulta = $consulta."SET nombre_evaluador= '".$obj->getnombre_evaluador()."', usuario = '".$obj->getusuario()."', contrasena = '".$obj->getcontrasena."', estado = ".$obj->getestado().", admin = ".$obj->getAdmin()."  ";
 					$consulta = $consulta."WHERE rut_evaluador = ".$obj->getrut_evaluador().";";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
@@ -224,6 +224,51 @@
 				if(ambiente == 'DEV') { echo $e->getMessage(); }
 				return false;
 			}
+		}
+
+
+		public function estadisticas($evaluador) {
+			try {
+				$consulta	= 'SELECT '; 
+				$consulta	= $consulta.'a.nombre_area, ';
+				$consulta 	= $consulta."(SELECT count(*) FROM evaluacion_parcial aa WHERE aa.codigo_area = a.codigo_area AND aa.rut_evaluador = ".$evaluador." AND aa.periodo = '".$_SESSION['current_periodo_work']."') as parciales, ";
+				$consulta 	= $consulta."(SELECT count(*) FROM evaluacion_quincenal bb WHERE bb.codigo_area = a.codigo_area AND bb.rut_evaluador = ".$evaluador." AND bb.periodo = '".$_SESSION['current_periodo_work']."') as quincenales, ";
+				$consulta 	= $consulta."(SELECT count(*) FROM evaluacion_final cc WHERE cc.codigo_area = a.codigo_area AND cc.rut_evaluador = ".$evaluador." AND cc.periodo = '".$_SESSION['current_periodo_work']."') as finales ";
+				$consulta 	= $consulta."FROM area a";
+
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						switch ($this->databaseTransaction->cantidadResultados()) {
+							case 1:
+								return $this->databaseTransaction->resultados();
+							break;
+							
+							default:
+								$array = null;
+								$i 	   = 0;
+								while($registro = $this->databaseTransaction->resultados()) {
+									$array[$i] = $registro;
+									$i++;
+								}
+								$this->databaseTransaction->cerrar();
+								return $array;
+							break;
+						}
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluadorController - estadisticas: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+
 		}
 
 	}

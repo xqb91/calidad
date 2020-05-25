@@ -264,6 +264,27 @@ $(document).ready(function(){
 		}
 	});
 
+	$.ajax({
+		type: 'get',
+		url : 'core/EstadisticasPersonales.php',
+		beforeSend: function() {
+			$("#estadisticas").html('');
+		},
+		statusCode: {
+			404: function(responseObject, textStatus, errorThrown) {
+				alert('no encontrado');
+			},
+			200: function(responseObject, textStatus, errorThrown) {
+				respuesta = JSON.parse(responseObject);
+				var insertar = "";
+				$.each(respuesta, function(index, e) {
+					insertar = insertar+'<li class="list-group-item d-flex justify-content-between align-items-center">'+e.area+'<span class="badge badge-primary badge-pill">'+e.total+'</span></li>';
+				});
+				$("#estadisticas").html(insertar);
+			}
+		}
+	});
+
 });
 
 
@@ -303,7 +324,16 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 			}
 		});
 	}else if($(this).attr('placetogo') == 'pdf') {
-		alert('PDF');
+		$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+	    $("#modalHome").modal('show');
+		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Evaluación Quincenal #'+data.evaluacion+' de <strong>'+data.nombre_ejecutivo+'</strong>');
+		$("#modalHomeContenido").html('<iframe src="core/pdfGenerate.php?evaluacion='+data.evaluacion+'&tipo=quincenal" width="100%" height="600px" />');
+    	$("#modalHomeBtnCerrar").show();
+		$("#modalHomeBtnCerrar").text('Cerrar');
+		$("#modalHomeCerrarVentana").show();
+		$("#modalHomeBtnAccion").show();
+		$("#modalHomeBtnAccion").text('Descargar Evaluación Quincenal');
+		$("#modalHomeBtnAccion").attr('evaluacion', data.evaluacion);
 	}else{ 
 		var respuesta = confirm('Esta a punto de eliminar la evaluación quincenal #'+data.evaluacion+' de '+data.nombre_ejecutivo+' para el periodo '+$("#slcPeriodo :selected").val()+'. ¿Esta usted seguro de proceder?');
 		if(respuesta) {
@@ -698,6 +728,27 @@ $("#slcPeriodo").change(function() {
 															});
 
 								                        }
+
+								                        $.ajax({
+															type: 'get',
+															url : 'core/EstadisticasPersonales.php',
+															beforeSend: function() {
+																$("#estadisticas").html('');
+															},
+															statusCode: {
+																404: function(responseObject, textStatus, errorThrown) {
+																	alert('no encontrado');
+																},
+																200: function(responseObject, textStatus, errorThrown) {
+																	respuesta = JSON.parse(responseObject);
+																	var insertar = "";
+																	$.each(respuesta, function(index, e) {
+																		insertar = insertar+'<li class="list-group-item d-flex justify-content-between align-items-center">'+e.area+'<span class="badge badge-primary badge-pill">'+e.total+'</span></li>';
+																	});
+																	$("#estadisticas").html(insertar);
+																}
+															}
+														});
 										            }           
 										        }
 									 	});
@@ -1251,5 +1302,7 @@ $("#modalHomeBtnAccion").click(function() {
 				}
 			}
 		});
+	}else if($("#modalHomeBtnAccion").text() == "Descargar Evaluación Quincenal") {
+		window.location.href = "core/pdfGenerate.php?evaluacion="+$("#modalHomeBtnAccion").attr('evaluacion')+"&tipo=quincenal&accion=descargar";
 	}
 })

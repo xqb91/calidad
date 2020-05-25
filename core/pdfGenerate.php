@@ -22,7 +22,6 @@
 						$usuario = $_SESSION['loginUser'];
 						$usuario->getrut_evaluador();
 						$nombre_fichero = "temp_".md5(date('YmdHisu').$usuario->getrut_evaluador()).".html";
-						echo $nombre_fichero; 
 						//realizando operaciones
 							$templatedaata 	= file_get_contents(DomainNameURL."/templatepdf/parcial.php?evaluacion=".$evaluacion);
 							file_put_contents(dirFileesTemporal.$nombre_fichero, $templatedaata);
@@ -64,9 +63,9 @@
 						if(file_exists(dirFileesTemporal.$nombre_fichero)) {
 							sleep(2);
 							if(unlink(dirFileesTemporal.$nombre_fichero)) {
-								echo "Eliminado";
+								//echo "Eliminado";
 							}else{
-								echo "No Eliminado";
+								//echo "No Eliminado";
 							}
 						}
 					break;
@@ -76,7 +75,7 @@
 						$usuario = $_SESSION['loginUser'];
 						$usuario->getrut_evaluador();
 						$nombre_fichero = "temp_".md5(date('YmdHisu').$usuario->getrut_evaluador()).".html";
-						echo $nombre_fichero; 
+						//echo $nombre_fichero; 
 						//realizando operaciones
 							$templatedaata 	= file_get_contents(DomainNameURL."/templatepdf/quincenal.php?evaluacion=".$evaluacion);
 							file_put_contents(dirFileesTemporal.$nombre_fichero, $templatedaata);
@@ -92,9 +91,9 @@
 						$html = file_get_contents(dirFileesTemporal.$nombre_fichero);
 						if(file_exists(dirFileesTemporal.$nombre_fichero)) {
 							if(unlink(dirFileesTemporal.$nombre_fichero)) {
-								echo "Eliminado";
+								//echo "Eliminado";
 							}else{
-								echo "No Eliminado";
+								//echo "No Eliminado";
 							}
 						}
 						$mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::DEFAULT_MODE);
@@ -126,7 +125,57 @@
 					break;
 
 					case 'final':
-						# code...
+//determinando nombre del fichero randomico en base a rut del evaluador solicitante y fecha
+						$usuario = $_SESSION['loginUser'];
+						$usuario->getrut_evaluador();
+						$nombre_fichero = "temp_".md5(date('YmdHisu').$usuario->getrut_evaluador()).".html";
+						//echo $nombre_fichero; 
+						//realizando operaciones
+							$templatedaata 	= file_get_contents(DomainNameURL."/templatepdf/final.php?evaluacion=".$evaluacion);
+							file_put_contents(dirFileesTemporal.$nombre_fichero, $templatedaata);
+
+						$array = ['','', 0, '', 15, 15, 16, 16, 9, 9, 'L'];
+						$mpdf = new \Mpdf\Mpdf([
+					    'mode' => 'utf-8',
+					    'format' => 'A4-L',
+					    'orientation' => 'L'
+						]);
+
+						// La variable $html es vuestro código que queréis pasar a PDF
+						$html = file_get_contents(dirFileesTemporal.$nombre_fichero);
+						if(file_exists(dirFileesTemporal.$nombre_fichero)) {
+							if(unlink(dirFileesTemporal.$nombre_fichero)) {
+								//echo "Eliminado";
+							}else{
+								//echo "No Eliminado";
+							}
+						}
+						$mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::DEFAULT_MODE);
+
+						// Genera el fichero y fuerza la descarga
+						$nombre_pdf = "final_".$evaluacion.".pdf";
+						switch ($accion) {
+							case 'ver':
+								$mpdf->Output($nombre_pdf, 'I'); exit;
+							break;
+							
+							case 'descargar':
+								$mpdf->Output($nombre_pdf, 'D'); exit;
+							break;
+
+							default:
+								$mpdf->Output($nombre_pdf, 'I'); exit;
+							break;
+						}
+												
+						if(file_exists(dirFileesTemporal.$nombre_fichero)) {
+							sleep(2);
+							if(unlink(dirFileesTemporal.$nombre_fichero)) {
+								echo "Eliminado";
+							}else{
+								echo "No Eliminado";
+							}
+						}
 					break;
 
 					default:

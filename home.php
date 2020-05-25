@@ -1,4 +1,5 @@
 <?php 
+  include("model/Evaluador.php");
   session_start();
   if(!isset($_SESSION['rauliUser'] )) {
     header('Location: index.php');
@@ -17,6 +18,13 @@
   if(!isset($_SESSION['current_periodo_work'])) {
     header('Location: index.php');
     exit;
+  }
+
+  if(!isset($_SESSION['loginUser'])) {
+      header('Location: index.php');
+      exit;
+  }else{
+    $evaluador = $_SESSION['loginUser'];
   }
 ?>
 <!DOCTYPE html>
@@ -92,7 +100,7 @@
           <span>Quincenales</span>
         </a>
       </li>
-
+    
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item" id="btn-evafinal">
         <a class="nav-link collapsed" href="finalHome.php" aria-expanded="true" aria-controls="collapsePages">
@@ -101,8 +109,10 @@
         </a>
       </li>
 
+      <?php if($evaluador->getAdmin() == 1) { ?>
       <!-- Divider -->
       <hr class="sidebar-divider">
+
 
       <!-- Heading -->
       <div class="sidebar-heading">
@@ -122,6 +132,7 @@
           <span>Ajustes</span></a>
       </li>
 
+      <?php } ?>
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
 
@@ -171,7 +182,7 @@
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                <a class="dropdown-item" href="logout.php">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                   Salir del sistema de Calidad
                 </a>
@@ -235,27 +246,7 @@
 
                 <!-- Card Body -->
                 <div class="card-body">
-                   <ul class="list-group list-group-vertical-sm">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                      Cobranza
-                       <span class="badge badge-primary badge-pill">14</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                      Calidad Del Dato
-                       <span class="badge badge-primary badge-pill">10</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                      SAC
-                       <span class="badge badge-primary badge-pill">6</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                      Informatica
-                       <span class="badge badge-primary badge-pill">1</span>
-                    </li>  
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                      Avatar
-                      <span class="badge badge-primary badge-pill">1</span>
-                    </li>    
+                   <ul class="list-group list-group-vertical-sm" id="estadisticas">
                   </ul>                  
                 </div>
               </div>

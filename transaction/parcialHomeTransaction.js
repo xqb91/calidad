@@ -269,6 +269,27 @@ $(document).ready(function(){
 		}
 	});
 
+	$.ajax({
+		type: 'get',
+		url : 'core/EstadisticasPersonales.php',
+		beforeSend: function() {
+			$("#estadisticas").html('');
+		},
+		statusCode: {
+			404: function(responseObject, textStatus, errorThrown) {
+				alert('no encontrado');
+			},
+			200: function(responseObject, textStatus, errorThrown) {
+				respuesta = JSON.parse(responseObject);
+				var insertar = "";
+				$.each(respuesta, function(index, e) {
+					insertar = insertar+'<li class="list-group-item d-flex justify-content-between align-items-center">'+e.area+'<span class="badge badge-primary badge-pill">'+e.total+'</span></li>';
+				});
+				$("#estadisticas").html(insertar);
+			}
+		}
+	});
+
 });
 
 
@@ -345,7 +366,15 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 	        }
 	    });
 	}else{
-		alert('No esta programado');
+		$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+	    $("#modalHome").modal('show');
+		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Crear Evaluación Final para <strong>'+data.nombre_ejecutivo+'</strong>');
+		$("#modalHomeContenido").load('finalCreator.php?ejecutivo='+data.rut_ejecutivo);
+    	$("#modalHomeBtnCerrar").show();
+		$("#modalHomeBtnCerrar").text('Cerrar');
+		$("#modalHomeCerrarVentana").show();
+		$("#modalHomeBtnAccion").hide();
+		$("#modalHomeBtnAccion").text('Guardar Evaluación Final');
 	}
 } );
 
@@ -600,6 +629,27 @@ $("#slcPeriodo").change(function() {
 															});
 
 								                        }
+
+							                        	$.ajax({
+															type: 'get',
+															url : 'core/EstadisticasPersonales.php',
+															beforeSend: function() {
+																$("#estadisticas").html('');
+															},
+															statusCode: {
+																404: function(responseObject, textStatus, errorThrown) {
+																	alert('no encontrado');
+																},
+																200: function(responseObject, textStatus, errorThrown) {
+																	respuesta = JSON.parse(responseObject);
+																	var insertar = "";
+																	$.each(respuesta, function(index, e) {
+																		insertar = insertar+'<li class="list-group-item d-flex justify-content-between align-items-center">'+e.area+'<span class="badge badge-primary badge-pill">'+e.total+'</span></li>';
+																	});
+																	$("#estadisticas").html(insertar);
+																}
+															}
+														});
 										            }           
 										        }
 									 	});
@@ -1162,5 +1212,162 @@ $("#modalHomeBtnAccion").click(function() {
 			    }
 			});
 		}
+	}else if($("#modalHomeBtnAccion").text() == "Guardar Evaluación Final") {
+		$.ajax({
+			url: 'core/CreateEvaluacionFinalObservacion.php',
+			type: 'POST',
+			data: 'comentario='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
+			beforeSend: function() {
+				$.ajax({
+					    type: 'post',
+					    url: 'core/ListEjecutivosPorAreaParciales.php',
+					    data: 'area='+$("#slcArea").val(),
+					    beforeSend: function() {
+					        //inicializando modal que valida sesión de raulí
+					        $("#modalHome").modal('show');
+					        $("#modalHomeTitle").text('Por Favor Espere');
+					        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Espere un momento...');
+					        $("#modalHomeBtnCerrar").hide();
+							$("#modalHomeBtnAccion").hide();
+							$("#modalHomeCerrarVentana").hide();
+					    },
+						error: function(XMLHttpRequest, textStatus, errorThrown) {
+						    if (XMLHttpRequest.readyState == 0) {
+								$("#modalHomeConfig").attr('class', 'modal-dialog');
+								$("#modalHome").modal('show');
+								$("#modalHomeTitle").text('Verifique su conexión a internet');
+								$("#modalHomeContenido").attr('align', 'left');
+								$("#modalHomeCerrarVentana").show();
+								$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+								$("#modalHomeBtnCerrar").show();
+								$("#modalHomeBtnCerrar").text('Cerrar');
+								$("#modalHomeBtnAccion").hide();
+						    }
+						},
+					    statusCode: {
+					            404: function(responseObject, textStatus, errorThrown) {
+					            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+					            	$("#modalHome").modal('show');
+					                $("#modalHomeTitle").text('Problema al cargar el periodo');
+					                $("#modalHomeContenido").attr('align', 'left');
+					                $("#modalHomeCerrarVentana").show();
+					                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
+					                $("#modalHomeBtnCerrar").show();
+					                $("#modalHomeBtnCerrar").text('Cerrar');
+					                $("#modalHomeBtnAccion").hide();
+					            },
+					            500: function(responseObject, textStatus, errorThrown) {
+					            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+					            	$("#modalHome").modal('show');
+					                $("#modalHomeTitle").text('Ocurrió un error');
+					                $("#modalHomeContenido").attr('align', 'left');
+					                $("#modalHomeCerrarVentana").show();
+					                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT EMPTY</strong>');
+					                $("#modalHomeBtnCerrar").show();
+					                $("#modalHomeBtnCerrar").text('Cerrar');
+					                $("#modalHomeBtnAccion").hide();
+					            },
+					            401: function(responseObject, textStatus, errorThrown) {
+					            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+					            	$("#modalHome").modal('show');
+					                $("#modalHomeTitle").text('Ocurrió un error');
+					                $("#modalHomeContenido").attr('align', 'left');
+					                $("#modalHomeCerrarVentana").show();
+					                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT NOT NUMBER</strong>');
+					                $("#modalHomeBtnCerrar").show();
+					                $("#modalHomeBtnCerrar").text('Cerrar');
+					                $("#modalHomeBtnAccion").hide();
+					            },
+					            301: function(responseObject, textStatus, errorThrown) {
+					            	tablaEjecutivos.clear().draw();
+					            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+					            	$("#modalHome").modal('show');
+					                $("#modalHomeTitle").text('Ocurrió un error');
+					                $("#modalHomeContenido").attr('align', 'left');
+					                $("#modalHomeCerrarVentana").show();
+					                $("#modalHomeContenido").html('El área que ha seleccionado no tiene ejecutivos registrados. Por favor contacte a su jefatura para más información<br /><strong>PHP CORE ARRAY CONTROLLER EMPTY</strong>');
+					                $("#modalHomeBtnCerrar").show();
+					                $("#modalHomeBtnCerrar").text('Cerrar');
+					                $("#modalHomeBtnAccion").hide();
+					            },
+					            200: function(responseObject, textStatus, errorThrown) {
+					                var resultados = JSON.parse(responseObject);
+									if($.trim(responseObject) == "NULL") {
+			                            alert('No hay valores');
+			                        }else{
+			                            var resultado = $.parseJSON(responseObject);
+			                            //cargando datos a la tabla
+			                            tablaEjecutivos.clear().draw();
+			                            tablaEjecutivos.destroy();
+			                            tablaEjecutivos = null;
+			                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
+										    data: resultado,
+										    columns: [
+										    	{ data: 'promedio_ejecutivo'},
+											    { data: 'cantidad_evaluaciones'},
+										        { data: 'rut_ejecutivo' },
+										        { data: 'nombre_ejecutivo' },
+										        { data: null},
+										        { data: null},
+										        { data: null},
+										    ],
+										    //añadiendo botones de acción
+									        "columnDefs": [ 
+									        	{ "targets": -1, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verFinal" title="evaluación Final"><i class="fab fa-font-awesome-flag"></i> Final</button>'},
+									        	{ "targets": -2, "data": null, "defaultContent": '<button type="button" class="btn btn-dark btn-sm" data-toggle="tooltip" data-placement="top" placetogo="verEjecutivo" title="Detalles de Ejecutivo"><i class="fas fa-history"></i> Ver Evaluaciones</button>'},
+									        	{ "targets": -3, "data": null, "defaultContent": '<button type="button" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" placetogo="crearEval" title="Nueva evaluación Parcial"><i class="fas fa-asterisk"></i> Nueva</button>'}
+
+									        ],
+											rowCallback : function(row, data, index) {
+												if(parseFloat(data.promedio_ejecutivo) <= 10 && parseFloat(data.promedio_ejecutivo) >= 9) {
+												 	$(row).find('td:eq(0)').addClass('table-success');
+												}else if(parseFloat(data.promedio_ejecutivo) >= 8 && parseFloat(data.promedio_ejecutivo) < 9) {
+												 	$(row).find('td:eq(0)').addClass('table-warning');
+												}else{
+												 	$(row).find('td:eq(0)').addClass('table-danger');
+												}
+												//bloqueo de botones
+												if (data.cantidad_evaluaciones == 0) {
+													$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+													$(row).find('button.btn.btn-info.btn-sm').prop('disabled', true);
+												}else{
+													$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+													$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);
+												}
+
+											}
+										});
+
+										$("#modalHomeBtnCerrar").click();
+			                        }
+					            }           
+					        }
+				 });
+		
+			},
+			statusCode: {
+				302: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeTitle").text('Error al guardar la observación');
+					$("#modalHomeContenido").html('No se recibió uno de los parámetros para poder guardar la observación. La evaluación final esta guardada pero editela para ingresar nuevamente su observación.<br /><strong>HTTP 302</strong>');
+					$("#modalHomeBtnAccion").hide();
+				},
+				301: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeTitle").text('Error al guardar la observación');
+					$("#modalHomeContenido").html('No se recibió uno de los parámetros para poder guardar la observación. La evaluación final esta guardada pero editela para ingresar nuevamente su observación.<br /><strong>HTTP 301</strong>');
+					$("#modalHomeBtnAccion").hide();
+				},
+				204: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeTitle").text('Error al guardar la observación');
+					$("#modalHomeContenido").html('Ocurrió un error al guardar la observación... Por favor intentelo más tarde.<br /><strong>HTTP 204</strong>');
+					$("#modalHomeBtnAccion").hide();
+				},
+				200: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeContenido").html('<strong>Evaluación guardada con éxito</strong>');
+					$("#modalHomeBtnAccion").hide();
+				}
+			}
+		});
+	}else if ($("#modalHomeBtnAccion").text() == "Iniciar Sesión") {
+		window.location.href="index.php";
 	}
 })
