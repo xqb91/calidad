@@ -33,7 +33,8 @@
 					$obj = $e->listarPorEjecutivo($temp->getrut_ejecutivo(), $_SESSION['current_periodo_work']);
 					if ($obj == null) {
 						echo '"promedio_ejecutivo" : 0.00,';
-						echo '"cantidad_evaluaciones" : 0';
+						echo '"cantidad_evaluaciones" : 0, ';
+						echo '"bloqueado" : 0 ';
 					}else{
 						$suma = 0;
 						$total = 0;
@@ -44,7 +45,12 @@
 						$promedio = $suma/$total;
 						$promedio = number_format($promedio, 2, '.', '');
 						echo '"promedio_ejecutivo" : '.$promedio.',';
-						echo '"cantidad_evaluaciones" : '.$total.'';
+						echo '"cantidad_evaluaciones" : '.$total.', ';
+						if($c->bloqueado($temp->getrut_ejecutivo(), $_SESSION['current_periodo_work'])) {
+							echo '"bloqueado" : 1 ';
+						}else{
+							echo '"bloqueado" : 0 ';
+						}
 					}
 					echo '}';
 

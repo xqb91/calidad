@@ -334,6 +334,34 @@
 			}
 		}
 
+		public function bloqueado($rut, $periodo) {
+			try {
+				$consulta = "SELECT count(*) as bloqueado FROM ejecutivo a INNER JOIN evaluacion_final b ON a.rut_ejecutivo = b.rut_ejecutivo WHERE a.rut_ejecutivo = ".$rut." AND b.periodo = '".$periodo."' ";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$registro = $this->databaseTransaction->resultados();
+						if($registro['bloqueado'] > 0) {
+							$this->databaseTransaction->cerrar();
+							return true;
+						}else{
+							$this->databaseTransaction->cerrar();
+							return false;
+						}
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EjecutivoController - listarPorJornada: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
 
 	}
 ?>

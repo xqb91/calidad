@@ -4,12 +4,14 @@
 	include("../controller/EvaluacionParcialController.php");
 	include("../controller/EvaluacionQuincenalController.php");
 	include("../controller/EvaluacionFinalController.php");
+	include("../controller/EjecutivoController.php");
 	session_start();
 
 	//instancias
 	$controlParcial 	= new EvaluacionParcialController();
 	$controlQuincenal	= new EvaluacionQuincenalController();
 	$controlFinal 		= new EvaluacionFinalController();
+	$ejecutivoControl 	= new EjecutivoController();
 
 	if(!isset($_POST["ejecutivo"])) {
 		http_response_code(500);
@@ -21,6 +23,12 @@
 		$quinc  = $controlQuincenal->listarPorEjecutivo($ejecutivo, $periodo);
 		$parci  = $controlParcial->listarPorEjecutivo($ejecutivo, $periodo);
 		echo "{ ";
+
+			if($ejecutivoControl->bloqueado($ejecutivo, $periodo)) {
+				echo '"bloqueado_final" : 1, ';
+			}else{
+				echo '"bloqueado_final" : 0, ';
+			}
 
 			if($final == null) {
 				echo '"efinal": null,';
@@ -42,7 +50,7 @@
 				
 				for($i=0; $i<count($parci); $i++) {
 					//etapa de Evaluacion
-					echo ' { "evaluacion" : '.$parci[$i]->getnumero_evaluacion().', "fecha_evaluacion" : "'.$parci[$i]->getfecha_evaluacion().'", "periodo" : "'.$parci[$i]->getperiodo().'", "nota" : '.$parci[$i]->getnota_final().' }';
+					echo ' { "evaluacion" : '.$parci[$i]->getnumero_evaluacion().', "fecha_evaluacion" : "'.$parci[$i]->getfecha_evaluacion().'", "periodo" : "'.$parci[$i]->getperiodo().'", "nota" : '.$parci[$i]->getnota_final().', "bloqueado" : 0 }';
 					if($i<count($parci)-1) {
 						echo ",";
 					}

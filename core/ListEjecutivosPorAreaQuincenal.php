@@ -28,8 +28,11 @@
 					echo '"rut_ejecutivo" : "'.$temp->getrut_ejecutivo().'", ';
 					echo '"nombre_ejecutivo" : "'.$temp->getnombre_ejecutivo().'", ';
 					echo '"codigo_area" : '.$temp->getcodigo_area().', ';
-
-					
+					if($c->bloqueado($temp->getrut_ejecutivo(), $_SESSION['current_periodo_work'])) {
+						echo '"bloqueado" : 1, ';
+					}else{
+						echo '"bloqueado" : 0, ';
+					}
 					//obteniendo promedio
 					$obj = $e->listarPorEjecutivo($temp->getrut_ejecutivo(), $_SESSION['current_periodo_work']);
 					if ($obj == null) {

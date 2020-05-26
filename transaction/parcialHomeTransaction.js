@@ -213,8 +213,18 @@ $(document).ready(function(){
 																											$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
 																											$(row).find('button.btn.btn-info.btn-sm').prop('disabled', true);
 																										}else{
-																											$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
-																											$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);
+																											if(data.bloqueado == 1) {
+																												$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+																												$(row).find('button.btn.btn-dark.btn-sm').html('<i class="fas fa-lock"></i> Final');
+																												$(row).find('button.btn.btn-dark.btn-sm').prop('title', 'Ya se generó evaluación Final. Esta función esta bloqueada.');
+																												$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Nueva');
+																												$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+																												$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Ya se generó evaluación Final. No se pueden generar nuevas evaluaciones para este ejecutivo.');
+																												$(row).prop('class', 'table-info');
+																											}else{
+																												$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																												$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);																												
+																											}
 																										}
 																									}
 																										
@@ -620,8 +630,18 @@ $("#slcPeriodo").change(function() {
 																		$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
 																		$(row).find('button.btn.btn-info.btn-sm').prop('disabled', true);
 																	}else{
-																		$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
-																		$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);
+																		if(data.bloqueado == 1) {
+																			$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+																			$(row).find('button.btn.btn-dark.btn-sm').html('<i class="fas fa-lock"></i> Final');
+																			$(row).find('button.btn.btn-dark.btn-sm').prop('title', 'Ya se generó evaluación Final. Esta función esta bloqueada.');
+																			$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Nueva');
+																			$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+																			$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Ya se generó evaluación Final. No se pueden generar nuevas evaluaciones para este ejecutivo.');
+																			$(row).prop('class', 'table-info');
+																		}else{
+																			$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																			$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);																												
+																		}
 																	}
 
 																}
@@ -1020,8 +1040,18 @@ $("#slcArea").change(function(){
 																										$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
 																										$(row).find('button.btn.btn-info.btn-sm').prop('disabled', true);
 																									}else{
-																										$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
-																										$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);
+																										if(data.bloqueado == 1) {
+																											$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+																											$(row).find('button.btn.btn-dark.btn-sm').html('<i class="fas fa-lock"></i> Final');
+																											$(row).find('button.btn.btn-dark.btn-sm').prop('title', 'Ya se generó evaluación Final. Esta función esta bloqueada.');
+																											$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Nueva');
+																											$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+																											$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Ya se generó evaluación Final. No se pueden generar nuevas evaluaciones para este ejecutivo.');
+																											$(row).prop('class', 'table-info');
+																										}else{
+																											$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+																											$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);																												
+																										}
 																									}
 
 																								}
@@ -1194,8 +1224,18 @@ $("#modalHomeBtnAccion").click(function() {
 														$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
 														$(row).find('button.btn.btn-info.btn-sm').prop('disabled', true);
 													}else{
-														$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
-														$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);
+														if(data.bloqueado == 1) {
+															$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+															$(row).find('button.btn.btn-dark.btn-sm').html('<i class="fas fa-lock"></i> Final');
+															$(row).find('button.btn.btn-dark.btn-sm').prop('title', 'Ya se generó evaluación Final. Esta función esta bloqueada.');
+															$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Nueva');
+															$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+															$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Ya se generó evaluación Final. No se pueden generar nuevas evaluaciones para este ejecutivo.');
+															$(row).prop('class', 'table-info');
+														}else{
+															$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+															$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);																												
+														}
 													}
 
 												}
@@ -1331,8 +1371,18 @@ $("#modalHomeBtnAccion").click(function() {
 													$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
 													$(row).find('button.btn.btn-info.btn-sm').prop('disabled', true);
 												}else{
-													$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
-													$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);
+													if(data.bloqueado == 1) {
+														$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
+														$(row).find('button.btn.btn-dark.btn-sm').html('<i class="fas fa-lock"></i> Final');
+														$(row).find('button.btn.btn-dark.btn-sm').prop('title', 'Ya se generó evaluación Final. Esta función esta bloqueada.');
+														$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Nueva');
+														$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+														$(row).find('button.btn.btn-warning.btn-sm').prop('title', 'Ya se generó evaluación Final. No se pueden generar nuevas evaluaciones para este ejecutivo.');
+														$(row).prop('class', 'table-info');
+													}else{
+														$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
+														$(row).find('button.btn.btn-info.btn-sm').prop('disabled', false);																												
+													}
 												}
 
 											}

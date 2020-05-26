@@ -157,6 +157,7 @@ table tfoot .links a{
 </head>
 
 <body>
+<img src="<?php echo DomainNameURL; ?>templatepdf/tricard.png" height="30px">
 <table width="100%" border="1">
   <tr>
     <td colspan="3"><table width="100%" border="1">

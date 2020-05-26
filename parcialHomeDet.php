@@ -24,7 +24,14 @@
       header('Location: index.php');
       exit;
   }else{
-    $evaluador = $_SESSION['loginUser'];
+    $evaluadorr = $_SESSION['loginUser'];
+  }
+
+  if(isset($_GET["ejecutivo"])) {
+    $rut = filter_input(INPUT_GET, ("ejecutivo"));
+  }else{ 
+    header('Location: parcialHome.php');
+    exit;
   }
 ?>
 <!DOCTYPE html>
@@ -109,7 +116,7 @@
         </a>
       </li>
       
-      <?php if($evaluador->getAdmin() == 1) { ?>
+      <?php if($evaluadorr->getAdmin() == 1) { ?>
       <!-- Divider -->
       <hr class="sidebar-divider">
 
@@ -180,8 +187,8 @@
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <?php if($evaluador->getAdmin() == 1) { ?>
-                  <a class="dropdown-item" href="#">
+                <?php if($evaluadorr->getAdmin() == 1) { ?>
+                  <a class="dropdown-item" href="#" id="cierreTemprano">
                   <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
                   Cierre Temprano
                 </a>

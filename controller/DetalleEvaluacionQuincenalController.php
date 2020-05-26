@@ -218,5 +218,46 @@
 			}
 		}
 
+
+		public function bloqueoPorFinal($param) {
+			try {
+				//objeto
+				$obj = $param;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "SELECT ";
+					$consulta = $consulta."count(*) bloqueada ";
+					$consulta = $consulta."FROM "; 
+					$consulta = $consulta."evaluacion_quincenal a  ";
+					$consulta = $consulta."INNER JOIN detalle_evaluacion_quincenal b ON a.numero_quincenal = b.numero_quincenal ";
+					$consulta = $consulta."INNER JOIN detalle_evaluacion_final c ON b.numero_evaluacion = c.numero_evaluacion ";
+					$consulta = $consulta."WHERE  ";
+					$consulta = $consulta."a.numero_quincenal = ".$param." ";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultado > 0) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
+							return true;
+						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
+							return false;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "DetalleEvaluadorQuincenalController - bloqueoPorFinal: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "DetalleEvaluadorQuincenalController - bloqueoPorFinal: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
 	}
 ?>

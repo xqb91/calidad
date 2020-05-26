@@ -581,5 +581,76 @@
 			}
 		}
 
+
+		public function bloquePorQuincenal($evaluacionParcial) {
+			try {			
+				$query = 'SELECT '; 
+				$query = $query.'count(*) bloqueada ';
+				$query = $query.'FROM '; 
+				$query = $query.'evaluacion_parcial a ';
+				$query = $query.'INNER JOIN detalle_evaluacion_quincenal b ON a.numero_evaluacion = b.numero_evaluacion ';
+				$query = $query.'WHERE '; 
+				$query = $query.'a.numero_evaluacion = '.$evaluacion.' ';
+
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($query);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$registro = $this->databaseTransaction->resultados();
+						if($registro['bloqueada'] > 0) {
+							return true;
+						}else{
+							return false;
+						}
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionParcialController - bloquePorQuincenal: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo "Error Crítico: ".$e->getMessage(); }
+				return false;
+			}
+		}
+
+		public function bloqueoPorFinal($evaluacionParcial) {
+			try {			
+				$query = 'SELECT '; 
+				$query = $query.'count(*) bloqueada ';
+				$query = $query.'FROM '; 
+				$query = $query.'evaluacion_parcial a ';
+				$query = $query.'INNER JOIN detalle_evaluacion_final b ON a.numero_evaluacion = b.numero_evaluacion ';
+				$query = $query.'WHERE '; 
+				$query = $query.'a.numero_evaluacion = '.$evaluacion.' ';
+
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($query);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$registro = $this->databaseTransaction->resultados();
+						if($registro['bloqueada'] > 0) {
+							$this->databaseTransaction->cerrar();
+							return true;
+						}else{
+							$this->databaseTransaction->cerrar();
+							return false;
+						}
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionParcialController - bloqueoPorFinal: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo "Error Crítico: ".$e->getMessage(); }
+				return false;
+			}
+		}
+
 	}
 ?>

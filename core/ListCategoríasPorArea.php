@@ -16,7 +16,7 @@
 			$evaluadores = $c->listarPorArea($id);
 			if($evaluadores == null) {
 				http_response_code(301);
-			}else{
+			}else{	
 				echo "[";
 				for($i=0; $i<count($evaluadores); $i++){
 					$temp = $evaluadores[$i];

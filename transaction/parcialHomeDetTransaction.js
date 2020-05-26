@@ -197,6 +197,11 @@ $(document).ready(function(){
 																             			200: function(responseObject, textStatus, errorThrown) {
 																             				var resultado = JSON.parse(responseObject);
 
+																             				if(resultado.bloqueado_final == 1) {
+																             					$("#btnGenerarEva").prop('disabled', true);
+																             					$("#btnGenerarEva").html('<i class="fas fa-lock"></i> <strong>Bloqueado porque existe Evaluación Final</strong>');
+																             				}
+
 																             				if(resultado.parciales == null) {
 																             					$("#tblEjecutivoCantidad").html('Ninguna Evaluación Parcial');
 																             				}else{
@@ -228,8 +233,13 @@ $(document).ready(function(){
 																		                            fila = fila +'<td>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</td>';
 																		                            fila = fila +'<td scope="row col-9" style="width: 40%;">Evaluación #'+v.evaluacion+'</th>';
 																		                            fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
-																		                            fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
-																		                            fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';
+																		                           	if(resultado.bloqueado_final == 1) {
+																		                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm">Eliminar <i class="fas fa-lock"></i></button></td>';
+																		                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm">Editar <i class="fas fa-lock"></i></button></td>';
+																		                            }else{
+																		                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
+																		                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';																		                            	
+																		                            }
 																		                            fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
 																		                          	fila = fila +'</tr>';
 																		                          	$("#tablaEvaluacionesGeneradas").append(fila);
@@ -389,7 +399,18 @@ $(document).ready(function(){
 
 });
 
-
+////CIERRE TEMPRANO
+$("#cierreTemprano").click(function() {
+	$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+    $("#modalHome").modal('show');
+	$("#modalHomeTitle").html('<i class="fas fa-key"></i> Cierre Temprano');
+	$("#modalHomeContenido").load('cierreTemprano.php?ejecutivo='+irqljob);
+	$("#modalHomeBtnCerrar").show();
+	$("#modalHomeBtnCerrar").text('Cerrar');
+	$("#modalHomeCerrarVentana").show();
+	$("#modalHomeBtnAccion").hide();
+	$("#modalHomeBtnAccion").text('Guardar Evaluación Final');
+});
 
 ///// CAMBIO DE PERIODO ******************************************************************************************************
 $("#slcPeriodo").change(function() {
@@ -602,10 +623,16 @@ $("#slcPeriodo").change(function() {
 										                fila = fila +'<td>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</td>';
 										                fila = fila +'<td scope="row col-9" style="width: 40%;">Evaluación #'+v.evaluacion+'</th>';
 										                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
-										                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
-										                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';
-										                fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
-										              	fila = fila +'</tr>';
+							                            fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
+							                           	if(resultado.bloqueado_final == 1) {
+							                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm">Eliminar <i class="fas fa-lock"></i></button></td>';
+							                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm">Editar <i class="fas fa-lock"></i></button></td>';
+							                            }else{
+							                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
+							                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';																		                            	
+							                            }
+							                            fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
+							                          	fila = fila +'</tr>';
 										              	$("#tablaEvaluacionesGeneradas").append(fila);
 														});
 													}
@@ -893,9 +920,13 @@ $("#modalHomeBtnAccion").click(function() {
 						                fila = fila +'<td>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</td>';
 						                fila = fila +'<td scope="row col-9" style="width: 40%;">Evaluación #'+v.evaluacion+'</th>';
 						                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
-						                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
-						                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';
-						                fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
+			                           	if(resultado.bloqueado_final == 1) {
+			                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm">Eliminar <i class="fas fa-lock"></i></button></td>';
+			                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm">Editar <i class="fas fa-lock"></i></button></td>';
+			                            }else{
+			                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
+			                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';																		                            	
+			                            }						                fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
 						              	fila = fila +'</tr>';
 						              	$("#tablaEvaluacionesGeneradas").append(fila);
 										});
@@ -1102,9 +1133,14 @@ $("#modalHomeBtnAccion").click(function() {
 					                fila = fila +'<td>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</td>';
 					                fila = fila +'<td scope="row col-9" style="width: 40%;">Evaluación #'+v.evaluacion+'</th>';
 					                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
-					                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
-					                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';
-					                fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
+		                           	if(resultado.bloqueado_final == 1) {
+		                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm">Eliminar <i class="fas fa-lock"></i></button></td>';
+		                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm">Editar <i class="fas fa-lock"></i></button></td>';
+		                            }else{
+		                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
+		                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';																		                            	
+		                            }					                
+		                            fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
 					              	fila = fila +'</tr>';
 					              	$("#tablaEvaluacionesGeneradas").append(fila);
 									});
@@ -1316,9 +1352,14 @@ $("#modalHomeBtnAccion").click(function() {
 						                fila = fila +'<td>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</td>';
 						                fila = fila +'<td scope="row col-9" style="width: 40%;">Evaluación #'+v.evaluacion+'</th>';
 						                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
-						                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
-						                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';
-						                fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
+			                           	if(resultado.bloqueado_final == 1) {
+			                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm">Eliminar <i class="fas fa-lock"></i></button></td>';
+			                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm">Editar <i class="fas fa-lock"></i></button></td>';
+			                            }else{
+			                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
+			                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';																		                            	
+			                            }						                
+			                            fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
 						              	fila = fila +'</tr>';
 						              	$("#tablaEvaluacionesGeneradas").append(fila);
 										});
@@ -1422,6 +1463,35 @@ $("#modalHomeBtnAccion").click(function() {
 		}
 	}else if($("#modalHomeBtnAccion").text() == "Descargar Documento PDF") {
 		window.location.href="core/pdfGenerate.php?evaluacion="+$("#modalHomeBtnAccion").attr('evaluacion')+"&tipo=parcial&accion=descargar";
+	}else if($("#modalHomeBtnAccion").text() == "Guardar Evaluación Final") {
+		$.ajax({
+			url: 'core/CreateEvaluacionFinalObservacion.php',
+			type: 'POST',
+			data: 'comentario='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
+			beforeSend: function() {
+			},
+			statusCode: {
+				302: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeTitle").text('Error al guardar la observación');
+					$("#modalHomeContenido").html('No se recibió uno de los parámetros para poder guardar la observación. La evaluación final esta guardada pero editela para ingresar nuevamente su observación.<br /><strong>HTTP 302</strong>');
+					$("#modalHomeBtnAccion").hide();
+				},
+				301: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeTitle").text('Error al guardar la observación');
+					$("#modalHomeContenido").html('No se recibió uno de los parámetros para poder guardar la observación. La evaluación final esta guardada pero editela para ingresar nuevamente su observación.<br /><strong>HTTP 301</strong>');
+					$("#modalHomeBtnAccion").hide();
+				},
+				204: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeTitle").text('Error al guardar la observación');
+					$("#modalHomeContenido").html('Ocurrió un error al guardar la observación... Por favor intentelo más tarde.<br /><strong>HTTP 204</strong>');
+					$("#modalHomeBtnAccion").hide();
+				},
+				200: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeContenido").html('<strong>Evaluación guardada con éxito</strong>');
+					$("#modalHomeBtnAccion").hide();
+				}
+			}
+		});
 	}
 })
 

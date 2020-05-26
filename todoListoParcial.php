@@ -66,10 +66,10 @@
                     <a class="small" href="parcialHomeDet.php?ejecutivo=<?php echo $ejecutivo; ?>"><i class="far fa-edit"></i> Revisar sus evaluaciones parciales en este periodo</a>
                   </div>
                   <div class="text-center">
-                    <a class="small" href="login.html"><i class="far fa-calendar-check"></i> Revisar su evaluación quincenal en este periodo</a>
+                    <a class="small" href="quincenalHome.php"><i class="far fa-calendar-check"></i> Revisar su evaluación quincenal en este periodo</a>
                   </div>
                   <div class="text-center">
-                    <a class="small" href="login.html"><i class="fas fa-flag"></i> Revisar su evaluación final en este periodo</a>
+                    <a class="small" href="finalHome.php"><i class="fas fa-flag"></i> Revisar su evaluación final en este periodo</a>
                   </div>
                 </div>
               </div>

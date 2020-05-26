@@ -70,7 +70,6 @@ $(document).ready(function() {
                         $("#modalIndexBtnAccion").show();
                     }, 
                     200: function(responseObject, textStatus, errorThrown) {
-                        $("#modalIndexBtnCerrar").click();
                         $.ajax({
                                 type: 'post',
                                 url: 'core/InfoSesionEvaluador.php',
@@ -147,6 +146,7 @@ $(document).ready(function() {
                                                                                         });
                                                                                         $("#slcPeriodo").removeAttr('disabled');
                                                                                         $("#btnComenzar").removeAttr('disabled');
+                                                                                        $("#modalIndexBtnCerrar").click();  
                                                                                     }           
                                                                                 }
                                                                     });

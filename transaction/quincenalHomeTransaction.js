@@ -202,14 +202,38 @@ $(document).ready(function(){
 																										 	$(row).find('td:eq(0)').addClass('table-success');
 																										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 																										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+																										 	if(data.bloqueado == 1) {
+																										 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+																										 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+																										 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+																										 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+																										 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+																										 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+																										 	}
 																										}else if(parseFloat(data.nota_quincenal) >= 8 && parseFloat(data.nota_quincenal) < 9) {
 																										 	$(row).find('td:eq(0)').addClass('table-warning');
 																										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 																										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+																										 	if(data.bloqueado == 1) {
+																										 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+																										 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+																										 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+																										 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+																										 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+																										 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+																										 	}
 																										}else{
 																										 	$(row).find('td:eq(0)').addClass('table-danger');
 																										 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
 																										 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+																										 	if(data.bloqueado == 1) {
+																										 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+																										 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+																										 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+																										 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+																										 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+																										 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+																										 	}
 																										}
 																									}
 																										
@@ -459,14 +483,40 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 												 	$(row).find('td:eq(0)').addClass('table-success');
 												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+												 	if(data.bloqueado == 1) {
+												 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+												 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+												 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+												 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+												 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+												 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+												 	}
+
 												}else if(parseFloat(data.nota_quincenal) >= 8 && parseFloat(data.nota_quincenal) < 9) {
 												 	$(row).find('td:eq(0)').addClass('table-warning');
 												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+												 	if(data.bloqueado == 1) {
+												 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+												 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+												 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+												 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+												 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+												 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+												 	}
+
 												}else{
 												 	$(row).find('td:eq(0)').addClass('table-danger');
 												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
 												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+													if(data.bloqueado == 1) {
+												 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+												 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+												 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+												 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+												 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+												 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+												 	}
 												}
 											}		
 										});
@@ -714,14 +764,38 @@ $("#slcPeriodo").change(function() {
 																	 	$(row).find('td:eq(0)').addClass('table-success');
 																	 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 																	 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+																		if(data.bloqueado == 1) {
+																	 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+																	 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+																	 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+																	 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+																	 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+																	 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+																	 	}
 																	}else if(parseFloat(data.nota_quincenal) >= 8 && parseFloat(data.nota_quincenal) < 9) {
 																	 	$(row).find('td:eq(0)').addClass('table-warning');
 																	 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 																	 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+																		if(data.bloqueado == 1) {
+																	 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+																	 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+																	 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+																	 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+																	 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+																	 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+																	 	}
 																	}else{
 																	 	$(row).find('td:eq(0)').addClass('table-danger');
 																	 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
 																	 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+																		if(data.bloqueado == 1) {
+																	 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+																	 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+																	 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+																	 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+																	 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+																	 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+																	 	}
 																	}
 																}
 																	
@@ -1109,14 +1183,38 @@ $("#slcArea").change(function(){
 																									 	$(row).find('td:eq(0)').addClass('table-success');
 																									 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 																									 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+																										if(data.bloqueado == 1) {
+																									 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+																									 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+																									 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+																									 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+																									 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+																									 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+																									 	}
 																									}else if(parseFloat(data.nota_quincenal) >= 8 && parseFloat(data.nota_quincenal) < 9) {
 																									 	$(row).find('td:eq(0)').addClass('table-warning');
 																									 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 																									 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+																										if(data.bloqueado == 1) {
+																									 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+																									 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+																									 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+																									 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+																									 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+																									 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+																									 	}
 																									}else{
 																									 	$(row).find('td:eq(0)').addClass('table-danger');
 																									 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
 																									 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+																										if(data.bloqueado == 1) {
+																									 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+																									 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+																									 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+																									 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+																									 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+																									 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+																									 	}
 																									}
 																								}
 
@@ -1282,14 +1380,38 @@ $("#modalHomeBtnAccion").click(function() {
 												 	$(row).find('td:eq(0)').addClass('table-success');
 												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+													if(data.bloqueado == 1) {
+												 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+												 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+												 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+												 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+												 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+												 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+												 	}
 												}else if(parseFloat(data.nota_quincenal) >= 8 && parseFloat(data.nota_quincenal) < 9) {
 												 	$(row).find('td:eq(0)').addClass('table-warning');
 												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', false);
 												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', false);
+													if(data.bloqueado == 1) {
+												 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+												 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+												 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+												 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+												 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+												 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+												 	}
 												}else{
 												 	$(row).find('td:eq(0)').addClass('table-danger');
 												 	$(row).find('button.btn.btn-dark.btn-sm').prop('disabled', true);
 												 	$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+													if(data.bloqueado == 1) {
+												 		$(row).find('button.btn.btn-danger.btn-sm').prop('disabled', true);
+												 		$(row).find('button.btn.btn-danger.btn-sm').prop('title', "No se puede eliminar la evaluación quincenal porque se generó una evaluación final.");
+												 		$(row).find('button.btn.btn-danger.btn-sm').html('<i class="fas fa-lock"></i> Eliminar');
+												 		$(row).find('button.btn.btn-warning.btn-sm').prop('disabled', true);
+												 		$(row).find('button.btn.btn-warning.btn-sm').prop('title', "No se puede regenerar la evaluación quincenal porque se generó una evaluación final.");
+												 		$(row).find('button.btn.btn-warning.btn-sm').html('<i class="fas fa-lock"></i> Regenerar');
+												 	}
 												}
 											}
 												
