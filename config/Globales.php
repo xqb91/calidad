@@ -11,7 +11,7 @@
 	// S E G U R I D A D
 	//***************************************************
 		//Tiempo máximo de inactividad del usuario
-		define('maxTiempoInactividad', 0);
+		define('maxTiempoInactividad', 30);
 
 	//***************************************************
 	// D I R E C T O R I O S  y  O T R O S

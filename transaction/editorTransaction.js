@@ -667,6 +667,8 @@ $("#fileAudio").change(function() {
 	            $("#infoFileAudio").html('Audio: <strong>'+respuesta.nombre_fichero+'</strong><br />Peso: <strong>'+respuesta.peso+'</strong>');
 	            $("#btnDownloadAudio").prop('href', respuesta.url);
 	            $("#btnDeleteAudio").prop('url', respuesta.nombre_fichero);
+	            $("#btnDownloadAudio").show();
+	            $("#btnDeleteAudio").show();
 	        }
 	    }
      });

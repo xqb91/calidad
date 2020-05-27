@@ -14,7 +14,10 @@
 			echo '[';
 				for($i=0; $i<count($obj); $i++) {
 					$k = $obj[$i];
-					echo '{ "numero_evaluacion" : '.$k["numero_evaluacion"].', "nota_parcial" : '.$k["nota_parcial"].', "nombre_categoria" : "'.$k["nombre_categoria"].'", "peso_categoria" : '.$k["peso_categoria"].', "nota_categoria" : '.$k["nota_categoria"].', "audio" : "'.$k["audio"].'" }';
+
+					if(empty($k["nota_categoria"])) {$nota_categoria = '"No evaluado"'; }else{ $nota_categoria = $k["nota_categoria"]; } 
+
+					echo '{ "numero_evaluacion" : '.$k["numero_evaluacion"].', "nota_parcial" : '.$k["nota_parcial"].', "nombre_categoria" : "'.$k["nombre_categoria"].'", "peso_categoria" : '.$k["peso_categoria"].', "nota_categoria" : '. $nota_categoria.', "audio" : "'.$k["audio"].'" }';
 					if($i<count($obj)-1) {
 						echo ',';
 					}

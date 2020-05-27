@@ -251,6 +251,8 @@ $(document).ready(function() {
 													        	$("#fileadjuntos").attr('evaluacion', evapar.numero_evaluacion);
 													        	$("#modalHomeBtnAccion").attr('evaluacion', evapar.numero_evaluacion);
 													        	$("#lblEvaluacionParcial").html('<i class="fas fa-address-book"></i>&nbsp;<strong>Evaluación #</strong>:&nbsp; '+evapar.numero_evaluacion+'');
+
+																setTimeout(function(){  $.each($('input#itemid1.form-check-input'), function(i,v) {  if($(this).val() == -1) { $(this).click(); console.log('clikeado'); }  }); }, 3000);
 													        }
 													    }
 													});
