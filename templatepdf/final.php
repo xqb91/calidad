@@ -232,7 +232,7 @@ table tfoot .links a{
   <tr>
     <td colspan="2"><table width="100%" border="0">
       <tr>
-        <td width="85%" class="CentroTituloConFormato">Obervación</td>
+        <td width="85%" class="CentroTituloConFormato">Observación de la Interacción Telefónica</td>
         <td width="15%" class="IzquierdaSinFormato"></td>
       </tr>
       <tr>

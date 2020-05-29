@@ -254,10 +254,10 @@ table tfoot .links a{
   <tr>
     <td colspan="2"><table width="100%" border="0">
       <tr>
-        <td width="34%" class="TituloCentrado" colspan="2">Observación</td>
+        <td width="34%" class="TituloCentrado" colspan="2">Observación de la Interacción Telefónica</td>
       </tr>
       <tr>
-        <td colspan="2" class="IzquierdaSinFormato">Evaluación quincenal generada automáticamente el <?php echo DateTime::createFromFormat('Y-m-d', $quincenal[0]->getfecha_creacion())->format('d-m-Y'); ?></td>
+        <td colspan="2" class="IzquierdaSinFormato">Evaluación quincenal generada automáticamente por el sistema de calidad el <?php echo DateTime::createFromFormat('Y-m-d', $quincenal[0]->getfecha_creacion())->format('d-m-Y'); ?></td>
       </tr>
     </table></td>
   </tr>

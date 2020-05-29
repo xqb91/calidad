@@ -1489,7 +1489,7 @@ $("#modalHomeBtnAccion").click(function() {
 						$.ajax({
 						    type: 'post',
 						    url: 'core/CreateEvaluacionParcialObservacion.php',
-						    data: 'comentarios='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
+						    data: {'comentarios' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
 						    beforeSend: function() {
 						        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');
 						    },
@@ -1618,7 +1618,7 @@ $("#modalHomeBtnAccion").click(function() {
 				$.ajax({
 					url: 'core/CreateEvaluacionFinalObservacion.php',
 					type: 'POST',
-					data: 'comentario='+quill.root.innerHTML+'&evaluacion='+$("#modalHomeBtnAccion").attr('evaluacion'),
+					data: {'comentarios' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
 					beforeSend: function() {
 						$.ajax({
 							    type: 'post',
