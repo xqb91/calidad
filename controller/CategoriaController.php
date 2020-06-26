@@ -29,7 +29,7 @@
 		//funcion retorna un arreglo de todos los registros que encuentre en la tabla
 		public function listar() {
 			try {
-				$consulta = 'SELECT * FROM Categoria ORDER BY codigo_categoria, orden ASC';
+				$consulta = 'SELECT * FROM Categoria ORDER BY orden ASC';
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -58,7 +58,7 @@
 
 		public function listarPorCodigo($codigo) {
 			try {
-				$consulta = "SELECT * FROM Categoria WHERE codigo_categoria = ".$codigo." ORDER BY codigo_categoria, orden ASC";
+				$consulta = "SELECT * FROM Categoria WHERE codigo_categoria = ".$codigo." ORDER BY orden ASC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -87,7 +87,7 @@
 
 		public function listarPorArea($area) {
 			try {
-				$consulta = "SELECT * FROM Categoria WHERE codigo_area = '".$area."' ORDER BY codigo_categoria, orden ASC";
+				$consulta = "SELECT * FROM Categoria WHERE codigo_area = '".$area."' ORDER BY orden ASC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -121,8 +121,8 @@
 				if($obj != null) {
 					//construyendo string
 					$consulta = "INSERT INTO Categoria ";
-					$consulta = $consulta."(numero_evaluacion, fecha, nombre_audio, periodo) VALUES ";
-					$consulta = $consulta."(".$obj->getnumero_evaluacion().", '".date('Y-m-d H:i:s')."', '".$obj->getnombre_audio()."', '".$obj->getperiodo()."' );";
+					$consulta = $consulta."(codigo_area, nombre_categoria, peso_categoria, orden) VALUES ";
+					$consulta = $consulta."(".$obj->getcodigo_area().", '".$obj->getnombre_categoria()."', '".$obj->getpeso_categoria()."', '".$obj->getorden()."' );";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -155,9 +155,9 @@
 				$obj = $param;
 				if($obj != null) {
 					//construyendo string
-					$consulta = "UPDATE Audio ";
-					$consulta = $consulta."SET nombre_audio = '".$obj->getnombre_audio()."', periodo = ".$obj->getperiodo()." ";
-					$consulta = $consulta."WHERE numero_evaluacion = ".$obj->getnumero_evaluacion().";";
+					$consulta = "UPDATE Categoria ";
+					$consulta = $consulta."SET nombre_categoria = '".$obj->getnombre_categoria()."', peso_categoria = ".$obj->getpeso_categoria().", orden = ".$obj->getorden()."  ";
+					$consulta = $consulta."WHERE codigo_categoria = ".$obj->getcodigo_categoria().";";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -190,8 +190,8 @@
 				$obj = $param;
 				if($obj != null) {
 					//construyendo string
-					$consulta = "DELETE FROM Audio ";
-					$consulta = $consulta."WHERE numero_evaluacion = ".$obj->getnumero_evaluacion().";";
+					$consulta = "DELETE FROM Categoria ";
+					$consulta = $consulta."WHERE codigo_categoria = ".$obj->getcodigo_categoria().";";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);

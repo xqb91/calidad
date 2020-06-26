@@ -1397,6 +1397,7 @@ $("#btnDownloadPDFEvalClicked").click(function() {
 
 /// CLICK generar nueva evaluacion
 $("#btnGenerarEva").click(function() {
+	var ejecutivo = $(this).attr('ejecutivo');
 	$.ajax({
 		type: 'get', 
 		url: 'core/SessionManager.php',
@@ -1478,7 +1479,6 @@ $("#btnGenerarEva").click(function() {
 					$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
 				    $("#modalHome").modal('show');
 					$("#modalHomeTitle").html('<i class="far fa-edit"></i> Nueva evaluación parcial');
-					var ejecutivo = $(this).attr('ejecutivo');
 
 					$.ajax({
 				        type: 'post',
