@@ -1281,7 +1281,18 @@ $("#slcPeriodo").change(function() {
 																						$("#modalHome").modal('show');
 																					},
 																					200: function(responseObject, textStatus, errorThrown) {
-																							window.location.href="core/pdfGenerate.php?evaluacion="+$("#modalHomeBtnAccion").attr('evaluacion')+"&tipo=parcial&accion=descargar";
+																							//here_delete
+																							//window.location.href="core/pdfGenerate.php?evaluacion="+$("#modalHomeBtnAccion").attr('evaluacion')+"&tipo=parcial&accion=descargar";
+																							$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																							$("#modalHomeTitle").html('<i class="far fa-edit"></i> Edición de Evaluación Parcial #'+eval);
+																							$("#modalHomeContenido").html('<iframe src="core/pdfGenerate.php?evaluacion='+eval+'&tipo=parcial" width="100%" height="600px" />');
+																			            	$("#modalHomeBtnCerrar").show();
+																							$("#modalHomeBtnCerrar").text('Cerrar');
+																							$("#modalHomeCerrarVentana").hide();
+																							$("#modalHomeBtnAccion").show();
+																							$("#modalHomeBtnAccion").attr('evaluacion', eval);
+																							$("#modalHomeBtnAccion").text('Descargar Documento PDF');
+																							$("#modalHome").modal('show');
 																					}
 																				}
 																			});
@@ -1898,7 +1909,18 @@ $("#modalHomeBtnAccion").click(function() {
 																		$("#modalHome").modal('show');
 																	},
 																	200: function(responseObject, textStatus, errorThrown) {
-																			window.location.href="core/pdfGenerate.php?evaluacion="+$("#modalHomeBtnAccion").attr('evaluacion')+"&tipo=parcial&accion=descargar";
+																			//here_delete
+																			//window.location.href="core/pdfGenerate.php?evaluacion="+$("#modalHomeBtnAccion").attr('evaluacion')+"&tipo=parcial&accion=descargar";
+																			$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																			$("#modalHomeTitle").html('<i class="far fa-edit"></i> Edición de Evaluación Parcial #'+eval);
+																			$("#modalHomeContenido").html('<iframe src="core/pdfGenerate.php?evaluacion='+eval+'&tipo=parcial" width="100%" height="600px" />');
+															            	$("#modalHomeBtnCerrar").show();
+																			$("#modalHomeBtnCerrar").text('Cerrar');
+																			$("#modalHomeCerrarVentana").hide();
+																			$("#modalHomeBtnAccion").show();
+																			$("#modalHomeBtnAccion").attr('evaluacion', eval);
+																			$("#modalHomeBtnAccion").text('Descargar Documento PDF');
+																			$("#modalHome").modal('show');
 																	}
 																}
 															});
@@ -2271,7 +2293,18 @@ $("#modalHomeBtnAccion").click(function() {
 																		$("#modalHome").modal('show');
 																	},
 																	200: function(responseObject, textStatus, errorThrown) {
-																			window.location.href="core/pdfGenerate.php?evaluacion="+$("#modalHomeBtnAccion").attr('evaluacion')+"&tipo=parcial&accion=descargar";
+																			//here_delete
+																			//window.location.href="core/pdfGenerate.php?evaluacion="+$("#modalHomeBtnAccion").attr('evaluacion')+"&tipo=parcial&accion=descargar";
+																			$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																			$("#modalHomeTitle").html('<i class="far fa-edit"></i> Edición de Evaluación Parcial #'+eval);
+																			$("#modalHomeContenido").html('<iframe src="core/pdfGenerate.php?evaluacion='+eval+'&tipo=parcial" width="100%" height="600px" />');
+															            	$("#modalHomeBtnCerrar").show();
+																			$("#modalHomeBtnCerrar").text('Cerrar');
+																			$("#modalHomeCerrarVentana").hide();
+																			$("#modalHomeBtnAccion").show();
+																			$("#modalHomeBtnAccion").attr('evaluacion', eval);
+																			$("#modalHomeBtnAccion").text('Descargar Documento PDF');
+																			$("#modalHome").modal('show');
 																	}
 																}
 															});
@@ -2653,7 +2686,18 @@ $("#modalHomeBtnAccion").click(function() {
 																				$("#modalHome").modal('show');
 																			},
 																			200: function(responseObject, textStatus, errorThrown) {
-																					window.location.href="core/pdfGenerate.php?evaluacion="+$("#modalHomeBtnAccion").attr('evaluacion')+"&tipo=parcial&accion=descargar";
+																					//here_delete
+																					//window.location.href="core/pdfGenerate.php?evaluacion="+$("#modalHomeBtnAccion").attr('evaluacion')+"&tipo=parcial&accion=descargar";
+																					$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																					$("#modalHomeTitle").html('<i class="far fa-edit"></i> Edición de Evaluación Parcial #'+eval);
+																					$("#modalHomeContenido").html('<iframe src="core/pdfGenerate.php?evaluacion='+eval+'&tipo=parcial" width="100%" height="600px" />');
+																	            	$("#modalHomeBtnCerrar").show();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeCerrarVentana").hide();
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHomeBtnAccion").attr('evaluacion', eval);
+																					$("#modalHomeBtnAccion").text('Descargar Documento PDF');
+																					$("#modalHome").modal('show');
 																			}
 																		}
 																	});
