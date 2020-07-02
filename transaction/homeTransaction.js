@@ -1489,7 +1489,7 @@ $("#modalHomeBtnAccion").click(function() {
 						$.ajax({
 						    type: 'post',
 						    url: 'core/CreateEvaluacionParcialObservacion.php',
-						    data: {'comentarios' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
+						    data: {'comentario' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
 						    beforeSend: function() {
 						        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');
 						    },
@@ -1537,6 +1537,7 @@ $("#modalHomeBtnAccion").click(function() {
 	}else if ($("#modalHomeBtnAccion").text() == "Iniciar Sesión") {
 		window.location.href="index.php";
 	}else if($("#modalHomeBtnAccion").text() == "Guardar Evaluación Final") {
+		var observacion = quill.root.innerHTML;
 		$.ajax({
 			type: 'get', 
 			url: 'core/SessionManager.php',
@@ -1618,7 +1619,7 @@ $("#modalHomeBtnAccion").click(function() {
 				$.ajax({
 					url: 'core/CreateEvaluacionFinalObservacion.php',
 					type: 'POST',
-					data: {'comentarios' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
+					data: {'comentario' : observacion, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
 					beforeSend: function() {
 						$.ajax({
 							    type: 'post',
@@ -1741,20 +1742,24 @@ $("#modalHomeBtnAccion").click(function() {
 							$("#modalHomeTitle").text('Error al guardar la observación');
 							$("#modalHomeContenido").html('No se recibió uno de los parámetros para poder guardar la observación. La evaluación final esta guardada pero editela para ingresar nuevamente su observación.<br /><strong>HTTP 302</strong>');
 							$("#modalHomeBtnAccion").hide();
+							$("#modalHomeBtnCerrar").show();
 						},
 						301: function(responseObject, textStatus, errorThrown) {
 							$("#modalHomeTitle").text('Error al guardar la observación');
 							$("#modalHomeContenido").html('No se recibió uno de los parámetros para poder guardar la observación. La evaluación final esta guardada pero editela para ingresar nuevamente su observación.<br /><strong>HTTP 301</strong>');
 							$("#modalHomeBtnAccion").hide();
+							$("#modalHomeBtnCerrar").show();
 						},
 						204: function(responseObject, textStatus, errorThrown) {
 							$("#modalHomeTitle").text('Error al guardar la observación');
 							$("#modalHomeContenido").html('Ocurrió un error al guardar la observación... Por favor intentelo más tarde.<br /><strong>HTTP 204</strong>');
 							$("#modalHomeBtnAccion").hide();
+							$("#modalHomeBtnCerrar").show();
 						},
 						200: function(responseObject, textStatus, errorThrown) {
 							$("#modalHomeContenido").html('<strong>Evaluación guardada con éxito</strong>');
 							$("#modalHomeBtnAccion").hide();
+							$("#modalHomeBtnCerrar").show();
 						}
 					}
 				});

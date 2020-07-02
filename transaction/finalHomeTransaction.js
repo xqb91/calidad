@@ -1843,7 +1843,7 @@ $("#modalHomeBtnAccion").click(function() {
 					$.ajax({
 						url: 'core/CreateEvaluacionFinalObservacion.php',
 						type: 'POST',
-						data: {'comentarios' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
+						data: {'comentario' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
 						beforeSend: function() {
 							$.ajax({
 							    type: 'post',
@@ -2086,7 +2086,7 @@ $("#modalHomeBtnAccion").click(function() {
 					$.ajax({
 						url: 'core/CreateEvaluacionFinalObservacion.php',
 						type: 'POST',
-						data: {'comentarios' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
+						data: {'comentario' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
 						beforeSend: function() {
 							$.ajax({
 							    type: 'post',
