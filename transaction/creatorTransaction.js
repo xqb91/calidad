@@ -145,6 +145,9 @@ $(document).ready(function() {
 								                    var act  = "";
 								                    var ct 	 = -1;
 								                    var colores = ['#E4E1F1', '#E2CBE0', '#CFB0CF','#BC96C0', '#A77EB0', '#9166A1'];
+
+
+								                    //here delete
 								                    for (var i =0; i<items.length; i++) {
 								                    	//categorias[i]
 								                    		act = items[i].nombre_categoria;
@@ -154,9 +157,25 @@ $(document).ready(function() {
 									                        mostrar = mostrar + '<th scope="row" style="font-size: 10px; color: #000;" bgcolor="'+colores[ct]+'">'+items[i].nombre_categoria+'</th>';
 									                        mostrar = mostrar + '<td style="font-size: 12px; color: #000;" bgcolor="'+colores[ct]+'">'+items[i].nombre_item+'</td>';
 									                        mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items[i].codigo_item+'" id="itemid'+items[i].codigo_item+'" categoria="'+items[i].codigo_categoria+'" peso="'+items[i].peso_categoria+'" codigo_item="'+items[i].codigo_item+'" value="-1" checked><label class="form-check-label" for="exampleRadios1"></label></div></td>';
-									                        mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items[i].codigo_item+'" id="itemid'+items[i].codigo_item+'" categoria="'+items[i].codigo_categoria+'" peso="'+items[i].peso_categoria+'" codigo_item="'+items[i].codigo_item+'" value="0"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
-									                        mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items[i].codigo_item+'" id="itemid'+items[i].codigo_item+'" categoria="'+items[i].codigo_categoria+'" peso="'+items[i].peso_categoria+'" codigo_item="'+items[i].codigo_item+'" value="5"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
-									                        mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items[i].codigo_item+'" id="itemid'+items[i].codigo_item+'" categoria="'+items[i].codigo_categoria+'" peso="'+items[i].peso_categoria+'" codigo_item="'+items[i].codigo_item+'" value="10"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+									                        									                        console.log(items[i].valor0);
+									                        if(items[i].valor0 == 0) {
+									                        	mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items[i].codigo_item+'" id="itemid'+items[i].codigo_item+'" categoria="'+items[i].codigo_categoria+'" peso="'+items[i].peso_categoria+'" codigo_item="'+items[i].codigo_item+'" value="0" disabled="disabled"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+									                        }else{
+									                        	mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items[i].codigo_item+'" id="itemid'+items[i].codigo_item+'" categoria="'+items[i].codigo_categoria+'" peso="'+items[i].peso_categoria+'" codigo_item="'+items[i].codigo_item+'" value="0"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+									                        }
+
+									                        if(items[i].valor05 == 0) {
+									                        	mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items[i].codigo_item+'" id="itemid'+items[i].codigo_item+'" categoria="'+items[i].codigo_categoria+'" peso="'+items[i].peso_categoria+'" codigo_item="'+items[i].codigo_item+'" value="5" disabled="disabled"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+									                        }else{
+									                        	mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items[i].codigo_item+'" id="itemid'+items[i].codigo_item+'" categoria="'+items[i].codigo_categoria+'" peso="'+items[i].peso_categoria+'" codigo_item="'+items[i].codigo_item+'" value="5"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+									                        }
+
+									                        if(items[i].valor1 == 0) {
+									                        	mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items[i].codigo_item+'" id="itemid'+items[i].codigo_item+'" categoria="'+items[i].codigo_categoria+'" peso="'+items[i].peso_categoria+'" codigo_item="'+items[i].codigo_item+'" value="10" disabled="disabled"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+									                        }else{
+									                        	mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items[i].codigo_item+'" id="itemid'+items[i].codigo_item+'" categoria="'+items[i].codigo_categoria+'" peso="'+items[i].peso_categoria+'" codigo_item="'+items[i].codigo_item+'" value="10"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+									                        }
+
 									                      	mostrar = mostrar + '</tr>';
 									                      	$("#tablaEvaluaciones").append(mostrar);
 								                    };

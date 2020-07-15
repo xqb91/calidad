@@ -230,22 +230,45 @@ $(document).ready(function() {
 												                        }
 
 												                        if(items["items"][i].nota == 0) {
-												                        	
-												                        	mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="0" checked><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	if(items["items"][i].valor0 == 0) {
+												                        		mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="0" disabled="disabled" checked><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	}else{
+												                        		mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="0" checked><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	}
 												                        }else{ 
-												                        	mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="0"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	if(items["items"][i].valor0 == 0) {
+												                        		mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="0" disabled="disabled"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	}else{
+												                        		mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="0"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	}	
 												                        }
 
 												                        if(items["items"][i].nota == 5) {
-												                        	mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="5" checked><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	if(items["items"][i].valor05 == 0) {
+												                        		mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="5" checked disabled="disabled"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	}else{
+												                        		mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="5" checked><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	}
 												                        }else{
-												                        	mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="5"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	if(items["items"][i].valor05 == 0) {
+												                        		mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="5" disabled="disabled"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	}else{
+												                        		mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="5"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	}
 												                        }
 
 												                        if(items["items"][i].nota == 10) {
-												                        	mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="10" checked><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	if(items["items"][i].valor1 == 0) {
+												                        		mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="10" disabled="disabled" checked><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	}else{
+												                        		mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="10" checked><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	}
 												                        }else{
-												                        	mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="10"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	if(items["items"][i].valor1 == 0) {
+												                        		mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="10" disabled="disabled"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	}else{
+												                        		mostrar = mostrar + '<td bgcolor="'+colores[ct]+'"><div class="form-check"><input class="form-check-input" type="radio" name="itemid'+items["items"][i].codigo_item+'" id="itemid'+items["items"][i].codigo_item+'" categoria="'+items["items"][i].codigo_categoria+'" peso="'+items["items"][i].peso_categoria+'" codigo_item="'+items["items"][i].codigo_item+'" value="10"><label class="form-check-label" for="exampleRadios1"></label></div></td>';
+												                        	}
 												                        }
 												                      	mostrar = mostrar + '</tr>';
 												                      	$("#tablaEvaluaciones").append(mostrar);

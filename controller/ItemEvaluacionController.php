@@ -145,7 +145,7 @@
 
 		public function listarPorArea($codigo) {
 			try {
-				$consulta = "SELECT a.codigo_item, a.codigo_categoria, a.nombre_item, a.orden FROM item_evaluacion a INNER JOIN categoria b ON a.codigo_categoria = b.codigo_categoria WHERE b.codigo_area = ".$codigo."  ORDER BY a.codigo_categoria ASC, a.codigo_item ASC";
+				$consulta = "SELECT * FROM item_evaluacion a INNER JOIN categoria b ON a.codigo_categoria = b.codigo_categoria WHERE b.codigo_area = ".$codigo."  ORDER BY a.codigo_categoria ASC, a.codigo_item ASC";
 				
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {

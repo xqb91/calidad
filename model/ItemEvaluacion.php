@@ -5,7 +5,12 @@
 	     private $codigo_item ; 
 	     private $codigo_categoria;
 	     private $nombre_item;
-	     private $orden ;
+	     private $orden;
+	     private $obligatorio;
+	     private $valor0;
+	     private $valor05;
+	     private $valor1;
+	     private $mostrar;
 
 	     //foreign objects
 	     private $codigo_area;
@@ -22,6 +27,11 @@
 			$this->nombre_item		= $arreglo['nombre_item'];
 			$this->orden			= $arreglo['orden'];
 			$this->setCategoria();
+			$this->valor0 			= $arreglo['valor_0'];
+			$this->valor05 			= $arreglo['valor_05'];
+			$this->valor1 			= $arreglo['valor_1'];
+			$this->mostrar 			= $arreglo['mostrar'];
+			$this->obligatorio 		= $arreglo['obligatorio'];
 		}
 
 		//accesadores
@@ -61,6 +71,47 @@
 		public function getcategoria() {
 			try {
 				return $this->categoria;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
+
+		public function getObligatorio() {
+			try {
+				return $this->obligatorio;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
+		public function getValor0() {
+			try {
+				return $this->valor0;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
+		public function getValor05() {
+			try {
+				return $this->valor05;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
+		public function getValor1() {
+			try {
+				return $this->valor1;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
+		public function getMostrar() {
+			try {
+				return $this->mostrar;
 			}catch(Exception $e) {
 				return null;
 			}
@@ -125,6 +176,52 @@
 				return false;
 			}
 		}	
+
+
+		public function setObligatorio($obligatorio) {
+			try {
+				$this->obligatorio = $obligatorio;
+				return true;
+			}catch(Exception $e) {
+				return false;
+			}
+		}
+
+		public function setValor0($valor) {
+			try {
+				$this->valor0 = $valor;
+				return true;
+			}catch(Exception $e) {
+				return false;
+			}
+		}
+
+		public function setValor05($valor) {
+			try {
+				$this->valor05 = $valor;
+				return true;
+			}catch(Exception $e) {
+				return false;
+			}
+		}
+
+		public function setValor1($valor) {
+			try {
+				$this->valor1 = $valor;
+				return true;
+			}catch(Exception $e) {
+				return false;
+			}
+		}
+
+		public function setMostrar($valor) {
+			try {
+				$this->mostrar = $valor;
+				return true;
+			}catch(Exception $e) {
+				return false;
+			}
+		}
 
 		//metodos de la clase
 		//lista todos los valores de la clase

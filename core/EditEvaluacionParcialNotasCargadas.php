@@ -30,7 +30,13 @@
 						echo '"peso_categoria" : '.$temp2->getpeso_categoria().',';
 						echo '"codigo_item" : '.$obj[$i]->getcodigo_item().',';
 						echo '"nombre_item" : "'.$temp->getnombre_item().'",';
-						echo '"nota" : '.$obj[$i]->getnota().'';
+						echo '"nota" : '.$obj[$i]->getnota().',';
+						echo '"valor0" : '.$temp->getValor0().',';
+						echo '"valor05" : '.$temp->getValor05().',';
+						echo '"valor1" : '.$temp->getValor1().',';
+						echo '"mostrar" : '.$temp->getMostrar().',';
+						echo '"obligatorio" : '.$temp->getObligatorio().'';
+
 					echo '}';
 				//echo ']';
 				if( $i<count($obj)-1) {
