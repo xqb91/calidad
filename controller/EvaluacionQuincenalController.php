@@ -452,6 +452,31 @@
 		}
 
 
+		public function actualizaPorDesbloqueo($ejecutivo, $periodo) {
+			try {
+				$consulta = "CALL sp_update_eva_quincenal(".$ejecutivo.", '".$periodo."')";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultado == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
+							return 1;
+						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
+							return 0;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - eliminar: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
 		public function ultimaEvaluacionGenerada($periodo, $ejecutivo, $evaluador, $area) {
 			try {
 				$consulta = "SELECT * FROM evaluacion_quincenal WHERE periodo = '".$periodo."' AND rut_ejecutivo = ".$ejecutivo." AND rut_evaluador = ".$evaluador." AND codigo_area = ".$area." ORDER BY numero_quincenal DESC LIMIT 1";

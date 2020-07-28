@@ -50,7 +50,8 @@
 				
 				for($i=0; $i<count($parci); $i++) {
 					//etapa de Evaluacion
-					echo ' { "evaluacion" : '.$parci[$i]->getnumero_evaluacion().', "fecha_evaluacion" : "'.$parci[$i]->getfecha_evaluacion().'", "periodo" : "'.$parci[$i]->getperiodo().'", "nota" : '.$parci[$i]->getnota_final().', "bloqueado" : 0 }';
+					if($parci[$i]->getOrden() == null) { $orden = 0; }else{ $orden = $parci[$i]->getOrden(); }
+					echo ' { "evaluacion" : '.$parci[$i]->getnumero_evaluacion().', "fecha_evaluacion" : "'.$parci[$i]->getfecha_evaluacion().'", "periodo" : "'.$parci[$i]->getperiodo().'", "nota" : '.$parci[$i]->getnota_final().', "bloqueado" : 0, "orden":  '.$orden.', "estado" : '.$parci[$i]->getEstado().' }';
 					if($i<count($parci)-1) {
 						echo ",";
 					}

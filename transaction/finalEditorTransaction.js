@@ -1,6 +1,6 @@
 var quill;
 $(document).ready(function() {
-	var evaluacion = $("#irqljob").val();
+	var evaluacion = $("#irqljob2").val();
 
 	//inicializando objetos
 	$("#barraCargaAudio").hide();

@@ -1,4 +1,5 @@
 <?php
+	error_reporting(0);
 	class EvaluacionParcial {
 		//columnas de la tabla
 		private $numero_evaluacion; 
@@ -9,6 +10,8 @@
 		private $nota_final; 
 		private $observacion; 
 		private $codigo_area; 
+		private $orden;
+		private $estado;
 
 		//Constructor
 		//Obtiene un arreglo que es generado de forma automática por MySQL
@@ -22,6 +25,8 @@
 			$this->nota_final			= $arreglo['nota_final'];
 			$this->observacion			= $arreglo['observacion'];
 			$this->codigo_area			= $arreglo['codigo_area'];
+			$this->orden  				= $arreglo['orden'];
+			$this->estado 				= $arreglo['estado'];
 		}
 
 		//accesadores
@@ -84,6 +89,22 @@
 		public function getcodigo_area() {
 			try {
 				return $this->codigo_area;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
+		public function getOrden() {
+			try {
+				return $this->orden;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
+		public function getEstado() {
+			try {
+				return $this->estado;
 			}catch(Exception $e) {
 				return null;
 			}
@@ -156,6 +177,15 @@
 		public function setcodigo_area($codigo_area) {
 			try {
 				$this->codigo_area = $codigo_area;
+				return true;
+			}catch(Exception $e) {
+				return false;
+			}
+		}
+
+		public function setEstado($estado) {
+			try {
+				$this->estado = $estado;
 				return true;
 			}catch(Exception $e) {
 				return false;

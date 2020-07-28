@@ -58,7 +58,7 @@
 
 		public function listarPorNumero($codigo) {
 			try {
-				$consulta = "SELECT * FROM evaluacion_final WHERE numero_final = '".$codigo."' ORDER BY numero_final DESC";
+				$consulta = "SELECT * FROM evaluacion_final WHERE numero_final = ".$codigo." ORDER BY numero_final DESC";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -239,6 +239,40 @@
 					}
 				}else{
 					if(ambiente == 'DEV') { echo "EvaluacionFinalController - eliminar: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+
+		public function actualizaPorDesbloqueo($ejecutivo, $periodo) {
+			try {
+				//objeto
+				$obj = $param;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "CALL sp_update_eva_final(".$ejecutivo.", '".$periodo."')";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultado == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
+							return 1;
+						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
+							return 0;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "EvaluacionFinalController - actualizaPorDesbloqueo: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionFinalController - actualizaPorDesbloqueo: El objeto Adjunto (Model) se encuentra nulo"; }
 					return false;
 				}
 			}catch(Exception $e) {

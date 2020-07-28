@@ -226,9 +226,8 @@
                         <thead>
                           <tr>
                             <th scope="col" style="width: 30%;">Ejecutivo</th> 
-                            <th scope="col">Area</th>
                             <th scope="col">Periodo</th>
-                            <th scope="col">Evaluaciones</th>
+                            <th scope="col">Total Evas</th>
                             <th scope="col">Quincenal</th>
                             <th scope="col">Evaluación Final</th>
                           </tr>
@@ -236,7 +235,6 @@
                         <tbody>
                           <tr>
                             <th scope="row col-9" id="tblEjecutivoNombre">--</th>
-                            <td id="tblEjecutivoArea">--</td>
                             <td id="tblEjecutivoPeriodo">____-__</td>
                             <td id="tblEjecutivoCantidad">--</td>
                             <td id="tblEjecutivoQuincenal">-.--</td>
@@ -248,16 +246,17 @@
               </div>
 
 
-              <div class="col-xl-8 col-lg-10">
+              <div class="col-xl-9 col-lg-8">
                 <div class="card shadow mb-2">
                 <!-- Card Header - Dropdown -->
                   <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Evaluaciones</h6>
                      <div class="dropdown no-arrow">
-                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <button type="button" class="btn dropdown-menu-right  btn-primary btn-sm" id="btnGenerarEva"><i class="fas fa-plus-square"></i> Generar Evaluación</button>
+                     <!--<button type="button" class="btn btn-primary btn-sm">Primary</button><button type="button" class="btn dropdown-menu-right  btn-primary btn-sm" id="btnGenerarEva"><i class="fas fa-plus-square"></i> Generar Evaluación</button> -->
+                     <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                      <button type="button" class="btn btn-secondary" disabled="disabled" id="btnUnlockEvas" title="Desbloquear Evaluaciones"><i class="fas fa-lock-open"></i></button>
+                      <button type="button" class="btn dropdown-menu-right  btn-primary btn-sm" id="btnGenerarEva"><i class="fas fa-plus-square"></i> Generar Evaluación</button></div>
                     <!--</div>-->
-                    </a>
                   </div>
                   </div>
                 <!-- Card Body -->
@@ -273,7 +272,7 @@
             </div>
 
             <!-- Pie Chart -->
-            <div class="col-xl-4 col-lg-2">
+            <div class="col-xl-3 col-lg-4">
               <div class="card shadow mb-2">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">

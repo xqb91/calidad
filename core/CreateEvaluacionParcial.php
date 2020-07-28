@@ -74,8 +74,14 @@
 
 					if($controlado->ingresar($evaluacion) == 1) {
 						$parcial = $controlado->ultimaEvaluacionGenerada($periodo, $ejecutivo, $evaluador, $area);
-						echo $parcial[0]->serializar();
-						http_response_code(200);
+						$parcial = $controlado->seteaNumeroOrden($parcial[0]);
+						if($parcial == null) {
+							http_response_code(401);
+						}else{
+							echo $parcial[0]->serializar();
+							http_response_code(200);
+						}
+
 					}else{
 						http_response_code(401);
 					}

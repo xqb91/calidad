@@ -294,6 +294,74 @@
 			}
 		}
 
+		public function seteaNumeroOrden($param) {
+			try {
+				//objeto
+				$obj = $param;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "CALL sp_setea_numero_orden_parcial(".$param->getnumero_evaluacion().");";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultado == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
+							return $this->ultimaEvaluacionGenerada($param->getperiodo(), $param->getrut_ejecutivo(), $param->getrut_evaluador(), $param->getcodigo_area());
+						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
+							return null;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "seteaNumeroOrden - ingresar: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "seteaNumeroOrden - ingresar: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+
+		public function actualizaNumeroOrden($param) {
+			try {
+				//objeto
+				$obj = $param;
+				if($obj != null) {
+					//construyendo string
+					$consulta = "CALL sp_update_numero_orden_parcial('".$param->getperiodo()."', ".$param->getrut_ejecutivo().");";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($resultado == true) {
+							$this->databaseTransaction->confirmar();
+							$this->databaseTransaction->cerrar();
+							return $this->ultimaEvaluacionGenerada($param->getperiodo(), $param->getrut_ejecutivo(), $param->getrut_evaluador(), $param->getcodigo_area());
+						}else{
+							$this->databaseTransaction->deshacer();
+							$this->databaseTransaction->cerrar();
+							return null;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "seteaNumeroOrden - ingresar: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "seteaNumeroOrden - ingresar: El objeto Adjunto (Model) se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+
 		public function actualizar($param) {
 			try {
 				//objeto
@@ -301,7 +369,7 @@
 				if($obj != null) {
 					//construyendo string
 					$consulta = "UPDATE evaluacion_parcial ";
-					$consulta = $consulta."SET observacion = '".$obj->getobservacion()."', nota_final = ".$obj->getnota_final()." ";
+					$consulta = $consulta."SET observacion = '".$obj->getobservacion()."', nota_final = ".$obj->getnota_final().", estado = ".$obj->getEstado()." ";
 					$consulta = $consulta."WHERE numero_evaluacion = ".$obj->getnumero_evaluacion().";";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
@@ -378,6 +446,7 @@
 						if($resultado == true) {
 							$this->databaseTransaction->confirmar();
 							$this->databaseTransaction->cerrar();
+							$this->actualizaNumeroOrden($obj);
 							return 1;
 						}else{
 							$this->databaseTransaction->deshacer();

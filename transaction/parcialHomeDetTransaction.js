@@ -2,9 +2,25 @@
 
 var tablaEjecutivos;
 var irqljob = $("#irqljob").val();
-
+var ejecutivoBck = null;
+var statusBck = null;
 
 $(document).ready(function(){
+
+	//validando localstorage de bloqueo
+	if(localStorage.getItem('bloqueoParcial') == null) {
+		localStorage.setItem('bloqueoParcial', 0); 
+	}
+
+	if(localStorage.getItem('bloqueoParcial') == 1) {
+		 $(window).on('beforeunload', function(){
+                  return 'Seguro de salir sin bloquear las evaluaciones?';
+           });
+	}else{
+		$(window).off('beforeunload');
+	}
+
+
 	$.ajax({
 		type: 'get', 
 		url: 'core/SessionManager.php',
@@ -237,9 +253,9 @@ $(document).ready(function(){
 																				             			},
 																				             			200: function(responseObject, textStatus, errorThrown) {
 																				             				var resultado = JSON.parse(responseObject);
+																				             				ejecutivoBck = resultado;
+																				             				$("#tblEjecutivoNombre").html('<i class="fas fa-user-tie"></i> <b style="text-transform:capitalize;">'+resultado[0].ejecutivo.nombre_ejecutivo+'</b><br /><span class="badge badge-secondary" style="font-size: 12px;"><b>'+resultado[0].area.nombre_area+'</b> <em>'+resultado[0].ciclo.nombre_ciclo+' '+resultado[0].jornada.nombre_ciclo+'</em></span>');
 
-																				             				$("#tblEjecutivoNombre").html('<b>'+resultado[0].ejecutivo.nombre_ejecutivo+'</b>');
-																				             				$("#tblEjecutivoArea").html('<b>'+resultado[0].area.nombre_area+'</b> <em>'+resultado[0].ciclo.nombre_ciclo+' '+resultado[0].jornada.nombre_ciclo+'</em>');
 																				             			}
 																				             		}
 																				             	});
@@ -275,50 +291,80 @@ $(document).ready(function(){
 																				             			200: function(responseObject, textStatus, errorThrown) {
 																				             				var resultado = JSON.parse(responseObject);
 
-																				             				if(resultado.bloqueado_final == 1) {
+																				             				statusBck = resultado;
+
+																				             				if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 0) {
 																				             					$("#btnGenerarEva").prop('disabled', true);
+																				             					$("#btnUnlockEvas").removeProp('disabled');
 																				             					$("#btnGenerarEva").html('<i class="fas fa-lock"></i> <strong>Bloqueado porque existe Evaluación Final</strong>');
+																				             				}else if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 1){
+																				             					$("#btnGenerarEva").removeAttr('disabled');
+																												$("#btnGenerarEva").html('<i class="fas fa-plus-square"></i> Generar Evaluación');
+																												$("#btnUnlockEvas").removeAttr('disabled');
+																												$("#btnUnlockEvas").attr('class', 'btn-danger btn-sm');
+																												$("#btnUnlockEvas").attr('title', 'Bloquear y actualizar');
+																												$("#btnUnlockEvas").html('<i class="fas fa-lock"></i> <strong>Bloquear</strong>');
+																				             				}
+
+																				             				//habilitacion de bonton de desbloqueo
+																				             				if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 0) {
+																				             					$("#btnUnlockEvas").removeAttr('disabled');
 																				             				}
 
 																				             				if(resultado.parciales == null) {
-																				             					$("#tblEjecutivoCantidad").html('Ninguna Evaluación Parcial');
+																				             					$("#tblEjecutivoCantidad").html('0');
 																				             				}else{
 																				             					$("#tblEjecutivoCantidad").html(resultado.parciales.length);
 																				             				}
 																				             				
 																				             				if(resultado.efinal == null) {
-																				             					$("#tblEjecutivoFinal").html('No Generada');
+																				             					$("#tblEjecutivoFinal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Basic example"><button type="button" class="btn btn-primary id="btnFastPDFFinal" disabled="disabled"><i class="fas fa-flag"></i> -.-- PDF</button> <button type="button" class="btn btn-warning" id="btnCrearFinal"><i class="fas fa-asterisk"></i></button></div>');
 																				             				}else{
-																				             					$("#tblEjecutivoFinal").html(parseFloat(resultado.efinal.nota).toFixed(2));
+																				             					$("#tblEjecutivoFinal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Basic example"><button type="button" class="btn btn-primary" id="btnFastPDFFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="fas fa-flag"></i> <strong>'+parseFloat(resultado.efinal.nota).toFixed(2)+'</strong> PDF</button> <button type="button" class="btn btn-warning" id="btnEditarFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="fas fa-pen"></i></button><button type="button" class="btn btn-danger" id="btnEliminarFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="far fa-trash-alt"></i></button></div>');
 																				             				}
 
 																				             				if(resultado.quincenal == null) {
-																				             					$("#tblEjecutivoQuincenal").html('No Generada');
+																				             					$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="0" disabled="disabled"><i class="far fa-calendar-check"></i> <strong>-.--</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="0" disabled="disabled"><i class="far fa-trash-alt"></i></button></div>');
 																				             				}else{
-																				             					$("#tblEjecutivoQuincenal").html(parseFloat(resultado.quincenal.nota).toFixed(2));
+																				             					if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 0) {
+																				             						$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-calendar-check"></i> <strong>'+parseFloat(resultado.quincenal.nota).toFixed(2)+'</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'" disabled="disabled"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'" disabled="disabled"><i class="far fa-trash-alt"></i></button></div>');
+																				             					}else{
+																				             						$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-calendar-check"></i> <strong>'+parseFloat(resultado.quincenal.nota).toFixed(2)+'</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-trash-alt"></i></button></div>');
+																				             					}
 																				             				}
 
 																				             				if(resultado.parciales == null)  {
 																				             					var fila = '';
 																				             					fila = fila + '<tr>';
-				                            																	fila = fila + '<td colspan="6">No se han ingresado evaluaciones para este ejecutivo</td>';
+				                            																	fila = fila + '<td colspan="5">No se han ingresado evaluaciones para este ejecutivo</td>';
 				                          																		fila = fila + '</tr>';
 				                          																		$("#tablaEvaluacionesGeneradas").append(fila);
 																				             				}else{
 																					             				$.each(resultado.parciales, function(i,v) {
+
 																					             					var fila = '';
-																					             					fila = fila +'<tr evaluacion="'+v.evaluacion+'">';
-																						                            fila = fila +'<td>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</td>';
-																						                            fila = fila +'<td scope="row col-9" style="width: 40%;">Evaluación #'+v.evaluacion+'</th>';
-																						                            fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
-																						                           	if(resultado.bloqueado_final == 1) {
-																						                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm">Eliminar <i class="fas fa-lock"></i></button></td>';
-																						                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm">Editar <i class="fas fa-lock"></i></button></td>';
+																					             					//validando si requiere corrección
+																					             					if(v.estado == 2) { 
+																					             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-danger">';  
+																					             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-danger"><i class="fas fa-exclamation-circle"></i> Requiere Revisión</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+																					             					}else if(v.estado == 4) {
+																					             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-success">'; 
+																					             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-success"><i class="fas fa-check"></i> Revisada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+																					             					}else{ 
+																					             						fila = fila +'<tr evaluacion="'+v.evaluacion+'">'; 
+																					             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación</strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+																					             					}
+																					             					
+																						                          
+																						                            fila = fila +'<td width="80px"><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm"><strong>PDF</strong></button></td>';
+																						                           	if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 0) {
+																						                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
+																						                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';
 																						                            }else{
-																						                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
-																						                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';																		                            	
+																						                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button></td>';
+																						                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></button></td>';																		                            	
 																						                            }
-																						                            fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
+																						                            fila = fila +'<td style="width:10%; text-align: center;"><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
 																						                          	fila = fila +'</tr>';
 																						                          	$("#tablaEvaluacionesGeneradas").append(fila);
 																					             				});
@@ -380,6 +426,946 @@ $(document).ready(function(){
 																									             		}
 																									             	});
 																												});
+
+																												
+																												// DESBLOQUEO MANUAL-------------------------------------------------------------------------
+																												$("#btnUnlockEvas").click(function() {
+																													if($("#btnUnlockEvas").text() == " Bloquear") {
+																														$(window).off('beforeunload');
+																														//actualizar aqui
+
+																														$("#btnGenerarEva").attr('disabled', 'disabled');
+																														$("#btnGenerarEva").html('<i class="fas fa-lock"></i> <strong>Bloqueado porque existe Evaluación Final</strong>');
+
+																														$("#btnRegenerarQuincenal").attr('disabled', 'disabled');
+																														$("#btnEliminarQuincenal").attr('disabled', 'disabled');
+
+																														$.each($("#tablaEvaluacionesGeneradas button.btn.btn-danger.btn-sm"), function(a,b) {
+																															$(this).attr('disabled', 'disabled');
+																															$(this).html('<i class="fas fa-lock"></i>');
+																														});
+
+																														$.each($("#tablaEvaluacionesGeneradas button.btn.btn-warning.btn-sm"), function(a,b) {
+																															$(this).attr('disabled', 'disabled');
+																															$(this).html('<i class="fas fa-lock"></i>');
+																														});
+
+																														$("#btnUnlockEvas").attr('class', 'btn-secondary btn-sm');
+																														$("#btnUnlockEvas").attr('title', 'Bloquear y actualizar');
+																														$("#btnUnlockEvas").html('<i class="fas fa-lock-open"></i>');
+
+																														if(localStorage.getItem('bloqueoParcial') == null) {
+																															localStorage.setItem('bloqueoParcial', 0); 
+																														}else{
+																															localStorage.setItem('bloqueoParcial', 0);
+																														}
+																													}else{
+																														$.ajax({
+																															type: 'get', 
+																															url: 'core/SessionManager.php',
+																															error: function(XMLHttpRequest, textStatus, errorThrown) {
+																																if (XMLHttpRequest.readyState == 0) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Verifique su conexión a internet');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																																	$("#modalHomeBtnCerrar").show();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").hide();
+																																	$("#modalHome").modal('show');
+																																}
+																															},
+																															beforeSend: function() {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Identificando');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('Un momento, por favor...');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").hide();
+																																	$("#modalHome").modal('show');
+																															},
+																															statusCode : {
+																																401: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																403: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																500: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Acceso Restringido');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																503: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Error Crítico');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																200: function(responseObject, textStatus, errorThrown) {
+																																		$("#modalHomeConfig").attr('class', 'modal-dialog modal-lg');
+																																		$("#modalHomeTitle").html('<i class="fas fa-key"></i> Desbloqueo de Evaluaciones');
+																																		$("#modalHomeContenido").html('<h5><i class="fas fa-exclamation-triangle"></i> Importante</h5><p class="text-danger">Este proceso desbloquea de forma manual las evaluaciones que se encuentran generadas dentro del sistema, <strong>lo que se traduce en que las notas de las evaluaciones quincenales y finales podrían no actualizarse al modificar una o mas evaluaciones parciales si usted no vuelve a bloquearlas manualmente</strong>. <strong><u>Es su resposabilidad</u></strong> validar que los cambios se guarden de forma correcta dentro del sistema validando las evaluaciones quincenal y final.</p>Este desbloqueo será registrado para respaldo en posibles futuras auditorías:<br />Ejecutivo a desbloquear: <strong>'+ejecutivoBck[0].ejecutivo.rut_ejecutivo+' '+ejecutivoBck[0].ejecutivo.nombre_ejecutivo+'</strong><br />Periodo: <strong>'+$("#slcPeriodo").val()+'</strong>');
+																														            	$("#modalHomeBtnCerrar").show();
+																																		$("#modalHomeBtnCerrar").text('Cancelar Desbloqueo');
+																																		$("#modalHomeCerrarVentana").hide();
+																																		$("#modalHomeBtnAccion").show();
+																																		$("#modalHomeBtnAccion").text('Entiendo, Desbloquear');
+																																		$("#modalHome").modal('show');
+																																}
+																															}
+																														});
+																													}
+																												});
+
+																												// ------------------------------------------------------------------------------------------
+
+
+																												// ---- ZONA QUINCENAL ---------------------------------------------------------------------------------------------
+																												// 
+																												// 22.07.2020 funcion que rescata el PDF de la barra de estado del ejecutivo
+																												$("#btnPDFQuincenal").click(function() {
+																													var quincenalPDF = $("#btnPDFQuincenal").attr("evaluacion");
+																													//generar PDF
+																														$.ajax({
+																															type: 'get', 
+																															url: 'core/SessionManager.php',
+																															error: function(XMLHttpRequest, textStatus, errorThrown) {
+																																if (XMLHttpRequest.readyState == 0) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Verifique su conexión a internet');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																																	$("#modalHomeBtnCerrar").show();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").hide();
+																																	$("#modalHome").modal('show');
+																																}
+																															},
+																															beforeSend: function() {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Identificando');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('Un momento, por favor...');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").hide();
+																																	$("#modalHome").modal('show');
+																															},
+																															statusCode : {
+																																401: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																403: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																500: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Acceso Restringido');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																503: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Error Crítico');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																200: function(responseObject, textStatus, errorThrown) {
+																																		$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																																		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Visualización de Evaluación Quincenal #'+quincenalPDF);
+																																		$("#modalHomeContenido").html('<iframe src="core/pdfGenerate.php?evaluacion='+quincenalPDF+'&tipo=quincenal" width="100%" height="600px" />');
+																														            	$("#modalHomeBtnCerrar").show();
+																																		$("#modalHomeBtnCerrar").text('Cerrar');
+																																		$("#modalHomeCerrarVentana").hide();
+																																		$("#modalHomeBtnAccion").show();
+																																		$("#modalHomeBtnAccion").attr('evaluacion', quincenalPDF);
+																																		$("#modalHomeBtnAccion").text('Descargar PDF Quincenal');
+																																		$("#modalHome").modal('show');
+																																}
+																															}
+																														});
+																												});
+
+																												$("#btnRegenerarQuincenal").click(function() {
+																													$.ajax({
+																														type: 'get', 
+																														url: 'core/SessionManager.php',
+																														error: function(XMLHttpRequest, textStatus, errorThrown) {
+																															if (XMLHttpRequest.readyState == 0) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Verifique su conexión a internet');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																																$("#modalHomeBtnCerrar").show();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").hide();
+																																$("#modalHome").modal('show');
+																															}
+																														},
+																														beforeSend: function() {
+																															$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Identificando');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('Un momento, por favor...');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").hide();
+																																$("#modalHome").modal('show');
+																														},
+																														statusCode : {
+																															401: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															403: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															500: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Acceso Restringido');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															503: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Error Crítico');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															200: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeBtnAccion").removeAttr('disabled');
+																																$("#modalHomeConfig").attr('class', 'modal-dialog modal-lg');
+																															    $("#modalHome").modal('show');
+																																$("#modalHomeTitle").html('<i class="far fa-edit"></i> Regenerar Evaluación Quincenal');
+																																$("#modalHomeContenido").load('regenerarQuincenal.php?ejecutivo='+irqljob+'&area='+$("#slcArea :selected").val());
+																														    	$("#modalHomeBtnCerrar").show();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHomeBtnAccion").attr('disabled', true);
+																																$("#modalHomeBtnAccion").text('Regenerar Quincenal');
+																																$("#modalHomeBtnAccion").attr('ejecutivo', irqljob);
+																																$('#modalHome').click( function() {
+																																	if(parseInt(localStorage.getItem('bandeQuincenal')) == 1) {
+																																		$("#modalHomeBtnAccion").attr('disabled', false);
+																																	}else{
+																																		$("#modalHomeBtnAccion").attr('disabled', true);
+																																	}
+																																});
+																															}
+																														}
+																													});
+																												});
+
+																												$("#btnEliminarQuincenal").click(function() {
+																													var evaluacion = $("#btnEliminarQuincenal").attr('evaluacion');
+																													var respuesta = confirm('Esta a punto de eliminar la evaluación quincenal #'+evaluacion+' de este ejecutivo para el periodo '+$("#slcPeriodo :selected").val()+'. ¿Esta usted seguro de proceder?');
+																													if(respuesta) {
+																														$.ajax({
+																															type: 'get', 
+																															url: 'core/SessionManager.php',
+																															error: function(XMLHttpRequest, textStatus, errorThrown) {
+																																if (XMLHttpRequest.readyState == 0) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Verifique su conexión a internet');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																																	$("#modalHomeBtnCerrar").show();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").hide();
+																																	$("#modalHome").modal('show');
+																																}
+																															},
+																															beforeSend: function() {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Identificando');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('Un momento, por favor...');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").hide();
+																																	$("#modalHome").modal('show');
+																															},
+																															statusCode : {
+																																401: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																403: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																500: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Acceso Restringido');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																503: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Error Crítico');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																200: function(responseObject, textStatus, errorThrown) {						
+																																	$.ajax({
+																																		url: 'core/EliminarEvaluacionQuincenal.php',
+																																		type: 'POST',
+																																		data: 'evaluacion='+evaluacion+'',
+																																		beforeSend: function() {
+																																			$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																		    $("#modalHome").modal('show');
+																																			$("#modalHomeTitle").html('<i class="fas fa-trash"></i> Eliminación de Evaluación Quincenal #<strong>'+evaluacion+'</strong>');
+																																			$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud');
+																																	    	$("#modalHomeBtnCerrar").hide();
+																																			$("#modalHomeBtnCerrar").text('Cerrar');
+																																			$("#modalHomeCerrarVentana").hide();
+																																			$("#modalHomeBtnAccion").hide();
+																																			$("#modalHomeBtnAccion").attr('disabled', true);
+																																			$("#modalHomeBtnAccion").text('Regenerar Quincenal');
+																																		},
+																																		statusCode: {
+																																			500: function(responseObject, textStatus, errorThrown) {
+																																				$("#modalHomeContenido").html('La evaluación no fue encontrada, posiblemente ya fue eliminada por otro evaluador [EMPTY PARAMETER] HTTP 500');
+																																		    	$("#modalHomeBtnCerrar").show();
+																																				$("#modalHomeBtnCerrar").text('Cerrar');
+																																				$("#modalHomeCerrarVentana").hide();
+																																				$("#modalHomeBtnAccion").hide();
+																																			},
+																																			501: function(responseObject, textStatus, errorThrown) {
+																																				$("#modalHomeContenido").html('Ha ocurrido un error al procesar su solicitud [EMPTY PARAMETER] HTTP 501');
+																																		    	$("#modalHomeBtnCerrar").show();
+																																				$("#modalHomeBtnCerrar").text('Cerrar');
+																																				$("#modalHomeCerrarVentana").hide();
+																																				$("#modalHomeBtnAccion").hide();
+																																			},
+																																			200: function(responseObject, textStatus, errorThrown) {
+																																				alert('Evaluación quincenal #'+evaluacion+' eliminada con éxito');
+																																				window.location.reload();
+																																			}
+
+																																		}
+																																	});
+																																}
+																															}
+																														});
+																													}
+
+																												})
+																												// FIN DE ZONA QUINCENAL -----------------------------------------------------------------------------------------
+
+
+																												// -------- ZONA FINALES -----------------------------------------------------------------------------------------
+																												$("#btnFastPDFFinal").click(function() {
+																													var nroEvaFinal = $("#btnFastPDFFinal").attr("evaluacion");
+																													$.ajax({
+																														type: 'get', 
+																														url: 'core/SessionManager.php',
+																														error: function(XMLHttpRequest, textStatus, errorThrown) {
+																															if (XMLHttpRequest.readyState == 0) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Verifique su conexión a internet');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																																$("#modalHomeBtnCerrar").show();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").hide();
+																																$("#modalHome").modal('show');
+																															}
+																														},
+																														beforeSend: function() {
+																															$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Identificando');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('Un momento, por favor...');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").hide();
+																																$("#modalHome").modal('show');
+																														},
+																														statusCode : {
+																															401: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															403: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															500: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Acceso Restringido');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															503: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Error Crítico');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															200: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																																    $("#modalHome").modal('show');
+																																	$("#modalHomeTitle").html('<i class="far fa-edit"></i>Evaluación Final</strong>');
+																																	$("#modalHomeContenido").html('<iframe src="core/pdfGenerate.php?evaluacion='+nroEvaFinal+'&tipo=final" width="100%" height="600px" />');
+																															    	$("#modalHomeBtnCerrar").show();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHomeBtnAccion").text('Descargar Evaluación Final');
+																																	$("#modalHomeBtnAccion").attr('evaluacion', nroEvaFinal);
+																															}
+																														}
+																													});
+																												});
+
+																												$("#btnCrearFinal").click(function() {
+																													$.ajax({
+																														type: 'get', 
+																														url: 'core/SessionManager.php',
+																														error: function(XMLHttpRequest, textStatus, errorThrown) {
+																															if (XMLHttpRequest.readyState == 0) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Verifique su conexión a internet');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																																$("#modalHomeBtnCerrar").show();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").hide();
+																																$("#modalHome").modal('show');
+																															}
+																														},
+																														beforeSend: function() {
+																															$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Identificando');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('Un momento, por favor...');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").hide();
+																																$("#modalHome").modal('show');
+																														},
+																														statusCode : {
+																															401: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															403: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															500: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Acceso Restringido');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															503: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Error Crítico');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															200: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																																    $("#modalHome").modal('show');
+																																	$("#modalHomeTitle").html('<i class="far fa-edit"></i> Crear Evaluación Final</strong>');
+																																	$("#modalHomeContenido").load('finalCreator.php?ejecutivo='+irqljob);
+																															    	$("#modalHomeBtnCerrar").show();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeBtnAccion").hide();
+																																	$("#modalHomeBtnAccion").text('Guardar Evaluación Final');
+																																	localStorage.setItem('bloqueoParcial', 1); 
+																															}
+																														}
+																													});
+																												})
+
+																												$("#btnEditarFinal").click(function() {
+																													var nroEvaFinal = $("#btnEditarFinal").attr("evaluacion");
+																													$.ajax({
+																														type: 'get', 
+																														url: 'core/SessionManager.php',
+																														error: function(XMLHttpRequest, textStatus, errorThrown) {
+																															if (XMLHttpRequest.readyState == 0) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Verifique su conexión a internet');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																																$("#modalHomeBtnCerrar").show();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").hide();
+																																$("#modalHome").modal('show');
+																															}
+																														},
+																														beforeSend: function() {
+																															$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Identificando');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('Un momento, por favor...');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").hide();
+																																$("#modalHome").modal('show');
+																														},
+																														statusCode : {
+																															401: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															403: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															500: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Acceso Restringido');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															503: function(responseObject, textStatus, errorThrown) {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																$("#modalHomeTitle").text('Error Crítico');
+																																$("#modalHomeContenido").attr('align', 'left');
+																																$("#modalHomeCerrarVentana").show();
+																																$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																																$("#modalHomeBtnCerrar").hide();
+																																$("#modalHomeBtnCerrar").text('Cerrar');
+																																$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																$("#modalHomeBtnAccion").show();
+																																$("#modalHome").modal('show');
+																															},
+																															200: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																																    $("#modalHome").modal('show');
+																																	$("#modalHomeTitle").html('<i class="far fa-edit"></i> Editar Evaluación Final');
+																																	$("#modalHomeContenido").load('finalEditor.php?evaluacion='+nroEvaFinal);
+																															    	$("#modalHomeBtnCerrar").show();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHomeBtnAccion").text('Finalizar Edición');
+																																	$("#modalHomeBtnAccion").attr('evaluacion', nroEvaFinal);
+																															}
+																														}
+																													});
+																												})
+
+																												$("#btnEliminarFinal").click(function() {
+																													var nroEvaFinal = $("#btnFastPDFFinal").attr("evaluacion");
+																													var respuesta = confirm('Esta a punto de eliminar la evaluación final #'+nroEvaFinal+' para el periodo '+$("#slcPeriodo :selected").val()+'. ¿Esta usted seguro de proceder?');
+																													if(respuesta) {
+																														$.ajax({
+																															type: 'get', 
+																															url: 'core/SessionManager.php',
+																															error: function(XMLHttpRequest, textStatus, errorThrown) {
+																																if (XMLHttpRequest.readyState == 0) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Verifique su conexión a internet');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																																	$("#modalHomeBtnCerrar").show();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").hide();
+																																	$("#modalHome").modal('show');
+																																}
+																															},
+																															beforeSend: function() {
+																																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Identificando');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('Un momento, por favor...');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").hide();
+																																	$("#modalHome").modal('show');
+																															},
+																															statusCode : {
+																																401: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																403: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																500: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Acceso Restringido');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																503: function(responseObject, textStatus, errorThrown) {
+																																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																	$("#modalHomeTitle").text('Error Crítico');
+																																	$("#modalHomeContenido").attr('align', 'left');
+																																	$("#modalHomeCerrarVentana").show();
+																																	$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																																	$("#modalHomeBtnCerrar").hide();
+																																	$("#modalHomeBtnCerrar").text('Cerrar');
+																																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																																	$("#modalHomeBtnAccion").show();
+																																	$("#modalHome").modal('show');
+																																},
+																																200: function(responseObject, textStatus, errorThrown) {		
+																																			$.ajax({
+																																				url: 'core/EliminarEvaluacionFinal.php',
+																																				type: 'POST',
+																																				data: 'evaluacion='+nroEvaFinal,
+																																				beforeSend: function() {
+																																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																			        $("#modalHome").modal('show');
+																																					$("#modalHomeTitle").text('Espere un momento');
+																																					$("#modalHomeBtnCerrar").hide();
+																																					$("#modalHomeCerrarVentana").hide();
+																																					$("#modalHomeBtnAccion").hide();
+																																					$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Recibiendo información...');
+																																				},
+																																				statusCode: {
+																																					301: function(responseObject, textStatus, errorThrown) {
+																																						$("#modalHomeTitle").text('Error');
+																																						$("#modalHomeBtnCerrar").show();
+																																						$("#modalHomeCerrarVentana").show();
+																																						$("#modalHomeContenido").html('No se ha podido ejecutar su solicitud porque el sistema no recibió los parámetros necesarios para poder llevarla a cabo. HTTP 301');
+																																					},
+																																					302: function(responseObject, textStatus, errorThrown) {
+																																						$("#modalHomeTitle").text('Error');
+																																						$("#modalHomeBtnCerrar").show();
+																																						$("#modalHomeCerrarVentana").show();
+																																						$("#modalHomeContenido").html('La evaluación posiblemente ya fué eliminada por otro evaluador o bien no existe en el sistema. HTTP 302');
+																																					},
+																																					201: function(responseObject, textStatus, errorThrown) {
+																																						$("#modalHomeTitle").text('Error');
+																																						$("#modalHomeBtnCerrar").show();
+																																						$("#modalHomeCerrarVentana").show();
+																																						$("#modalHomeContenido").html('Ocurrió un error al intentar eliminar la evaluación final. HTTP 201');
+																																					},
+																																					200: function(responseObject, textStatus, errorThrown) {
+																																						$("#modalHomeTitle").text('Error');
+																																						$("#modalHomeBtnCerrar").show();
+																																						$("#modalHomeCerrarVentana").show();
+																																						$("#modalHomeContenido").html(responseObject);
+
+																																						$.ajax({
+																																						    type: 'post',
+																																						    url: 'core/ListEjecutivosPorAreaFinal.php',
+																																						    data: 'area='+$("#slcArea").val(),
+																																						    beforeSend: function() {
+																																						        //inicializando modal que valida sesión de raulí
+																																						    },
+																																						    statusCode: {
+																																						            404: function(responseObject, textStatus, errorThrown) {
+																																						            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																						            	$("#modalHome").modal('show');
+																																						                $("#modalHomeTitle").text('Problema al cargar el periodo');
+																																						                $("#modalHomeContenido").attr('align', 'left');
+																																						                $("#modalHomeCerrarVentana").show();
+																																						                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
+																																						                $("#modalHomeBtnCerrar").show();
+																																						                $("#modalHomeBtnCerrar").text('Cerrar');
+																																						                $("#modalHomeBtnAccion").hide();
+																																						            },
+																																						            500: function(responseObject, textStatus, errorThrown) {
+																																						            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																						            	$("#modalHome").modal('show');
+																																						                $("#modalHomeTitle").text('Ocurrió un error');
+																																						                $("#modalHomeContenido").attr('align', 'left');
+																																						                $("#modalHomeCerrarVentana").show();
+																																						                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT EMPTY</strong>');
+																																						                $("#modalHomeBtnCerrar").show();
+																																						                $("#modalHomeBtnCerrar").text('Cerrar');
+																																						                $("#modalHomeBtnAccion").hide();
+																																						            },
+																																						            401: function(responseObject, textStatus, errorThrown) {
+																																						            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																						            	$("#modalHome").modal('show');
+																																						                $("#modalHomeTitle").text('Ocurrió un error');
+																																						                $("#modalHomeContenido").attr('align', 'left');
+																																						                $("#modalHomeCerrarVentana").show();
+																																						                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT NOT NUMBER</strong>');
+																																						                $("#modalHomeBtnCerrar").show();
+																																						                $("#modalHomeBtnCerrar").text('Cerrar');
+																																						                $("#modalHomeBtnAccion").hide();
+																																						            },
+																																						            301: function(responseObject, textStatus, errorThrown) {
+																																						            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																																						            	$("#modalHome").modal('show');
+																																						                $("#modalHomeTitle").text('Ocurrió un error');
+																																						                $("#modalHomeContenido").attr('align', 'left');
+																																						                $("#modalHomeCerrarVentana").show();
+																																						                $("#modalHomeContenido").html('El área que ha seleccionado no tiene ejecutivos registrados. Por favor contacte a su jefatura para más información<br /><strong>PHP CORE ARRAY CONTROLLER EMPTY</strong>');
+																																						                $("#modalHomeBtnCerrar").show();
+																																						                $("#modalHomeBtnCerrar").text('Cerrar');
+																																						                $("#modalHomeBtnAccion").hide();
+																																						            },
+																																						            200: function(responseObject, textStatus, errorThrown) {
+																																						                var resultados = JSON.parse(responseObject);
+																																										if($.trim(responseObject) == "NULL") {
+																																				                            alert('No hay valores');
+																																				                        }else{
+																																				                            var resultado = $.parseJSON(responseObject);
+																																				                            alert('Evaluación Final Eliminada');
+																																				                            window.location.reload();
+																																				                        }
+																																						            }           
+																																						        }
+																																					 	});
+																																					}
+																																				}
+																																			});
+																																}
+																															}
+																														});
+																													}
+																												});
+
+																												// -----FIN  ZONA FINALES -----------------------------------------------------------------------------------------
 
 
 																												//Editar Evaluación/eliminar evaluacion / PDF
@@ -465,6 +1451,7 @@ $(document).ready(function(){
 																																	$("#modalHome").modal('show');
 																																},
 																																200: function(responseObject, textStatus, errorThrown) {
+																																		$("#modalHomeBtnAccion").removeAttr('disabled');
 																																		$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
 																																		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Edición de Evaluación Parcial #'+eval);
 																																		$("#modalHomeContenido").load('editor.php?evaluacion='+eval);
@@ -472,7 +1459,7 @@ $(document).ready(function(){
 																																		$("#modalHomeBtnCerrar").text('Cancelar');
 																																		$("#modalHomeCerrarVentana").hide();
 																																		$("#modalHomeBtnAccion").show();
-																																		$("#modalHomeBtnAccion").text('Finalizar Edición');
+																																		$("#modalHomeBtnAccion").text('Finalizar Edición Parcial');
 																																		$("#modalHome").modal('show');
 																																}
 																															}
@@ -650,6 +1637,7 @@ $(document).ready(function(){
 																																	$("#modalHome").modal('show');
 																																},
 																																200: function(responseObject, textStatus, errorThrown) {
+																																		$("#modalHomeBtnAccion").removeAttr('disabled');
 																																		$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
 																																		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Edición de Evaluación Parcial #'+eval);
 																																		$("#modalHomeContenido").html('<iframe src="core/pdfGenerate.php?evaluacion='+eval+'&tipo=parcial" width="100%" height="600px" />');
@@ -1080,16 +2068,20 @@ $("#slcPeriodo").change(function() {
 																	}
 																	
 																	if(resultado.efinal == null) {
-																		$("#tblEjecutivoFinal").html('No Generada');
-																	}else{
-																		$("#tblEjecutivoFinal").html(parseFloat(resultado.efinal.nota).toFixed(2));
-																	}
+										             					$("#tblEjecutivoFinal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Basic example"><button type="button" class="btn btn-primary id="btnFastPDFFinal" disabled="disabled"><i class="fas fa-flag"></i> -.-- PDF</button> <button type="button" class="btn btn-warning" id="btnCrearFinal"><i class="fas fa-asterisk"></i></button></div>');
+										             				}else{
+										             					$("#tblEjecutivoFinal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Basic example"><button type="button" class="btn btn-primary" id="btnFastPDFFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="fas fa-flag"></i> <strong>'+parseFloat(resultado.efinal.nota).toFixed(2)+'</strong> PDF</button> <button type="button" class="btn btn-warning" id="btnEditarFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="fas fa-pen"></i></button><button type="button" class="btn btn-danger" id="btnEliminarFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="far fa-trash-alt"></i></button></div>');
+										             				}
 
 																	if(resultado.quincenal == null) {
-																		$("#tblEjecutivoQuincenal").html('No Generada');
-																	}else{
-																		$("#tblEjecutivoQuincenal").html(parseFloat(resultado.quincenal.nota).toFixed(2));
-																	}
+										             					$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="0" disabled="disabled"><i class="far fa-calendar-check"></i> <strong>-.--</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="0" disabled="disabled"><i class="far fa-trash-alt"></i></button></div>');
+										             				}else{
+										             					if(resultado.bloqueado_final == 1  && localStorage.getItem('bloqueoParcial') == 0) {
+										             						$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-calendar-check"></i> <strong>'+parseFloat(resultado.quincenal.nota).toFixed(2)+'</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'" disabled="disabled"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'" disabled="disabled"><i class="far fa-trash-alt"></i></button></div>');
+										             					}else{
+										             						$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-calendar-check"></i> <strong>'+parseFloat(resultado.quincenal.nota).toFixed(2)+'</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-trash-alt"></i></button></div>');
+										             					}
+										             				}
 
 																	if(resultado.parciales == null)  {
 																		var fila = '';
@@ -1100,23 +2092,846 @@ $("#slcPeriodo").change(function() {
 																	}else{
 																		$.each(resultado.parciales, function(i,v) {
 																			var fila = '';
-																			fila = fila +'<tr evaluacion="'+v.evaluacion+'">';
-														                fila = fila +'<td>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</td>';
-														                fila = fila +'<td scope="row col-9" style="width: 40%;">Evaluación #'+v.evaluacion+'</th>';
-														                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
-											                            fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
-											                           	if(resultado.bloqueado_final == 1) {
-											                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm">Eliminar <i class="fas fa-lock"></i></button></td>';
-											                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm">Editar <i class="fas fa-lock"></i></button></td>';
-											                            }else{
-											                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
-											                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';																		                            	
-											                            }
-											                            fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
-											                          	fila = fila +'</tr>';
-														              	$("#tablaEvaluacionesGeneradas").append(fila);
+											             					//validando si requiere corrección
+											             					if(v.estado == 2) { 
+											             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-danger">';  
+											             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-danger"><i class="fas fa-exclamation-circle"></i> Requiere Revisión</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+											             					}else if(v.estado == 4) {
+											             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-success">'; 
+											             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-success"><i class="fas fa-check"></i> Revisada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+											             					}else{ 
+											             						fila = fila +'<tr evaluacion="'+v.evaluacion+'">'; 
+											             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación</strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+											             					}
+											             					
+												                          
+												                            fila = fila +'<td width="80px"><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm"><strong>PDF</strong></button></td>';
+												                           	if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 0) {
+												                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
+												                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';
+												                            }else{
+												                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button></td>';
+												                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></button></td>';																		                            	
+												                            }
+												                            fila = fila +'<td style="width:10%; text-align: center;"><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
+												                          	fila = fila +'</tr>';
+												                          	$("#tablaEvaluacionesGeneradas").append(fila);
 																		});
 																	}
+
+
+
+																	// ---- ZONA QUINCENAL ---------------------------------------------------------------------------------------------
+																	// 
+																	// 22.07.2020 funcion que rescata el PDF de la barra de estado del ejecutivo
+																	$("#btnPDFQuincenal").click(function() {
+																		var quincenalPDF = $("#btnPDFQuincenal").attr("evaluacion");
+																		//generar PDF
+																			$.ajax({
+																				type: 'get', 
+																				url: 'core/SessionManager.php',
+																				error: function(XMLHttpRequest, textStatus, errorThrown) {
+																					if (XMLHttpRequest.readyState == 0) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Verifique su conexión a internet');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																						$("#modalHomeBtnCerrar").show();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").hide();
+																						$("#modalHome").modal('show');
+																					}
+																				},
+																				beforeSend: function() {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Identificando');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('Un momento, por favor...');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").hide();
+																						$("#modalHome").modal('show');
+																				},
+																				statusCode : {
+																					401: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Identifiquese nuevamente');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").show();
+																						$("#modalHome").modal('show');
+																					},
+																					403: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Identifiquese nuevamente');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").show();
+																						$("#modalHome").modal('show');
+																					},
+																					500: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Acceso Restringido');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").show();
+																						$("#modalHome").modal('show');
+																					},
+																					503: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Error Crítico');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").show();
+																						$("#modalHome").modal('show');
+																					},
+																					200: function(responseObject, textStatus, errorThrown) {
+																							$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																							$("#modalHomeTitle").html('<i class="far fa-edit"></i> Visualización de Evaluación Quincenal #'+quincenalPDF);
+																							$("#modalHomeContenido").html('<iframe src="core/pdfGenerate.php?evaluacion='+quincenalPDF+'&tipo=quincenal" width="100%" height="600px" />');
+																			            	$("#modalHomeBtnCerrar").show();
+																							$("#modalHomeBtnCerrar").text('Cerrar');
+																							$("#modalHomeCerrarVentana").hide();
+																							$("#modalHomeBtnAccion").show();
+																							$("#modalHomeBtnAccion").attr('evaluacion', quincenalPDF);
+																							$("#modalHomeBtnAccion").text('Descargar PDF Quincenal');
+																							$("#modalHome").modal('show');
+																					}
+																				}
+																			});
+																	});
+
+																	$("#btnRegenerarQuincenal").click(function() {
+																		$.ajax({
+																			type: 'get', 
+																			url: 'core/SessionManager.php',
+																			error: function(XMLHttpRequest, textStatus, errorThrown) {
+																				if (XMLHttpRequest.readyState == 0) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Verifique su conexión a internet');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																					$("#modalHomeBtnCerrar").show();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").hide();
+																					$("#modalHome").modal('show');
+																				}
+																			},
+																			beforeSend: function() {
+																				$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Identificando');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('Un momento, por favor...');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").hide();
+																					$("#modalHome").modal('show');
+																			},
+																			statusCode : {
+																				401: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Identifiquese nuevamente');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				403: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Identifiquese nuevamente');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				500: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Acceso Restringido');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				503: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Error Crítico');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				200: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeBtnAccion").removeAttr('disabled');
+																					$("#modalHomeConfig").attr('class', 'modal-dialog modal-lg');
+																				    $("#modalHome").modal('show');
+																					$("#modalHomeTitle").html('<i class="far fa-edit"></i> Regenerar Evaluación Quincenal');
+																					$("#modalHomeContenido").load('regenerarQuincenal.php?ejecutivo='+irqljob+'&area='+$("#slcArea :selected").val());
+																			    	$("#modalHomeBtnCerrar").show();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHomeBtnAccion").attr('disabled', true);
+																					$("#modalHomeBtnAccion").text('Regenerar Quincenal');
+																					$("#modalHomeBtnAccion").attr('ejecutivo', irqljob);
+																					$('#modalHome').click( function() {
+																						if(parseInt(localStorage.getItem('bandeQuincenal')) == 1) {
+																							$("#modalHomeBtnAccion").attr('disabled', false);
+																						}else{
+																							$("#modalHomeBtnAccion").attr('disabled', true);
+																						}
+																					});
+																				}
+																			}
+																		});
+																	});
+
+																	$("#btnEliminarQuincenal").click(function() {
+																		var evaluacion = $("#btnEliminarQuincenal").attr('evaluacion');
+																		var respuesta = confirm('Esta a punto de eliminar la evaluación quincenal #'+evaluacion+' de este ejecutivo para el periodo '+$("#slcPeriodo :selected").val()+'. ¿Esta usted seguro de proceder?');
+																		if(respuesta) {
+																			$.ajax({
+																				type: 'get', 
+																				url: 'core/SessionManager.php',
+																				error: function(XMLHttpRequest, textStatus, errorThrown) {
+																					if (XMLHttpRequest.readyState == 0) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Verifique su conexión a internet');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																						$("#modalHomeBtnCerrar").show();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").hide();
+																						$("#modalHome").modal('show');
+																					}
+																				},
+																				beforeSend: function() {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Identificando');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('Un momento, por favor...');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").hide();
+																						$("#modalHome").modal('show');
+																				},
+																				statusCode : {
+																					401: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Identifiquese nuevamente');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").show();
+																						$("#modalHome").modal('show');
+																					},
+																					403: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Identifiquese nuevamente');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").show();
+																						$("#modalHome").modal('show');
+																					},
+																					500: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Acceso Restringido');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").show();
+																						$("#modalHome").modal('show');
+																					},
+																					503: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Error Crítico');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").show();
+																						$("#modalHome").modal('show');
+																					},
+																					200: function(responseObject, textStatus, errorThrown) {						
+																						$.ajax({
+																							url: 'core/EliminarEvaluacionQuincenal.php',
+																							type: 'POST',
+																							data: 'evaluacion='+evaluacion+'',
+																							beforeSend: function() {
+																								$("#modalHomeConfig").attr('class', 'modal-dialog');
+																							    $("#modalHome").modal('show');
+																								$("#modalHomeTitle").html('<i class="fas fa-trash"></i> Eliminación de Evaluación Quincenal #<strong>'+evaluacion+'</strong>');
+																								$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud');
+																						    	$("#modalHomeBtnCerrar").hide();
+																								$("#modalHomeBtnCerrar").text('Cerrar');
+																								$("#modalHomeCerrarVentana").hide();
+																								$("#modalHomeBtnAccion").hide();
+																								$("#modalHomeBtnAccion").attr('disabled', true);
+																								$("#modalHomeBtnAccion").text('Regenerar Quincenal');
+																							},
+																							statusCode: {
+																								500: function(responseObject, textStatus, errorThrown) {
+																									$("#modalHomeContenido").html('La evaluación no fue encontrada, posiblemente ya fue eliminada por otro evaluador [EMPTY PARAMETER] HTTP 500');
+																							    	$("#modalHomeBtnCerrar").show();
+																									$("#modalHomeBtnCerrar").text('Cerrar');
+																									$("#modalHomeCerrarVentana").hide();
+																									$("#modalHomeBtnAccion").hide();
+																								},
+																								501: function(responseObject, textStatus, errorThrown) {
+																									$("#modalHomeContenido").html('Ha ocurrido un error al procesar su solicitud [EMPTY PARAMETER] HTTP 501');
+																							    	$("#modalHomeBtnCerrar").show();
+																									$("#modalHomeBtnCerrar").text('Cerrar');
+																									$("#modalHomeCerrarVentana").hide();
+																									$("#modalHomeBtnAccion").hide();
+																								},
+																								200: function(responseObject, textStatus, errorThrown) {
+																									alert('Evaluación quincenal #'+evaluacion+' eliminada con éxito');
+																									window.location.reload();
+																								}
+
+																							}
+																						});
+																					}
+																				}
+																			});
+																		}
+
+																	})
+																	// FIN DE ZONA QUINCENAL -----------------------------------------------------------------------------------------
+
+
+																	// -------- ZONA FINALES -----------------------------------------------------------------------------------------
+																	$("#btnFastPDFFinal").click(function() {
+																		var nroEvaFinal = $("#btnFastPDFFinal").attr("evaluacion");
+																		$.ajax({
+																			type: 'get', 
+																			url: 'core/SessionManager.php',
+																			error: function(XMLHttpRequest, textStatus, errorThrown) {
+																				if (XMLHttpRequest.readyState == 0) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Verifique su conexión a internet');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																					$("#modalHomeBtnCerrar").show();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").hide();
+																					$("#modalHome").modal('show');
+																				}
+																			},
+																			beforeSend: function() {
+																				$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Identificando');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('Un momento, por favor...');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").hide();
+																					$("#modalHome").modal('show');
+																			},
+																			statusCode : {
+																				401: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Identifiquese nuevamente');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				403: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Identifiquese nuevamente');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				500: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Acceso Restringido');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				503: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Error Crítico');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				200: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																					    $("#modalHome").modal('show');
+																						$("#modalHomeTitle").html('<i class="far fa-edit"></i>Evaluación Final</strong>');
+																						$("#modalHomeContenido").html('<iframe src="core/pdfGenerate.php?evaluacion='+nroEvaFinal+'&tipo=final" width="100%" height="600px" />');
+																				    	$("#modalHomeBtnCerrar").show();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeBtnAccion").show();
+																						$("#modalHomeBtnAccion").text('Descargar Evaluación Final');
+																						$("#modalHomeBtnAccion").attr('evaluacion', nroEvaFinal);
+																				}
+																			}
+																		});
+																	});
+
+																	$("#btnCrearFinal").click(function() {
+																		$.ajax({
+																			type: 'get', 
+																			url: 'core/SessionManager.php',
+																			error: function(XMLHttpRequest, textStatus, errorThrown) {
+																				if (XMLHttpRequest.readyState == 0) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Verifique su conexión a internet');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																					$("#modalHomeBtnCerrar").show();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").hide();
+																					$("#modalHome").modal('show');
+																				}
+																			},
+																			beforeSend: function() {
+																				$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Identificando');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('Un momento, por favor...');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").hide();
+																					$("#modalHome").modal('show');
+																			},
+																			statusCode : {
+																				401: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Identifiquese nuevamente');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				403: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Identifiquese nuevamente');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				500: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Acceso Restringido');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				503: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Error Crítico');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				200: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																					    $("#modalHome").modal('show');
+																						$("#modalHomeTitle").html('<i class="far fa-edit"></i> Crear Evaluación Final</strong>');
+																						$("#modalHomeContenido").load('finalCreator.php?ejecutivo='+irqljob);
+																				    	$("#modalHomeBtnCerrar").show();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeBtnAccion").hide();
+																						$("#modalHomeBtnAccion").text('Guardar Evaluación Final');
+																						localStorage.setItem('bloqueoParcial', 1); 
+																				}
+																			}
+																		});
+																	})
+
+																	$("#btnEditarFinal").click(function() {
+																		var nroEvaFinal = $("#btnEditarFinal").attr("evaluacion");
+																		$.ajax({
+																			type: 'get', 
+																			url: 'core/SessionManager.php',
+																			error: function(XMLHttpRequest, textStatus, errorThrown) {
+																				if (XMLHttpRequest.readyState == 0) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Verifique su conexión a internet');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																					$("#modalHomeBtnCerrar").show();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").hide();
+																					$("#modalHome").modal('show');
+																				}
+																			},
+																			beforeSend: function() {
+																				$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Identificando');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('Un momento, por favor...');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").hide();
+																					$("#modalHome").modal('show');
+																			},
+																			statusCode : {
+																				401: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Identifiquese nuevamente');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				403: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Identifiquese nuevamente');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				500: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Acceso Restringido');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				503: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																					$("#modalHomeTitle").text('Error Crítico');
+																					$("#modalHomeContenido").attr('align', 'left');
+																					$("#modalHomeCerrarVentana").show();
+																					$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																					$("#modalHomeBtnCerrar").hide();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																					$("#modalHomeBtnAccion").show();
+																					$("#modalHome").modal('show');
+																				},
+																				200: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																					    $("#modalHome").modal('show');
+																						$("#modalHomeTitle").html('<i class="far fa-edit"></i> Editar Evaluación Final');
+																						$("#modalHomeContenido").load('finalEditor.php?evaluacion='+nroEvaFinal);
+																				    	$("#modalHomeBtnCerrar").show();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeBtnAccion").show();
+																						$("#modalHomeBtnAccion").text('Finalizar Edición');
+																						$("#modalHomeBtnAccion").attr('evaluacion', nroEvaFinal);
+																				}
+																			}
+																		});
+																	})
+
+																	$("#btnEliminarFinal").click(function() {
+																		var nroEvaFinal = $("#btnFastPDFFinal").attr("evaluacion");
+																		var respuesta = confirm('Esta a punto de eliminar la evaluación final #'+nroEvaFinal+' para el periodo '+$("#slcPeriodo :selected").val()+'. ¿Esta usted seguro de proceder?');
+																		if(respuesta) {
+																			$.ajax({
+																				type: 'get', 
+																				url: 'core/SessionManager.php',
+																				error: function(XMLHttpRequest, textStatus, errorThrown) {
+																					if (XMLHttpRequest.readyState == 0) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Verifique su conexión a internet');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																						$("#modalHomeBtnCerrar").show();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").hide();
+																						$("#modalHome").modal('show');
+																					}
+																				},
+																				beforeSend: function() {
+																					$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Identificando');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('Un momento, por favor...');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").hide();
+																						$("#modalHome").modal('show');
+																				},
+																				statusCode : {
+																					401: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Identifiquese nuevamente');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").show();
+																						$("#modalHome").modal('show');
+																					},
+																					403: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Identifiquese nuevamente');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").show();
+																						$("#modalHome").modal('show');
+																					},
+																					500: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Acceso Restringido');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").show();
+																						$("#modalHome").modal('show');
+																					},
+																					503: function(responseObject, textStatus, errorThrown) {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																						$("#modalHomeTitle").text('Error Crítico');
+																						$("#modalHomeContenido").attr('align', 'left');
+																						$("#modalHomeCerrarVentana").show();
+																						$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeBtnCerrar").text('Cerrar');
+																						$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																						$("#modalHomeBtnAccion").show();
+																						$("#modalHome").modal('show');
+																					},
+																					200: function(responseObject, textStatus, errorThrown) {		
+																								$.ajax({
+																									url: 'core/EliminarEvaluacionFinal.php',
+																									type: 'POST',
+																									data: 'evaluacion='+nroEvaFinal,
+																									beforeSend: function() {
+																										$("#modalHomeConfig").attr('class', 'modal-dialog');
+																								        $("#modalHome").modal('show');
+																										$("#modalHomeTitle").text('Espere un momento');
+																										$("#modalHomeBtnCerrar").hide();
+																										$("#modalHomeCerrarVentana").hide();
+																										$("#modalHomeBtnAccion").hide();
+																										$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Recibiendo información...');
+																									},
+																									statusCode: {
+																										301: function(responseObject, textStatus, errorThrown) {
+																											$("#modalHomeTitle").text('Error');
+																											$("#modalHomeBtnCerrar").show();
+																											$("#modalHomeCerrarVentana").show();
+																											$("#modalHomeContenido").html('No se ha podido ejecutar su solicitud porque el sistema no recibió los parámetros necesarios para poder llevarla a cabo. HTTP 301');
+																										},
+																										302: function(responseObject, textStatus, errorThrown) {
+																											$("#modalHomeTitle").text('Error');
+																											$("#modalHomeBtnCerrar").show();
+																											$("#modalHomeCerrarVentana").show();
+																											$("#modalHomeContenido").html('La evaluación posiblemente ya fué eliminada por otro evaluador o bien no existe en el sistema. HTTP 302');
+																										},
+																										201: function(responseObject, textStatus, errorThrown) {
+																											$("#modalHomeTitle").text('Error');
+																											$("#modalHomeBtnCerrar").show();
+																											$("#modalHomeCerrarVentana").show();
+																											$("#modalHomeContenido").html('Ocurrió un error al intentar eliminar la evaluación final. HTTP 201');
+																										},
+																										200: function(responseObject, textStatus, errorThrown) {
+																											$("#modalHomeTitle").text('Error');
+																											$("#modalHomeBtnCerrar").show();
+																											$("#modalHomeCerrarVentana").show();
+																											$("#modalHomeContenido").html(responseObject);
+
+																											$.ajax({
+																											    type: 'post',
+																											    url: 'core/ListEjecutivosPorAreaFinal.php',
+																											    data: 'area='+$("#slcArea").val(),
+																											    beforeSend: function() {
+																											        //inicializando modal que valida sesión de raulí
+																											    },
+																											    statusCode: {
+																											            404: function(responseObject, textStatus, errorThrown) {
+																											            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																											            	$("#modalHome").modal('show');
+																											                $("#modalHomeTitle").text('Problema al cargar el periodo');
+																											                $("#modalHomeContenido").attr('align', 'left');
+																											                $("#modalHomeCerrarVentana").show();
+																											                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
+																											                $("#modalHomeBtnCerrar").show();
+																											                $("#modalHomeBtnCerrar").text('Cerrar');
+																											                $("#modalHomeBtnAccion").hide();
+																											            },
+																											            500: function(responseObject, textStatus, errorThrown) {
+																											            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																											            	$("#modalHome").modal('show');
+																											                $("#modalHomeTitle").text('Ocurrió un error');
+																											                $("#modalHomeContenido").attr('align', 'left');
+																											                $("#modalHomeCerrarVentana").show();
+																											                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT EMPTY</strong>');
+																											                $("#modalHomeBtnCerrar").show();
+																											                $("#modalHomeBtnCerrar").text('Cerrar');
+																											                $("#modalHomeBtnAccion").hide();
+																											            },
+																											            401: function(responseObject, textStatus, errorThrown) {
+																											            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																											            	$("#modalHome").modal('show');
+																											                $("#modalHomeTitle").text('Ocurrió un error');
+																											                $("#modalHomeContenido").attr('align', 'left');
+																											                $("#modalHomeCerrarVentana").show();
+																											                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT NOT NUMBER</strong>');
+																											                $("#modalHomeBtnCerrar").show();
+																											                $("#modalHomeBtnCerrar").text('Cerrar');
+																											                $("#modalHomeBtnAccion").hide();
+																											            },
+																											            301: function(responseObject, textStatus, errorThrown) {
+																											            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																											            	$("#modalHome").modal('show');
+																											                $("#modalHomeTitle").text('Ocurrió un error');
+																											                $("#modalHomeContenido").attr('align', 'left');
+																											                $("#modalHomeCerrarVentana").show();
+																											                $("#modalHomeContenido").html('El área que ha seleccionado no tiene ejecutivos registrados. Por favor contacte a su jefatura para más información<br /><strong>PHP CORE ARRAY CONTROLLER EMPTY</strong>');
+																											                $("#modalHomeBtnCerrar").show();
+																											                $("#modalHomeBtnCerrar").text('Cerrar');
+																											                $("#modalHomeBtnAccion").hide();
+																											            },
+																											            200: function(responseObject, textStatus, errorThrown) {
+																											                var resultados = JSON.parse(responseObject);
+																															if($.trim(responseObject) == "NULL") {
+																									                            alert('No hay valores');
+																									                        }else{
+																									                            var resultado = $.parseJSON(responseObject);
+																									                            alert('Evaluación Final Eliminada');
+																									                            window.location.reload();
+																									                        }
+																											            }           
+																											        }
+																										 	});
+																										}
+																									}
+																								});
+																					}
+																				}
+																			});
+																		}
+																	});
+
+																	// -----FIN  ZONA FINALES -----------------------------------------------------------------------------------------
+
 
 																	//elementos clickeados en la tabla para mostrar los datos en el card del lado derecho
 																	$('#tablaEvaluacionesGeneradas tr').click(function() {
@@ -1187,7 +3002,7 @@ $("#slcPeriodo").change(function() {
 																			$("#modalHomeBtnCerrar").text('Cancelar');
 																			$("#modalHomeCerrarVentana").hide();
 																			$("#modalHomeBtnAccion").show();
-																			$("#modalHomeBtnAccion").text('Finalizar Edición');
+																			$("#modalHomeBtnAccion").text('Finalizar Edición Parcial');
 																			$("#modalHome").modal('show');
 																		}else if($(this).attr('role') == 'eliminar'){
 																			//ejecutar eliminación
@@ -1708,16 +3523,20 @@ $("#modalHomeBtnAccion").click(function() {
 													}
 													
 													if(resultado.efinal == null) {
-														$("#tblEjecutivoFinal").html('No Generada');
-													}else{
-														$("#tblEjecutivoFinal").html(parseFloat(resultado.efinal.nota).toFixed(2));
-													}
+						             					$("#tblEjecutivoFinal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Basic example"><button type="button" class="btn btn-primary id="btnFastPDFFinal" disabled="disabled"><i class="fas fa-flag"></i> -.-- PDF</button> <button type="button" class="btn btn-warning" id="btnCrearFinal"><i class="fas fa-asterisk"></i></button></div>');
+						             				}else{
+						             					$("#tblEjecutivoFinal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Basic example"><button type="button" class="btn btn-primary" id="btnFastPDFFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="fas fa-flag"></i> <strong>'+parseFloat(resultado.efinal.nota).toFixed(2)+'</strong> PDF</button> <button type="button" class="btn btn-warning" id="btnEditarFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="fas fa-pen"></i></button><button type="button" class="btn btn-danger" id="btnEliminarFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="far fa-trash-alt"></i></button></div>');
+						             				}
 
 													if(resultado.quincenal == null) {
-														$("#tblEjecutivoQuincenal").html('No Generada');
-													}else{
-														$("#tblEjecutivoQuincenal").html(parseFloat(resultado.quincenal.nota).toFixed(2));
-													}
+						             					$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="0" disabled="disabled"><i class="far fa-calendar-check"></i> <strong>-.--</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="0" disabled="disabled"><i class="far fa-trash-alt"></i></button></div>');
+						             				}else{
+						             					if(resultado.bloqueado_final == 1  && localStorage.getItem('bloqueoParcial') == 0) {
+						             						$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-calendar-check"></i> <strong>'+parseFloat(resultado.quincenal.nota).toFixed(2)+'</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'" disabled="disabled"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'" disabled="disabled"><i class="far fa-trash-alt"></i></button></div>');
+						             					}else{
+						             						$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-calendar-check"></i> <strong>'+parseFloat(resultado.quincenal.nota).toFixed(2)+'</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-trash-alt"></i></button></div>');
+						             					}
+						             				}
 
 													if(resultado.parciales == null)  {
 														var fila = '';
@@ -1728,21 +3547,848 @@ $("#modalHomeBtnAccion").click(function() {
 													}else{
 														$.each(resultado.parciales, function(i,v) {
 															var fila = '';
-															fila = fila +'<tr evaluacion="'+v.evaluacion+'">';
-										                fila = fila +'<td>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</td>';
-										                fila = fila +'<td scope="row col-9" style="width: 40%;">Evaluación #'+v.evaluacion+'</th>';
-										                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
-							                           	if(resultado.bloqueado_final == 1) {
-							                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm">Eliminar <i class="fas fa-lock"></i></button></td>';
-							                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm">Editar <i class="fas fa-lock"></i></button></td>';
-							                            }else{
-							                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
-							                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';																		                            	
-							                            }						                fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
-										              	fila = fila +'</tr>';
-										              	$("#tablaEvaluacionesGeneradas").append(fila);
+							             					//validando si requiere corrección
+							             					if(v.estado == 2) { 
+							             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-danger">';  
+							             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-danger"><i class="fas fa-exclamation-circle"></i> Requiere Revisión</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+							             					}else if(v.estado == 4) {
+							             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-success">'; 
+							             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-success"><i class="fas fa-check"></i> Revisada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+							             					}else{ 
+							             						fila = fila +'<tr evaluacion="'+v.evaluacion+'">'; 
+							             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación</strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+							             					}
+							             					
+								                          
+								                            fila = fila +'<td width="80px"><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm"><strong>PDF</strong></button></td>';
+								                           	if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 0) {
+								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
+								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';
+								                            }else{
+								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button></td>';
+								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></button></td>';																		                            	
+								                            }
+								                            fila = fila +'<td style="width:10%; text-align: center;"><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
+								                          	fila = fila +'</tr>';
+								                          	$("#tablaEvaluacionesGeneradas").append(fila);
 														});
 													}
+
+
+
+
+													// ---- ZONA QUINCENAL ---------------------------------------------------------------------------------------------
+													// 
+													// 22.07.2020 funcion que rescata el PDF de la barra de estado del ejecutivo
+													$("#btnPDFQuincenal").click(function() {
+														var quincenalPDF = $("#btnPDFQuincenal").attr("evaluacion");
+														//generar PDF
+															$.ajax({
+																type: 'get', 
+																url: 'core/SessionManager.php',
+																error: function(XMLHttpRequest, textStatus, errorThrown) {
+																	if (XMLHttpRequest.readyState == 0) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Verifique su conexión a internet');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																		$("#modalHomeBtnCerrar").show();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").hide();
+																		$("#modalHome").modal('show');
+																	}
+																},
+																beforeSend: function() {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Identificando');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('Un momento, por favor...');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").hide();
+																		$("#modalHome").modal('show');
+																},
+																statusCode : {
+																	401: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Identifiquese nuevamente');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").show();
+																		$("#modalHome").modal('show');
+																	},
+																	403: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Identifiquese nuevamente');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").show();
+																		$("#modalHome").modal('show');
+																	},
+																	500: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Acceso Restringido');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").show();
+																		$("#modalHome").modal('show');
+																	},
+																	503: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Error Crítico');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").show();
+																		$("#modalHome").modal('show');
+																	},
+																	200: function(responseObject, textStatus, errorThrown) {
+																			$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																			$("#modalHomeTitle").html('<i class="far fa-edit"></i> Visualización de Evaluación Quincenal #'+quincenalPDF);
+																			$("#modalHomeContenido").html('<iframe src="core/pdfGenerate.php?evaluacion='+quincenalPDF+'&tipo=quincenal" width="100%" height="600px" />');
+															            	$("#modalHomeBtnCerrar").show();
+																			$("#modalHomeBtnCerrar").text('Cerrar');
+																			$("#modalHomeCerrarVentana").hide();
+																			$("#modalHomeBtnAccion").show();
+																			$("#modalHomeBtnAccion").attr('evaluacion', quincenalPDF);
+																			$("#modalHomeBtnAccion").text('Descargar PDF Quincenal');
+																			$("#modalHome").modal('show');
+																	}
+																}
+															});
+													});
+
+													$("#btnRegenerarQuincenal").click(function() {
+														$.ajax({
+															type: 'get', 
+															url: 'core/SessionManager.php',
+															error: function(XMLHttpRequest, textStatus, errorThrown) {
+																if (XMLHttpRequest.readyState == 0) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Verifique su conexión a internet');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																	$("#modalHomeBtnCerrar").show();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").hide();
+																	$("#modalHome").modal('show');
+																}
+															},
+															beforeSend: function() {
+																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Identificando');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('Un momento, por favor...');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").hide();
+																	$("#modalHome").modal('show');
+															},
+															statusCode : {
+																401: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																403: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																500: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Acceso Restringido');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																503: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Error Crítico');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																200: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeBtnAccion").removeAttr('disabled');
+																	$("#modalHomeConfig").attr('class', 'modal-dialog modal-lg');
+																    $("#modalHome").modal('show');
+																	$("#modalHomeTitle").html('<i class="far fa-edit"></i> Regenerar Evaluación Quincenal');
+																	$("#modalHomeContenido").load('regenerarQuincenal.php?ejecutivo='+irqljob+'&area='+$("#slcArea :selected").val());
+															    	$("#modalHomeBtnCerrar").show();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHomeBtnAccion").attr('disabled', true);
+																	$("#modalHomeBtnAccion").text('Regenerar Quincenal');
+																	$("#modalHomeBtnAccion").attr('ejecutivo', irqljob);
+																	$('#modalHome').click( function() {
+																		if(parseInt(localStorage.getItem('bandeQuincenal')) == 1) {
+																			$("#modalHomeBtnAccion").attr('disabled', false);
+																		}else{
+																			$("#modalHomeBtnAccion").attr('disabled', true);
+																		}
+																	});
+																}
+															}
+														});
+													});
+
+													$("#btnEliminarQuincenal").click(function() {
+														var evaluacion = $("#btnEliminarQuincenal").attr('evaluacion');
+														var respuesta = confirm('Esta a punto de eliminar la evaluación quincenal #'+evaluacion+' de este ejecutivo para el periodo '+$("#slcPeriodo :selected").val()+'. ¿Esta usted seguro de proceder?');
+														if(respuesta) {
+															$.ajax({
+																type: 'get', 
+																url: 'core/SessionManager.php',
+																error: function(XMLHttpRequest, textStatus, errorThrown) {
+																	if (XMLHttpRequest.readyState == 0) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Verifique su conexión a internet');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																		$("#modalHomeBtnCerrar").show();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").hide();
+																		$("#modalHome").modal('show');
+																	}
+																},
+																beforeSend: function() {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Identificando');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('Un momento, por favor...');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").hide();
+																		$("#modalHome").modal('show');
+																},
+																statusCode : {
+																	401: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Identifiquese nuevamente');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").show();
+																		$("#modalHome").modal('show');
+																	},
+																	403: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Identifiquese nuevamente');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").show();
+																		$("#modalHome").modal('show');
+																	},
+																	500: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Acceso Restringido');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").show();
+																		$("#modalHome").modal('show');
+																	},
+																	503: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Error Crítico');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").show();
+																		$("#modalHome").modal('show');
+																	},
+																	200: function(responseObject, textStatus, errorThrown) {						
+																		$.ajax({
+																			url: 'core/EliminarEvaluacionQuincenal.php',
+																			type: 'POST',
+																			data: 'evaluacion='+evaluacion+'',
+																			beforeSend: function() {
+																				$("#modalHomeConfig").attr('class', 'modal-dialog');
+																			    $("#modalHome").modal('show');
+																				$("#modalHomeTitle").html('<i class="fas fa-trash"></i> Eliminación de Evaluación Quincenal #<strong>'+evaluacion+'</strong>');
+																				$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud');
+																		    	$("#modalHomeBtnCerrar").hide();
+																				$("#modalHomeBtnCerrar").text('Cerrar');
+																				$("#modalHomeCerrarVentana").hide();
+																				$("#modalHomeBtnAccion").hide();
+																				$("#modalHomeBtnAccion").attr('disabled', true);
+																				$("#modalHomeBtnAccion").text('Regenerar Quincenal');
+																			},
+																			statusCode: {
+																				500: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeContenido").html('La evaluación no fue encontrada, posiblemente ya fue eliminada por otro evaluador [EMPTY PARAMETER] HTTP 500');
+																			    	$("#modalHomeBtnCerrar").show();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeCerrarVentana").hide();
+																					$("#modalHomeBtnAccion").hide();
+																				},
+																				501: function(responseObject, textStatus, errorThrown) {
+																					$("#modalHomeContenido").html('Ha ocurrido un error al procesar su solicitud [EMPTY PARAMETER] HTTP 501');
+																			    	$("#modalHomeBtnCerrar").show();
+																					$("#modalHomeBtnCerrar").text('Cerrar');
+																					$("#modalHomeCerrarVentana").hide();
+																					$("#modalHomeBtnAccion").hide();
+																				},
+																				200: function(responseObject, textStatus, errorThrown) {
+																					alert('Evaluación quincenal #'+evaluacion+' eliminada con éxito');
+																					window.location.reload();
+																				}
+
+																			}
+																		});
+																	}
+																}
+															});
+														}
+
+													})
+													// FIN DE ZONA QUINCENAL -----------------------------------------------------------------------------------------
+
+
+													// -------- ZONA FINALES -----------------------------------------------------------------------------------------
+													$("#btnFastPDFFinal").click(function() {
+														var nroEvaFinal = $("#btnFastPDFFinal").attr("evaluacion");
+														$.ajax({
+															type: 'get', 
+															url: 'core/SessionManager.php',
+															error: function(XMLHttpRequest, textStatus, errorThrown) {
+																if (XMLHttpRequest.readyState == 0) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Verifique su conexión a internet');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																	$("#modalHomeBtnCerrar").show();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").hide();
+																	$("#modalHome").modal('show');
+																}
+															},
+															beforeSend: function() {
+																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Identificando');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('Un momento, por favor...');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").hide();
+																	$("#modalHome").modal('show');
+															},
+															statusCode : {
+																401: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																403: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																500: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Acceso Restringido');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																503: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Error Crítico');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																200: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																	    $("#modalHome").modal('show');
+																		$("#modalHomeTitle").html('<i class="far fa-edit"></i>Evaluación Final</strong>');
+																		$("#modalHomeContenido").html('<iframe src="core/pdfGenerate.php?evaluacion='+nroEvaFinal+'&tipo=final" width="100%" height="600px" />');
+																    	$("#modalHomeBtnCerrar").show();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeBtnAccion").show();
+																		$("#modalHomeBtnAccion").text('Descargar Evaluación Final');
+																		$("#modalHomeBtnAccion").attr('evaluacion', nroEvaFinal);
+																}
+															}
+														});
+													});
+
+													$("#btnCrearFinal").click(function() {
+														$.ajax({
+															type: 'get', 
+															url: 'core/SessionManager.php',
+															error: function(XMLHttpRequest, textStatus, errorThrown) {
+																if (XMLHttpRequest.readyState == 0) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Verifique su conexión a internet');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																	$("#modalHomeBtnCerrar").show();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").hide();
+																	$("#modalHome").modal('show');
+																}
+															},
+															beforeSend: function() {
+																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Identificando');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('Un momento, por favor...');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").hide();
+																	$("#modalHome").modal('show');
+															},
+															statusCode : {
+																401: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																403: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																500: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Acceso Restringido');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																503: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Error Crítico');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																200: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																	    $("#modalHome").modal('show');
+																		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Crear Evaluación Final</strong>');
+																		$("#modalHomeContenido").load('finalCreator.php?ejecutivo='+irqljob);
+																    	$("#modalHomeBtnCerrar").show();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeBtnAccion").hide();
+																		$("#modalHomeBtnAccion").text('Guardar Evaluación Final');
+																		localStorage.setItem('bloqueoParcial', 1); 
+																}
+															}
+														});
+													})
+
+													$("#btnEditarFinal").click(function() {
+														var nroEvaFinal = $("#btnEditarFinal").attr("evaluacion");
+														$.ajax({
+															type: 'get', 
+															url: 'core/SessionManager.php',
+															error: function(XMLHttpRequest, textStatus, errorThrown) {
+																if (XMLHttpRequest.readyState == 0) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Verifique su conexión a internet');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																	$("#modalHomeBtnCerrar").show();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").hide();
+																	$("#modalHome").modal('show');
+																}
+															},
+															beforeSend: function() {
+																$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Identificando');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('Un momento, por favor...');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").hide();
+																	$("#modalHome").modal('show');
+															},
+															statusCode : {
+																401: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																403: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Identifiquese nuevamente');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																500: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Acceso Restringido');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																503: function(responseObject, textStatus, errorThrown) {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																	$("#modalHomeTitle").text('Error Crítico');
+																	$("#modalHomeContenido").attr('align', 'left');
+																	$("#modalHomeCerrarVentana").show();
+																	$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																	$("#modalHomeBtnCerrar").hide();
+																	$("#modalHomeBtnCerrar").text('Cerrar');
+																	$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																	$("#modalHomeBtnAccion").show();
+																	$("#modalHome").modal('show');
+																},
+																200: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+																	    $("#modalHome").modal('show');
+																		$("#modalHomeTitle").html('<i class="far fa-edit"></i> Editar Evaluación Final');
+																		$("#modalHomeContenido").load('finalEditor.php?evaluacion='+nroEvaFinal);
+																    	$("#modalHomeBtnCerrar").show();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeBtnAccion").show();
+																		$("#modalHomeBtnAccion").text('Finalizar Edición');
+																		$("#modalHomeBtnAccion").attr('evaluacion', nroEvaFinal);
+																}
+															}
+														});
+													})
+
+													$("#btnEliminarFinal").click(function() {
+														var nroEvaFinal = $("#btnFastPDFFinal").attr("evaluacion");
+														var respuesta = confirm('Esta a punto de eliminar la evaluación final #'+nroEvaFinal+' para el periodo '+$("#slcPeriodo :selected").val()+'. ¿Esta usted seguro de proceder?');
+														if(respuesta) {
+															$.ajax({
+																type: 'get', 
+																url: 'core/SessionManager.php',
+																error: function(XMLHttpRequest, textStatus, errorThrown) {
+																	if (XMLHttpRequest.readyState == 0) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Verifique su conexión a internet');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+																		$("#modalHomeBtnCerrar").show();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").hide();
+																		$("#modalHome").modal('show');
+																	}
+																},
+																beforeSend: function() {
+																	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Identificando');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('Un momento, por favor...');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").hide();
+																		$("#modalHome").modal('show');
+																},
+																statusCode : {
+																	401: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Identifiquese nuevamente');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").show();
+																		$("#modalHome").modal('show');
+																	},
+																	403: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Identifiquese nuevamente');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").show();
+																		$("#modalHome").modal('show');
+																	},
+																	500: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Acceso Restringido');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").show();
+																		$("#modalHome").modal('show');
+																	},
+																	503: function(responseObject, textStatus, errorThrown) {
+																		$("#modalHomeConfig").attr('class', 'modal-dialog');
+																		$("#modalHomeTitle").text('Error Crítico');
+																		$("#modalHomeContenido").attr('align', 'left');
+																		$("#modalHomeCerrarVentana").show();
+																		$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+																		$("#modalHomeBtnCerrar").hide();
+																		$("#modalHomeBtnCerrar").text('Cerrar');
+																		$("#modalHomeBtnAccion").text('Iniciar Sesión');
+																		$("#modalHomeBtnAccion").show();
+																		$("#modalHome").modal('show');
+																	},
+																	200: function(responseObject, textStatus, errorThrown) {		
+																				$.ajax({
+																					url: 'core/EliminarEvaluacionFinal.php',
+																					type: 'POST',
+																					data: 'evaluacion='+nroEvaFinal,
+																					beforeSend: function() {
+																						$("#modalHomeConfig").attr('class', 'modal-dialog');
+																				        $("#modalHome").modal('show');
+																						$("#modalHomeTitle").text('Espere un momento');
+																						$("#modalHomeBtnCerrar").hide();
+																						$("#modalHomeCerrarVentana").hide();
+																						$("#modalHomeBtnAccion").hide();
+																						$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Recibiendo información...');
+																					},
+																					statusCode: {
+																						301: function(responseObject, textStatus, errorThrown) {
+																							$("#modalHomeTitle").text('Error');
+																							$("#modalHomeBtnCerrar").show();
+																							$("#modalHomeCerrarVentana").show();
+																							$("#modalHomeContenido").html('No se ha podido ejecutar su solicitud porque el sistema no recibió los parámetros necesarios para poder llevarla a cabo. HTTP 301');
+																						},
+																						302: function(responseObject, textStatus, errorThrown) {
+																							$("#modalHomeTitle").text('Error');
+																							$("#modalHomeBtnCerrar").show();
+																							$("#modalHomeCerrarVentana").show();
+																							$("#modalHomeContenido").html('La evaluación posiblemente ya fué eliminada por otro evaluador o bien no existe en el sistema. HTTP 302');
+																						},
+																						201: function(responseObject, textStatus, errorThrown) {
+																							$("#modalHomeTitle").text('Error');
+																							$("#modalHomeBtnCerrar").show();
+																							$("#modalHomeCerrarVentana").show();
+																							$("#modalHomeContenido").html('Ocurrió un error al intentar eliminar la evaluación final. HTTP 201');
+																						},
+																						200: function(responseObject, textStatus, errorThrown) {
+																							$("#modalHomeTitle").text('Error');
+																							$("#modalHomeBtnCerrar").show();
+																							$("#modalHomeCerrarVentana").show();
+																							$("#modalHomeContenido").html(responseObject);
+
+																							$.ajax({
+																							    type: 'post',
+																							    url: 'core/ListEjecutivosPorAreaFinal.php',
+																							    data: 'area='+$("#slcArea").val(),
+																							    beforeSend: function() {
+																							        //inicializando modal que valida sesión de raulí
+																							    },
+																							    statusCode: {
+																							            404: function(responseObject, textStatus, errorThrown) {
+																							            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																							            	$("#modalHome").modal('show');
+																							                $("#modalHomeTitle").text('Problema al cargar el periodo');
+																							                $("#modalHomeContenido").attr('align', 'left');
+																							                $("#modalHomeCerrarVentana").show();
+																							                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
+																							                $("#modalHomeBtnCerrar").show();
+																							                $("#modalHomeBtnCerrar").text('Cerrar');
+																							                $("#modalHomeBtnAccion").hide();
+																							            },
+																							            500: function(responseObject, textStatus, errorThrown) {
+																							            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																							            	$("#modalHome").modal('show');
+																							                $("#modalHomeTitle").text('Ocurrió un error');
+																							                $("#modalHomeContenido").attr('align', 'left');
+																							                $("#modalHomeCerrarVentana").show();
+																							                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT EMPTY</strong>');
+																							                $("#modalHomeBtnCerrar").show();
+																							                $("#modalHomeBtnCerrar").text('Cerrar');
+																							                $("#modalHomeBtnAccion").hide();
+																							            },
+																							            401: function(responseObject, textStatus, errorThrown) {
+																							            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																							            	$("#modalHome").modal('show');
+																							                $("#modalHomeTitle").text('Ocurrió un error');
+																							                $("#modalHomeContenido").attr('align', 'left');
+																							                $("#modalHomeCerrarVentana").show();
+																							                $("#modalHomeContenido").html('No se recibió la suficiente información para completar el listado de evaluadores<br /><strong>PHP CORE VARIABLE INPUT NOT NUMBER</strong>');
+																							                $("#modalHomeBtnCerrar").show();
+																							                $("#modalHomeBtnCerrar").text('Cerrar');
+																							                $("#modalHomeBtnAccion").hide();
+																							            },
+																							            301: function(responseObject, textStatus, errorThrown) {
+																							            	$("#modalHomeConfig").attr('class', 'modal-dialog');
+																							            	$("#modalHome").modal('show');
+																							                $("#modalHomeTitle").text('Ocurrió un error');
+																							                $("#modalHomeContenido").attr('align', 'left');
+																							                $("#modalHomeCerrarVentana").show();
+																							                $("#modalHomeContenido").html('El área que ha seleccionado no tiene ejecutivos registrados. Por favor contacte a su jefatura para más información<br /><strong>PHP CORE ARRAY CONTROLLER EMPTY</strong>');
+																							                $("#modalHomeBtnCerrar").show();
+																							                $("#modalHomeBtnCerrar").text('Cerrar');
+																							                $("#modalHomeBtnAccion").hide();
+																							            },
+																							            200: function(responseObject, textStatus, errorThrown) {
+																							                var resultados = JSON.parse(responseObject);
+																											if($.trim(responseObject) == "NULL") {
+																					                            alert('No hay valores');
+																					                        }else{
+																					                            var resultado = $.parseJSON(responseObject);
+																					                            alert('Evaluación Final Eliminada');
+																					                            window.location.reload();
+																					                        }
+																							            }           
+																							        }
+																						 	});
+																						}
+																					}
+																				});
+																	}
+																}
+															});
+														}
+													});
+
+													// -----FIN  ZONA FINALES -----------------------------------------------------------------------------------------
+
+
 
 													//elementos clickeados en la tabla para mostrar los datos en el card del lado derecho
 													$('#tablaEvaluacionesGeneradas tr').click(function() {
@@ -1813,7 +4459,7 @@ $("#modalHomeBtnAccion").click(function() {
 															$("#modalHomeBtnCerrar").text('Cancelar');
 															$("#modalHomeCerrarVentana").hide();
 															$("#modalHomeBtnAccion").show();
-															$("#modalHomeBtnAccion").text('Finalizar Edición');
+															$("#modalHomeBtnAccion").text('Finalizar Edición Parcial');
 															$("#modalHome").modal('show');
 														}else if($(this).attr('role') == 'eliminar'){
 															//ejecutar eliminación
@@ -2089,16 +4735,20 @@ $("#modalHomeBtnAccion").click(function() {
 													}
 													
 													if(resultado.efinal == null) {
-														$("#tblEjecutivoFinal").html('No Generada');
-													}else{
-														$("#tblEjecutivoFinal").html(parseFloat(resultado.efinal.nota).toFixed(2));
-													}
+						             					$("#tblEjecutivoFinal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Basic example"><button type="button" class="btn btn-primary id="btnFastPDFFinal" disabled="disabled"><i class="fas fa-flag"></i> -.-- PDF</button> <button type="button" class="btn btn-warning" id="btnCrearFinal"><i class="fas fa-asterisk"></i></button></div>');
+						             				}else{
+						             					$("#tblEjecutivoFinal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Basic example"><button type="button" class="btn btn-primary" id="btnFastPDFFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="fas fa-flag"></i> <strong>'+parseFloat(resultado.efinal.nota).toFixed(2)+'</strong> PDF</button> <button type="button" class="btn btn-warning" id="btnEditarFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="fas fa-pen"></i></button><button type="button" class="btn btn-danger" id="btnEliminarFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="far fa-trash-alt"></i></button></div>');
+						             				}
 
 													if(resultado.quincenal == null) {
-														$("#tblEjecutivoQuincenal").html('No Generada');
-													}else{
-														$("#tblEjecutivoQuincenal").html(parseFloat(resultado.quincenal.nota).toFixed(2));
-													}
+						             					$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="0" disabled="disabled"><i class="far fa-calendar-check"></i> <strong>-.--</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="0" disabled="disabled"><i class="far fa-trash-alt"></i></button></div>');
+						             				}else{
+						             					if(resultado.bloqueado_final == 1  && localStorage.getItem('bloqueoParcial') == 0) {
+						             						$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-calendar-check"></i> <strong>'+parseFloat(resultado.quincenal.nota).toFixed(2)+'</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'" disabled="disabled"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'" disabled="disabled"><i class="far fa-trash-alt"></i></button></div>');
+						             					}else{
+						             						$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-calendar-check"></i> <strong>'+parseFloat(resultado.quincenal.nota).toFixed(2)+'</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-trash-alt"></i></button></div>');
+						             					}
+						             				}
 
 													if(resultado.parciales == null)  {
 														var fila = '';
@@ -2109,20 +4759,30 @@ $("#modalHomeBtnAccion").click(function() {
 													}else{
 														$.each(resultado.parciales, function(i,v) {
 															var fila = '';
-															fila = fila +'<tr evaluacion="'+v.evaluacion+'">';
-										                fila = fila +'<td>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</td>';
-										                fila = fila +'<td scope="row col-9" style="width: 40%;">Evaluación #'+v.evaluacion+'</th>';
-										                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
-							                           	if(resultado.bloqueado_final == 1) {
-							                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm">Eliminar <i class="fas fa-lock"></i></button></td>';
-							                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm">Editar <i class="fas fa-lock"></i></button></td>';
-							                            }else{
-							                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
-							                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';																		                            	
-							                            }					                
-							                            fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
-										              	fila = fila +'</tr>';
-										              	$("#tablaEvaluacionesGeneradas").append(fila);
+							             					//validando si requiere corrección
+							             					if(v.estado == 2) { 
+							             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-danger">';  
+							             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-danger"><i class="fas fa-exclamation-circle"></i> Requiere Revisión</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+							             					}else if(v.estado == 4) {
+							             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-success">'; 
+							             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-success"><i class="fas fa-check"></i> Revisada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+							             					}else{ 
+							             						fila = fila +'<tr evaluacion="'+v.evaluacion+'">'; 
+							             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación</strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+							             					}
+							             					
+								                          
+								                            fila = fila +'<td width="80px"><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm"><strong>PDF</strong></button></td>';
+								                           	if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 0) {
+								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
+								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';
+								                            }else{
+								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button></td>';
+								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></button></td>';																		                            	
+								                            }
+								                            fila = fila +'<td style="width:10%; text-align: center;"><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
+								                          	fila = fila +'</tr>';
+								                          	$("#tablaEvaluacionesGeneradas").append(fila);
 														});
 													}
 
@@ -2195,7 +4855,7 @@ $("#modalHomeBtnAccion").click(function() {
 															$("#modalHomeBtnCerrar").text('Cancelar');
 															$("#modalHomeCerrarVentana").hide();
 															$("#modalHomeBtnAccion").show();
-															$("#modalHomeBtnAccion").text('Finalizar Edición');
+															$("#modalHomeBtnAccion").text('Finalizar Edición Parcial');
 															$("#modalHome").modal('show');
 														}else if($(this).attr('role') == 'eliminar'){
 															//ejecutar eliminación
@@ -2316,7 +4976,7 @@ $("#modalHomeBtnAccion").click(function() {
 				}
 			}
 		});
-	}else if($("#modalHomeBtnAccion").text() == "Finalizar Edición") {
+	}else if($("#modalHomeBtnAccion").text() == "Finalizar Edición Parcial") {
 		if(!$("#infoAudioCargado").is(":visible")) {
 			alert('Debe seleccionar un audio para poder guardar la evaluación parcial');
 			$("#fileAudio").click();
@@ -2480,16 +5140,20 @@ $("#modalHomeBtnAccion").click(function() {
 															}
 															
 															if(resultado.efinal == null) {
-																$("#tblEjecutivoFinal").html('No Generada');
-															}else{
-																$("#tblEjecutivoFinal").html(parseFloat(resultado.efinal.nota).toFixed(2));
-															}
+								             					$("#tblEjecutivoFinal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Basic example"><button type="button" class="btn btn-primary id="btnFastPDFFinal" disabled="disabled"><i class="fas fa-flag"></i> -.-- PDF</button> <button type="button" class="btn btn-warning" id="btnCrearFinal"><i class="fas fa-asterisk"></i></button></div>');
+								             				}else{
+								             					$("#tblEjecutivoFinal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Basic example"><button type="button" class="btn btn-primary" id="btnFastPDFFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="fas fa-flag"></i> <strong>'+parseFloat(resultado.efinal.nota).toFixed(2)+'</strong> PDF</button> <button type="button" class="btn btn-warning" id="btnEditarFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="fas fa-pen"></i></button><button type="button" class="btn btn-danger" id="btnEliminarFinal" evaluacion="'+resultado.efinal.evaluaucion+'"><i class="far fa-trash-alt"></i></button></div>');
+								             				}
 
 															if(resultado.quincenal == null) {
-																$("#tblEjecutivoQuincenal").html('No Generada');
-															}else{
-																$("#tblEjecutivoQuincenal").html(parseFloat(resultado.quincenal.nota).toFixed(2));
-															}
+								             					$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="0" disabled="disabled"><i class="far fa-calendar-check"></i> <strong>-.--</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="0" disabled="disabled"><i class="far fa-trash-alt"></i></button></div>');
+								             				}else{
+								             					if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 0) {
+								             						$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-calendar-check"></i> <strong>'+parseFloat(resultado.quincenal.nota).toFixed(2)+'</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'" disabled="disabled"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'" disabled="disabled"><i class="far fa-trash-alt"></i></button></div>');
+								             					}else{
+								             						$("#tblEjecutivoQuincenal").html('<div class="btn-group btn-group-sm" role="group" aria-label="Quincenal"><button type="button" class="btn btn-primary btn-sm" id="btnPDFQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-calendar-check"></i> <strong>'+parseFloat(resultado.quincenal.nota).toFixed(2)+'</strong> PDF</button><button type="button" class="btn btn-warning btn-sm" id="btnRegenerarQuincenal" ejecutivo="'+irqljob+'"><i class="fas fa-sync-alt"></i></button><button type="button" class="btn btn-danger btn-sm" id="btnEliminarQuincenal" evaluacion="'+resultado.quincenal.evaluacion+'"><i class="far fa-trash-alt"></i></button></div>');
+								             					}
+								             				}
 
 															if(resultado.parciales == null)  {
 																var fila = '';
@@ -2500,20 +5164,30 @@ $("#modalHomeBtnAccion").click(function() {
 															}else{
 																$.each(resultado.parciales, function(i,v) {
 																	var fila = '';
-																	fila = fila +'<tr evaluacion="'+v.evaluacion+'">';
-												                fila = fila +'<td>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</td>';
-												                fila = fila +'<td scope="row col-9" style="width: 40%;">Evaluación #'+v.evaluacion+'</th>';
-												                fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm">Descargar Pdf <i class="far fa-file-pdf"></i></button></td>';
-									                           	if(resultado.bloqueado_final == 1) {
-									                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm">Eliminar <i class="fas fa-lock"></i></button></td>';
-									                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm">Editar <i class="fas fa-lock"></i></button></td>';
-									                            }else{
-									                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm">Eliminar <i class="far fa-trash-alt"></i></button></td>';
-									                            	fila = fila +'<td><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm">Editar <i class="far fa-edit"></i></button></td>';																		                            	
-									                            }						                
-									                            fila = fila +'<td><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
-												              	fila = fila +'</tr>';
-												              	$("#tablaEvaluacionesGeneradas").append(fila);
+									             					//validando si requiere corrección
+									             					if(v.estado == 2) { 
+									             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-danger">';  
+									             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-danger"><i class="fas fa-exclamation-circle"></i> Requiere Revisión</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+									             					}else if(v.estado == 4) {
+									             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-success">'; 
+									             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-success"><i class="fas fa-check"></i> Revisada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+									             					}else{ 
+									             						fila = fila +'<tr evaluacion="'+v.evaluacion+'">'; 
+									             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación</strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+									             					}
+									             					
+										                          
+										                            fila = fila +'<td width="80px"><button type="button" evaluacion="'+v.evaluacion+'" role="pdf" class="btn btn-info btn-sm"><strong>PDF</strong></button></td>';
+										                           	if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 0) {
+										                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
+										                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';
+										                            }else{
+										                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button></td>';
+										                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></button></td>';																		                            	
+										                            }
+										                            fila = fila +'<td style="width:10%; text-align: center;"><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
+										                          	fila = fila +'</tr>';
+										                          	$("#tablaEvaluacionesGeneradas").append(fila);
 																});
 															}
 
@@ -2586,7 +5260,7 @@ $("#modalHomeBtnAccion").click(function() {
 																	$("#modalHomeBtnCerrar").text('Cancelar');
 																	$("#modalHomeCerrarVentana").hide();
 																	$("#modalHomeBtnAccion").show();
-																	$("#modalHomeBtnAccion").text('Finalizar Edición');
+																	$("#modalHomeBtnAccion").text('Finalizar Edición Parcial');
 																	$("#modalHome").modal('show');
 																}else if($(this).attr('role') == 'eliminar'){
 																	//ejecutar eliminación
@@ -2871,7 +5545,7 @@ $("#modalHomeBtnAccion").click(function() {
 						$.ajax({
 							url: 'core/CreateEvaluacionFinalObservacion.php',
 							type: 'POST',
-							data: {'comentarios' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
+							data: {'comentario' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
 							beforeSend: function() {
 							},
 							statusCode: {
@@ -2893,6 +5567,9 @@ $("#modalHomeBtnAccion").click(function() {
 								200: function(responseObject, textStatus, errorThrown) {
 									$("#modalHomeContenido").html('<strong>Evaluación guardada con éxito</strong>');
 									$("#modalHomeBtnAccion").hide();
+									localStorage.setItem('bloqueoParcial', 1); 
+									 alert('Evaluación final creada');
+				                     window.location.reload();
 								}
 							}
 						});
@@ -2901,8 +5578,591 @@ $("#modalHomeBtnAccion").click(function() {
 		});
 	}else if ($("#modalHomeBtnAccion").text() == "Iniciar Sesión") {
 		window.location.href="index.php";
+	}else if($("#modalHomeBtnAccion").text() == "Descargar PDF Quincenal") {
+		$.ajax({
+			type: 'get', 
+			url: 'core/SessionManager.php',
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				if (XMLHttpRequest.readyState == 0) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Verifique su conexión a internet');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+					$("#modalHomeBtnCerrar").show();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").hide();
+					$("#modalHome").modal('show');
+				}
+			},
+			beforeSend: function() {
+				$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identificando');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('Un momento, por favor...');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").hide();
+					$("#modalHome").modal('show');
+			},
+			statusCode : {
+				401: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identifiquese nuevamente');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				403: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identifiquese nuevamente');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				500: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Acceso Restringido');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				503: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Error Crítico');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				200: function(responseObject, textStatus, errorThrown) {
+						window.location.href="core/pdfGenerate.php?evaluacion="+$("#modalHomeBtnAccion").attr('evaluacion')+"&tipo=quincenal&accion=descargar";
+				}
+			}
+		});
+	}else if($("#modalHomeBtnAccion").text() == "Regenerar Quincenal") {
+		var array = [];
+		$('input[type=checkbox]:checked').each(function() {
+			array.push($(this).val());
+		});
+		$.ajax({
+			type: 'get', 
+			url: 'core/SessionManager.php',
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				if (XMLHttpRequest.readyState == 0) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Verifique su conexión a internet');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+					$("#modalHomeBtnCerrar").show();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").hide();
+					$("#modalHome").modal('show');
+				}
+			},
+			beforeSend: function() {
+				$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identificando');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('Un momento, por favor...');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").hide();
+					$("#modalHome").modal('show');
+			},
+			statusCode : {
+				401: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identifiquese nuevamente');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				403: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identifiquese nuevamente');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				500: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Acceso Restringido');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				503: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Error Crítico');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				200: function(responseObject, textStatus, errorThrown) {
+
+						$.ajax({
+							type: 'post',
+							url: 'core/QuincenalManualGen.php',
+							data: 'evas='+JSON.stringify(array)+'&ejecutivo='+$("#modalHomeBtnAccion").attr('ejecutivo')+'&area='+$("#slcArea").val(),
+							beforeSend: function() {
+								$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');	
+								$("#modalHomeBtnAccion").hide();
+							},
+							statusCode: {
+								201: function(responseObject, textStatus, errorThrown) {
+									$("#modalHomeContenido").html(responseObject);
+								},
+								202: function(responseObject, textStatus, errorThrown) {
+									$("#modalHomeContenido").html(responseObject);
+								},
+								404: function(responseObject, textStatus, errorThrown) {
+									$("#modalHomeContenido").html(responseObject);
+								},
+								205: function(responseObject, textStatus, errorThrown) {
+									$("#modalHomeContenido").html(responseObject);
+								},
+								206: function(responseObject, textStatus, errorThrown) {
+									$("#modalHomeContenido").html(responseObject);
+								},
+								500: function(responseObject, textStatus, errorThrown) {
+									$("#modalHomeContenido").html(responseObject);
+								},
+								203: function(responseObject, textStatus, errorThrown) {
+									$("#modalHomeContenido").html(responseObject);
+								},
+								200: function(responseObject, textStatus, errorThrown) {
+									$("#modalHomeContenido").html('Evaluación quincenal regenerada con éxito');
+									alert('Evaluación quincenal regenerada con éxito');
+									window.location.reload();
+								}
+							}
+						});
+				}
+			}
+		});
+	}else if($("#modalHomeBtnAccion").text() ==  "Descargar Evaluación Final") {
+		$.ajax({
+			type: 'get', 
+			url: 'core/SessionManager.php',
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				if (XMLHttpRequest.readyState == 0) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Verifique su conexión a internet');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+					$("#modalHomeBtnCerrar").show();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").hide();
+					$("#modalHome").modal('show');
+				}
+			},
+			beforeSend: function() {
+				$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identificando');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('Un momento, por favor...');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").hide();
+					$("#modalHome").modal('show');
+			},
+			statusCode : {
+				401: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identifiquese nuevamente');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				403: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identifiquese nuevamente');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				500: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Acceso Restringido');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				503: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Error Crítico');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				200: function(responseObject, textStatus, errorThrown) {
+					window.location.href="core/pdfGenerate.php?evaluacion="+$("#modalHomeBtnAccion").attr('evaluacion')+"&tipo=final&accion=descargar";
+				}
+			}
+		});
+	}else if($("#modalHomeBtnAccion").text() == "Finalizar Edición") {
+		$.ajax({
+			type: 'get', 
+			url: 'core/SessionManager.php',
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				if (XMLHttpRequest.readyState == 0) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Verifique su conexión a internet');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+					$("#modalHomeBtnCerrar").show();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").hide();
+					$("#modalHome").modal('show');
+				}
+			},
+			beforeSend: function() {
+				$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identificando');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('Un momento, por favor...');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").hide();
+					$("#modalHome").modal('show');
+			},
+			statusCode : {
+				401: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identifiquese nuevamente');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				403: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identifiquese nuevamente');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				500: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Acceso Restringido');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				503: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Error Crítico');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				200: function(responseObject, textStatus, errorThrown) {
+					$.ajax({
+						url: 'core/CreateEvaluacionFinalObservacion.php',
+						type: 'POST',
+						data: {'comentario' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
+						beforeSend: function() {
+
+						},
+						statusCode: {
+							302: function(responseObject, textStatus, errorThrown) {
+								$("#modalHomeTitle").text('Error al guardar la observación');
+								$("#modalHomeContenido").html('No se recibió uno de los parámetros para poder guardar la observación. La evaluación final esta guardada pero editela para ingresar nuevamente su observación.<br /><strong>HTTP 302</strong>');
+								$("#modalHomeBtnAccion").hide();
+							},
+							301: function(responseObject, textStatus, errorThrown) {
+								$("#modalHomeTitle").text('Error al guardar la observación');
+								$("#modalHomeContenido").html('No se recibió uno de los parámetros para poder guardar la observación. La evaluación final esta guardada pero editela para ingresar nuevamente su observación.<br /><strong>HTTP 301</strong>');
+								$("#modalHomeBtnAccion").hide();
+							},
+							204: function(responseObject, textStatus, errorThrown) {
+								$("#modalHomeTitle").text('Error al guardar la observación');
+								$("#modalHomeContenido").html('Ocurrió un error al guardar la observación... Por favor intentelo más tarde.<br /><strong>HTTP 204</strong>');
+								$("#modalHomeBtnAccion").hide();
+							},
+							200: function(responseObject, textStatus, errorThrown) {
+								$("#modalHomeContenido").html('<strong>Evaluación guardada con éxito</strong>');
+								$("#modalHomeBtnAccion").hide();
+								$("#modalHomeBtnCerrar").show();
+						        $("#modalHomeBtnCerrar").text('Cerrar');
+							}
+						}
+					});
+				}
+			}
+		});
+	}else if($("#modalHomeBtnAccion").text() == "Entiendo, Desbloquear") {
+		$.ajax({
+			type: 'get', 
+			url: 'core/SessionManager.php',
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				if (XMLHttpRequest.readyState == 0) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Verifique su conexión a internet');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+					$("#modalHomeBtnCerrar").show();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").hide();
+					$("#modalHome").modal('show');
+				}
+			},
+			beforeSend: function() {
+				$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identificando');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('Un momento, por favor...');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").hide();
+					$("#modalHome").modal('show');
+			},
+			statusCode : {
+				401: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identifiquese nuevamente');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>Ha permanecido demasiado tiempo inactivo</strong> Por favor inicie sesión nuevamente');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				403: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Identifiquese nuevamente');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>No se ha encontrado la variable de usuario y tiempo de actividad del sistema</strong> (CORE SESSIONMANAGER HTTP 403)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				500: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Acceso Restringido');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>Usted no cuenta con los privilegios para acceder al sistema</strong> (CORE SESSIONMANAGER HTTP 500)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				503: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeConfig").attr('class', 'modal-dialog');
+					$("#modalHomeTitle").text('Error Crítico');
+					$("#modalHomeContenido").attr('align', 'left');
+					$("#modalHomeCerrarVentana").show();
+					$("#modalHomeContenido").html('<strong>El sistema de evaluaciones huesped no ha sido encontrado definida la sesión del sistema hospedador. Inicie sesión nuevamente, si el problema persiste por favor comuníquese con el desarollador.</strong> (Información técnica: RAULI NO ENTREGA VARIABLE DE SESION A SISTEMA HTTP 503 CORE SESSION MANAGER)');
+					$("#modalHomeBtnCerrar").hide();
+					$("#modalHomeBtnCerrar").text('Cerrar');
+					$("#modalHomeBtnAccion").text('Iniciar Sesión');
+					$("#modalHomeBtnAccion").show();
+					$("#modalHome").modal('show');
+				},
+				200: function(responseObject, textStatus, errorThrown) {
+					$("#modalHomeTitle").text('Procesando...');
+					$("#modalHomeContenido").html('<img src="facade/img/loading2.gif"> Desbloqueando...');
+					$.ajax({
+						url: 'core/desbloqueoParcialesInit.php',
+						data: {'ejecutivo': irqljob},
+						type: 'POST',
+						error: function(XMLHttpRequest, textStatus, errorThrown) {
+							if (XMLHttpRequest.readyState == 0) {
+								$("#modalHomeConfig").attr('class', 'modal-dialog');
+								$("#modalHomeTitle").text('Verifique su conexión a internet');
+								$("#modalHomeContenido").attr('align', 'left');
+								$("#modalHomeCerrarVentana").show();
+								$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+								$("#modalHomeBtnCerrar").show();
+								$("#modalHomeBtnCerrar").text('Cerrar');
+								$("#modalHomeBtnAccion").hide();
+								$("#modalHome").modal('show');
+							}
+						},
+						statusCode : {
+							201: function(responseObject, textStatus, errorThrown) {
+								$("#modalHomeConfig").attr('class', 'modal-dialog');
+								$("#modalHomeTitle").text('Petición rechazada');
+								$("#modalHomeContenido").attr('align', 'left');
+								$("#modalHomeCerrarVentana").show();
+								$("#modalHomeContenido").html('<strong>No se ha recibido el rut del ejecutivo que intenta desbloquear</strong> Se cancela la petición');
+								$("#modalHomeBtnCerrar").show();
+								$("#modalHomeBtnCerrar").text('Cerrar');
+								$("#modalHomeBtnAccion").text('Iniciar Sesión');
+								$("#modalHomeBtnAccion").hide();
+								$("#modalHome").modal('show');
+							},
+							203: function(responseObject, textStatus, errorThrown) {
+								$("#modalHomeConfig").attr('class', 'modal-dialog');
+								$("#modalHomeTitle").text('Identifiquese nuevamente');
+								$("#modalHomeContenido").attr('align', 'left');
+								$("#modalHomeCerrarVentana").show();
+								$("#modalHomeContenido").html('<strong>El sistema no recibió de forma íntegra su credencial de indentificación</strong> La petición fue rechazada (CORE DESBLOQPARCIALES HTTP 203)');
+								$("#modalHomeBtnCerrar").show();
+								$("#modalHomeBtnCerrar").text('Cerrar');
+								$("#modalHomeBtnAccion").text('Iniciar Sesión');
+								$("#modalHomeBtnAccion").show();
+								$("#modalHome").modal('show');
+							},
+							204: function(responseObject, textStatus, errorThrown) {
+								$("#modalHomeConfig").attr('class', 'modal-dialog');
+								$("#modalHomeTitle").text('No se pudo registrar la petición');
+								$("#modalHomeContenido").attr('align', 'left');
+								$("#modalHomeCerrarVentana").show();
+								$("#modalHomeContenido").html('<strong>Falló el registro de la petición por parte del evaluador en el sistema de LOGs</strong> (CORE DESBLOQPARCIALES HTTP 204)');
+								$("#modalHomeBtnCerrar").show();
+								$("#modalHomeBtnCerrar").text('Cerrar');
+								$("#modalHomeBtnAccion").text('Iniciar Sesión');
+								$("#modalHomeBtnAccion").hide();
+								$("#modalHome").modal('show');
+							},
+							400: function(responseObject, textStatus, errorThrown) {
+								$("#modalHomeConfig").attr('class', 'modal-dialog');
+								$("#modalHomeTitle").text('Error Crítico');
+								$("#modalHomeContenido").attr('align', 'left');
+								$("#modalHomeCerrarVentana").show();
+								$("#modalHomeContenido").html('<strong>El sistema de evaluaciones controló un error crítico.</strong> (Información técnica: TRY CATCH EVENT EXCEPTION CONTROLLED HTTP 400 CORE DESBLOQPARCIALES)');
+								$("#modalHomeBtnCerrar").show();
+								$("#modalHomeBtnCerrar").text('Cerrar');
+								$("#modalHomeBtnAccion").text('Iniciar Sesión');
+								$("#modalHomeBtnAccion").hide();
+								$("#modalHome").modal('show');
+							},
+							200: function(responseObject, textStatus, errorThrown) {
+								$("#btnGenerarEva").removeAttr('disabled');
+								$("#btnGenerarEva").html('<i class="fas fa-plus-square"></i> Generar Evaluación');
+
+								$("#btnRegenerarQuincenal").removeAttr('disabled');
+								$("#btnEliminarQuincenal").removeAttr('disabled');
+
+								$.each($("#tablaEvaluacionesGeneradas button.btn.btn-danger.btn-sm"), function(a,b) {
+									$(this).removeAttr('disabled');
+									$(this).html('<i class="far fa-trash-alt"></i>');
+								});
+
+								$.each($("#tablaEvaluacionesGeneradas button.btn.btn-warning.btn-sm"), function(a,b) {
+									$(this).removeAttr('disabled');
+									$(this).html('<i class="fas fa-pen"></i>');
+								});
+
+								$("#btnUnlockEvas").attr('class', 'btn-danger btn-sm');
+								$("#btnUnlockEvas").attr('title', 'Bloquear y actualizar');
+								$("#btnUnlockEvas").html('<i class="fas fa-lock"></i> <strong>Bloquear</strong>');
+
+								if(localStorage.getItem('bloqueoParcial') == null) {
+									localStorage.setItem('bloqueoParcial', 1); 
+								}else{
+									localStorage.setItem('bloqueoParcial', 1);
+								}
+
+								setTimeout(function(){ $("#modalHomeCerrarVentana").click(); }, 2000);
+							}
+						}
+					});
+				}
+			}
+		});
 	}
 })
-
 
 

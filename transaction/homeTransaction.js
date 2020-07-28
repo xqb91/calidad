@@ -1489,7 +1489,7 @@ $("#modalHomeBtnAccion").click(function() {
 						$.ajax({
 						    type: 'post',
 						    url: 'core/CreateEvaluacionParcialObservacion.php',
-						    data: {'comentario' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
+						    data: {'comentarios' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
 						    beforeSend: function() {
 						        $("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Procesando su solicitud...');
 						    },
