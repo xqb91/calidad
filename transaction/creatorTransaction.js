@@ -147,6 +147,7 @@ $(document).ready(function() {
 								                    var colores = ['#E4E1F1', '#E2CBE0', '#CFB0CF','#BC96C0', '#A77EB0', '#9166A1'];
 
 
+								                    $("#tablaEvaluaciones").hide();
 								                    //here delete
 								                    for (var i =0; i<items.length; i++) {
 								                    	//categorias[i]
@@ -271,7 +272,16 @@ $(document).ready(function() {
 													        	$("#modalHomeBtnAccion").attr('evaluacion', evapar.numero_evaluacion);
 													        	$("#lblEvaluacionParcial").html('<i class="fas fa-address-book"></i>&nbsp;<strong>Evaluación #</strong>:&nbsp; '+evapar.numero_evaluacion+'');
 
-																setTimeout(function(){  $.each($('input#itemid1.form-check-input'), function(i,v) {  if($(this).val() == -1) { $(this).click(); console.log('clikeado'); }  }); }, 3000);
+													        	//desbloqueo global
+																setTimeout(function(){ 
+																	$.each($('input#itemid1.form-check-input'), function(i,v) {  
+																		if($(this).val() == -1) {
+																			//do this when is complete 
+																			$(this).click(); console.log('clikeado');  
+																			$("#tablaEvaluaciones").show(); 
+																		}  
+																	}); 
+																}, 3000);
 													        }
 													    }
 													});
