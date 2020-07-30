@@ -275,7 +275,7 @@ table tfoot .links a{
         <tr>
           <?php
             for ($i=0; $i<$total_categorias; $i++) { 
-              echo '<td width="25%" class="CentroSinFormato">'.$array[0]['detalle'][$i]['nombre_categoria'].'</td>';
+              echo '<td width="25%" class="CentroSinFormato">'.$array[0]['detalle'][$i]['nombre_categoria'].' ('.$peso[$i].'%)</td>';
             }
           ?>
           <?php

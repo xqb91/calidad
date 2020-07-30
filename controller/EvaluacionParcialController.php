@@ -607,6 +607,7 @@
 				$string = $string."d.nombre_categoria, ";
 				$string = $string."d.peso_categoria, ";
 				$string = $string."(SELECT count(*) FROM item_evaluacion cc INNER JOIN categoria dd ON cc.codigo_categoria = dd.codigo_categoria WHERE dd.codigo_categoria = d.codigo_categoria) cantidad_items, ";
+				$string = $string."a.orden, ";
 				$string = $string."c.codigo_item, ";
 				$string = $string."c.nombre_item, ";
 				$string = $string."b.nota ";
@@ -620,6 +621,7 @@
 				$string = $string."GROUP BY ";
 				$string = $string."d.codigo_categoria, ";
 				$string = $string."d.nombre_categoria, ";
+				$string = $string."a.orden, ";
 				$string = $string."d.peso_categoria, ";
 				$string = $string."c.codigo_item, ";
 				$string = $string."c.nombre_item, ";

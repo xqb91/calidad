@@ -3,7 +3,7 @@ var quill;
 $(document).ready(function() {
 	//limpiando localstorage
 	localStorage.clear();
-
+	$("#tablaEvaluaciones").hide();
 	var nroEvaluacionGlobal;
 
 	//inicializando objetos
@@ -147,7 +147,7 @@ $(document).ready(function() {
 								                    var colores = ['#E4E1F1', '#E2CBE0', '#CFB0CF','#BC96C0', '#A77EB0', '#9166A1'];
 
 
-								                    $("#tablaEvaluaciones").hide();
+								                    
 								                    //here delete
 								                    for (var i =0; i<items.length; i++) {
 								                    	//categorias[i]

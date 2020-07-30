@@ -177,7 +177,7 @@ table tfoot .links a{
         <td class="CentroTituloConFormato">Evaluacion de Ejecutivos de <?php echo $area[0]->getnombre_area(); ?> </td>
         </tr>
       <tr>
-        <td class="IzquierdaSinFormato">NUMERO DE LA EVALUACIÓN: <strong><?php echo $evaluacion; ?></strong></td>
+        <td class="IzquierdaSinFormato"> NUMERO DE LA EVALUACIÓN: <strong><?php echo $evaluacion; ?></strong></td>
         </tr>
     </table></td>
   </tr>

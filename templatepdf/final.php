@@ -23,6 +23,76 @@ header("Content-Type: text/html");
     $dataejecutivo= $ct_ejecutivo->listarPorRut($final[0]->getejecutivo_rut_ejecutivo());
     $dataevaluador= $ct_evaluador->listarPorRut($final[0]->getevaluador_rut_evaluador());
     $data_area    = $ct_area->listarPorCodigo($final[0]->getejecutivo_codigo_area());
+
+
+ //¿Cuantas evaluaciones parciales se consideran para generar la quincenal?
+    $contador = 0;
+    $last = 0;
+    foreach ($datosfinal as $k) {
+      if($last != $k['parcial']) {
+        $contador++;
+        $last = $k['parcial'];
+      }
+    }
+
+    $total_parciales = $contador;
+    //--------------------------------------------------------------------------
+    
+    //¿cuantas categorias vienen?
+    $contador = 0;
+    $last = "";
+    $first = "";
+    foreach ($datosfinal as $k) {
+      if($last != $k['nombre_categoria']) {
+        if($first == $k['nombre_categoria']) {
+          break;
+        }
+        if($contador == 0) { $first = $k['nombre_categoria']; }
+        $contador++;
+        $last = $k['nombre_categoria'];
+      }
+    }
+
+    $total_categorias = $contador;
+
+
+    //------------------------------------------------------------------------------
+    // GENERANDO MATRIZ
+    // -----------------------------------------------------------------------------
+    
+    $array = null;
+    $i = 0;
+    while($i<($total_parciales*$total_categorias)) {
+      $array[$i]['parcial'] = $datosfinal[$i]['parcial'];
+      $array[$i]['orden'] = $datosfinal[$i]['orden'];
+      $aux = null;
+      for($j=$i; $j<($i+$total_categorias); $j++) { 
+        $aux[$j]['codigo_categoria']  = $datosfinal[$j]['codigo_categoria'];
+        $aux[$j]['nombre_categoria']  = $datosfinal[$j]['nombre_categoria'];
+        $aux[$j]['peso_categoria']    = $datosfinal[$j]['peso_categoria'];
+        $aux[$j]['promedio']          = $datosfinal[$j]['promedio'];
+      }
+      $array[$i]['detalle'] = $aux;
+       $i = $i+$total_categorias;
+    }
+
+    //
+    $promedios = null;
+    $peso      = null;
+    foreach ($array as $k) {
+      $i = 0;
+      foreach ($k['detalle'] as $j) {
+         if(@$promedios[$i] == null) {
+            $promedios[$i]  = $j['promedio'];
+            $peso[$i]       = $j['peso_categoria'];
+         }else{
+            $promedios[$i]  = $promedios[$i]+$j['promedio'];
+            $peso[$i]       = $j['peso_categoria'];
+         }
+         $i++;
+       } 
+    }
+
   
     function agregar_dv($_rol) {
         /* Bonus: remuevo los ceros del comienzo. */
@@ -186,19 +256,29 @@ table tfoot .links a{
     </table></td>
     <td width="60%"><table width="100%" border="0">
       <tr>
-        <td colspan="3" class="TituloCentrado">NOTA</td>
+        <td colspan="<?php echo $total_categorias; ?>" class="TituloCentrado">NOTA</td>
         <td class="TituloCentrado">FINAL</td>
       </tr>
       <tr>
-        <td width="25%" class="CentroSinFormato"><?php echo $datosfinal[0]['nombre_categoria']; ?></td>
-        <td width="25%" class="CentroSinFormato"><?php echo $datosfinal[1]['nombre_categoria']; ?></td>
-        <td width="25%" class="CentroSinFormato"><?php echo $datosfinal[2]['nombre_categoria']; ?></td>
+        <?php
+            for ($i=0; $i<$total_categorias; $i++) { 
+              echo '<td width="25%" class="CentroSinFormato">'.$array[0]['detalle'][$i]['nombre_categoria'].' ('.$peso[$i].'%)</td>';
+            }
+          ?>
+          <?php
+            $temp_nota_final = 0;
+            for($i=0; $i<count($promedios); $i++) {
+              $temp_nota_final = $temp_nota_final+(($promedios[$i]/$total_parciales)*($peso[$i]/100));
+            }
+          ?>
         <td width="25%" class="CentroSinFormatoNotaFinal" rowspan="2"><?php echo $final[0]->getnotafinal(); ?></td>
       </tr>
       <tr>
-        <td class="CentroSinFormatoNotas"><?php echo $datosResumen[0]['promedio']; ?></td>
-        <td class="CentroSinFormatoNotas"><?php echo $datosResumen[1]['promedio']; ?></td>
-        <td class="CentroSinFormatoNotas"><?php echo $datosResumen[2]['promedio']; ?></td>
+        <?php
+            for($i=0; $i<count($promedios); $i++) {
+              echo '<td class="CentroSinFormatoNotas">'.number_format(($promedios[$i]/$total_parciales), 2, '.', ',').'</td>';
+            }
+          ?>
       </tr>
     </table></td>
   </tr>
@@ -216,7 +296,7 @@ table tfoot .links a{
         for($i=0; $i<count($datosfinal); $i=$i+3) {
           $k = $datosfinal;
           echo '<tr>';
-          echo '<td width="20%" class="IzquierdaSinFormato">evaluación parcial <strong>#'.$k[$i]['parcial'].'</strong></td>';
+          echo '<td width="20%" class="IzquierdaSinFormato"><strong>'.$k[$i]['orden'].'° Evaluación Parcial</strong><br />Evaluación Correlativa de Sistema #'.$k[$i]['parcial'].'</td>';
           echo '<td width="10%" class="CentroSinFormato">'.$k[$i]['promedio'].'</td>';
           echo '<td width="10%" class="CentroSinFormato">'.$k[$i+1]['promedio'].'</td>';
           echo '<td width="10%" class="CentroSinFormato">'.$k[$i+2]['promedio'].'</td>';
