@@ -512,6 +512,7 @@
 				$consulta = "SELECT  ";
 				$consulta = $consulta."a.numero_quincenal, ";
 				$consulta = $consulta."c.numero_evaluacion, ";
+				$consulta = $consulta."c.orden, ";
 				$consulta = $consulta."f.codigo_categoria, ";
 				$consulta = $consulta."f.nombre_categoria, ";
 				$consulta = $consulta."f.peso_categoria, ";
@@ -528,6 +529,7 @@
 				$consulta = $consulta."GROUP BY  ";
 				$consulta = $consulta."a.numero_quincenal, ";
 				$consulta = $consulta."c.numero_evaluacion, ";
+				$consulta = $consulta."c.orden, ";
 				$consulta = $consulta."f.codigo_categoria, ";
 				$consulta = $consulta."f.nombre_categoria, ";
 				$consulta = $consulta."f.peso_categoria ";

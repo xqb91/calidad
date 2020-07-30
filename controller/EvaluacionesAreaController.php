@@ -117,7 +117,7 @@
 
 		public function listarPorCodigoAreaPeriodo($area, $periodo) {
 			try {
-				$consulta = "SELECT * FROM evaluaciones_area WHERE codigo_area = '".$area."' and periodo = '".$periodo."'";
+				$consulta = "SELECT * FROM evaluaciones_area WHERE codigo_area = ".$area." and periodo = '".$periodo."'";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);

@@ -27,7 +27,7 @@ $(document).ready(function() {
 						$.ajax({
 							type: 'POST',
 							url: 'core/QuantityEvaluacionesNecesarias.php',
-							data: 'area=1',
+							data: 'area='+$("#irqlarea").val(),
 							deforeSend: function() {
 
 							},

@@ -207,32 +207,28 @@
                     <h6 class="m-0 font-weight-bold text-primary">Listado de Ejecutivos</h6>
                   </div>
                 <!-- Card Body -->
-                  <div class="card-body">
-                      <div class="table-responsive">
-                        <table class="table table-bordered" id="tablaEjecutivos" width="100%" cellspacing="0">
-                          <thead>
-                            <tr>
-                              <th>Rut de Ejecutivo</th>
-                              <th>Nombre de Ejecutivo</th>
-                              <th></th>
-                              <th></th>
-                              <th></th>
-                            </tr>
-                          </thead>
-                          <tfoot>
-                            <tr>
-                              <th>Rut de Ejecutivo</th>
-                              <th>Nombre de Ejecutivo</th>
-                              <th></th>
-                              <th></th>
-                              <th></th>
-                            </tr>
-                          </tfoot>
-                          <tbody>
-                          </tbody>
-                        </table>
-                      </div>
-                </div>
+                  <table class="table table-bordered" id="tablaEjecutivos" width="100%" cellspacing="0">
+                    <thead>
+                      <tr>
+                        <th>Rut de Ejecutivo</th>
+                        <th>Nombre de Ejecutivo</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tfoot>
+                      <tr>
+                        <th>Rut de Ejecutivo</th>
+                        <th>Nombre de Ejecutivo</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                      </tr>
+                    </tfoot>
+                    <tbody>
+                    </tbody>
+                  </table>
               </div>
             </div>
 
