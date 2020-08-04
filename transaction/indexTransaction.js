@@ -28,6 +28,7 @@ $(document).ready(function() {
                         $("#modalIndexBtnCerrar").text('Cerrar');
                         $("#modalIndexBtnAccion").text('Iniciar sesión nuevamente!');
                         $("#modalIndexBtnAccion").show();
+                        window.close();
                     },
                     500: function(responseObject, textStatus, errorThrown) {
                         $("#modalIndexTitle").text('No Autorizado');
@@ -38,6 +39,7 @@ $(document).ready(function() {
                         $("#modalIndexBtnCerrar").text('Cerrar');
                         $("#modalIndexBtnAccion").text('Iniciar sesión nuevamente!');
                         $("#modalIndexBtnAccion").hide();
+                        window.close();
                     },
                     401: function(responseObject, textStatus, errorThrown) {
                         $("#modalIndexTitle").text('Sesión Caducada');
@@ -48,6 +50,7 @@ $(document).ready(function() {
                         $("#modalIndexBtnCerrar").text('Cerrar');
                         $("#modalIndexBtnAccion").text('Iniciar sesión nuevamente!');
                         $("#modalIndexBtnAccion").show();
+                        window.close();
                     },
                     403: function(responseObject, textStatus, errorThrown) {
                         $("#modalIndexTitle").text('No te podemos reconocer!');
@@ -58,6 +61,7 @@ $(document).ready(function() {
                         $("#modalIndexBtnCerrar").text('Cerrar');
                         $("#modalIndexBtnAccion").text('Iniciar sesión nuevamente!');
                         $("#modalIndexBtnAccion").show();
+                        window.close();
                     },
                     503: function(responseObject, textStatus, errorThrown) {
                         $("#modalIndexTitle").text('Sesión Corrupta');
@@ -68,6 +72,7 @@ $(document).ready(function() {
                         $("#modalIndexBtnCerrar").text('Cerrar');
                         $("#modalIndexBtnAccion").text('Iniciar sesión nuevamente!');
                         $("#modalIndexBtnAccion").show();
+                        window.close();
                     }, 
                     200: function(responseObject, textStatus, errorThrown) {
                         $.ajax({

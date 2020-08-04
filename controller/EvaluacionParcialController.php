@@ -272,6 +272,8 @@
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
 						if($resultado == true) {
+							$consulta = "CALL sp_update_numero_orden_parcial('".$obj->getperiodo()."', ".$obj->getrut_ejecutivo().");";
+							$this->databaseTransaction->ejecutar($consulta);
 							$this->databaseTransaction->confirmar();
 							$this->databaseTransaction->cerrar();
 							return 1;
@@ -300,7 +302,7 @@
 				$obj = $param;
 				if($obj != null) {
 					//construyendo string
-					$consulta = "CALL sp_setea_numero_orden_parcial(".$param->getnumero_evaluacion().");";
+					$consulta."CALL sp_update_numero_orden_parcial('".$param->getperiodo()."', ".$param->getrut_ejecutivo().");";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -334,7 +336,7 @@
 				$obj = $param;
 				if($obj != null) {
 					//construyendo string
-					$consulta = "CALL sp_update_numero_orden_parcial('".$param->getperiodo()."', ".$param->getrut_ejecutivo().");";
+					$consulta = "CALL sp_update_numero_orden_parcial(".$param->getperiodo().", ".$param->getrut_ejecutivo().");";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);

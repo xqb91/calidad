@@ -272,16 +272,25 @@ $(document).ready(function() {
 													        	$("#modalHomeBtnAccion").attr('evaluacion', evapar.numero_evaluacion);
 													        	$("#lblEvaluacionParcial").html('<i class="fas fa-address-book"></i>&nbsp;<strong>Evaluación #</strong>:&nbsp; '+evapar.numero_evaluacion+'');
 
+													        	var min = 999999999999999;
+													        	$.each($('.form-check-input'), function(i, x) {
+													        		if($(this).attr('codigo_item') < min) {
+													        			min = $(this).attr('codigo_item');
+													        		}
+													        	});
+
 													        	//desbloqueo global
 																setTimeout(function(){ 
-																	$.each($('input#itemid1.form-check-input'), function(i,v) {  
-																		if($(this).val() == -1) {
-																			//do this when is complete 
-																			$(this).click(); console.log('clikeado');  
-																			$("#tablaEvaluaciones").show(); 
-																		}  
+																	$.each($('.form-check-input'), function(i,v) {  
+																		if($(this).attr('codigo_item') == min) {
+																			if($(this).val() == -1) {
+																				//do this when is complete 
+																				$(this).click(); console.log('clikeado');  
+																				$("#tablaEvaluaciones").show(); 
+																			}  
+																		}
 																	}); 
-																}, 3000);
+																}, 1200);
 													        }
 													    }
 													});
