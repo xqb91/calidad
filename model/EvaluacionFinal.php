@@ -9,6 +9,7 @@
 		private $ejecutivo_codigo_area; 
 		private $observaciones;
 		private $nota_final;
+		private $estado;
 
 		//Constructor
 		//Obtiene un arreglo que es generado de forma automática por MySQL
@@ -22,6 +23,7 @@
 			$this->ejecutivo_codigo_area	= $arreglo['codigo_area'];
 			$this->observaciones			= $arreglo['observaciones'];
 			$this->nota_final 				= $arreglo['nota_final'];
+			$this->estado 					= $arreglo['estado'];
 		}
 
 
@@ -97,6 +99,24 @@
 				return $this->nota_final;
 			}catch(Exception $e) {
 				return null;
+			}
+		}
+
+
+		public function getEstado() {
+			try {
+				return $this->nota_final;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
+		public function setEstado($estado) {
+			try {
+				$this->nota_final = $estado;
+				return true;
+			}catch(Exception $e) {
+				return false;
 			}
 		}
 

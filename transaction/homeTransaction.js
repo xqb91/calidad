@@ -2,6 +2,7 @@
 var tablaEjecutivos;
 
 $(document).ready(function(){
+
 	$.ajax({
 		type: 'get', 
 		url: 'core/SessionManager.php',
@@ -262,6 +263,7 @@ $(document).ready(function(){
 													                            //cargando datos a la tabla
 													                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																				    data: resultado,
+																				    "order" : [[ 2, "ASC" ]],
 																				    columns: [
 																				        { data: 'rut_ejecutivo' },
 																				        { data: 'nombre_ejecutivo' },
@@ -1358,6 +1360,7 @@ $("#slcArea").change(function(){
 																				                            tablaEjecutivos = null;
 																				                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																											    data: resultado,
+																											    "order" : [[ 2, "ASC" ]],
 																											    columns: [
 																											        { data: 'rut_ejecutivo' },
 																											        { data: 'nombre_ejecutivo' },
@@ -1705,6 +1708,7 @@ $("#modalHomeBtnAccion").click(function() {
 					                            tablaEjecutivos = null;
 					                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 												    data: resultado,
+												    "order" : [[ 2, "ASC" ]],
 												    columns: [
 												        { data: 'rut_ejecutivo' },
 												        { data: 'nombre_ejecutivo' },

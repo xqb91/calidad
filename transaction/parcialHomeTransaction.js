@@ -263,6 +263,7 @@ $(document).ready(function(){
 																				                            //cargando datos a la tabla
 																				                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																											    data: resultado,
+																											    "order" : [[ 4, "ASC" ]],
 																											    columns: [
 																											    	{ data: 'promedio_ejecutivo'},
 																											    	{ data: 'cantidad_evaluaciones'},
@@ -280,7 +281,7 @@ $(document).ready(function(){
 																										        ],
 																												rowCallback : function(row, data, index) {
 																													if(parseFloat(data.promedio_ejecutivo) <= 10 && parseFloat(data.promedio_ejecutivo) >= 9) {
-																													 	$(row).find('td:eq(0)').addClass('table-success');
+																													 	$(row).find('td:eq(0)').addClass('table-success');																													 	$(row).find('td:eq(0)').html(data.promedio_ejecutivo.toFixed(2));
 																													}else if(parseFloat(data.promedio_ejecutivo) >= 8 && parseFloat(data.promedio_ejecutivo) < 9) {
 																													 	$(row).find('td:eq(0)').addClass('table-warning');
 																													}else{
@@ -998,6 +999,7 @@ $("#slcPeriodo").change(function() {
 											                            tablaEjecutivos = null;
 											                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																		    data: resultado,
+																		    "order" : [[ 4, "ASC" ]],
 																		    columns: [
 																		    	{ data: 'promedio_ejecutivo'},
 																		    	{ data: 'cantidad_evaluaciones'},
@@ -1490,6 +1492,7 @@ $("#slcArea").change(function(){
 																				                            tablaEjecutivos = null;
 																				                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																											    data: resultado,
+																											    "order" : [[ 4, "ASC" ]],
 																											    columns: [
 																											    	{ data: 'promedio_ejecutivo'},
 																												    { data: 'cantidad_evaluaciones'},
@@ -1755,6 +1758,7 @@ $("#modalHomeBtnAccion").click(function() {
 										                            tablaEjecutivos = null;
 										                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																	    data: resultado,
+																	    "order" : [[ 4, "ASC" ]],
 																	    columns: [
 																	    	{ data: 'promedio_ejecutivo'},
 																	    	{ data: 'cantidad_evaluaciones'},
@@ -1983,6 +1987,7 @@ $("#modalHomeBtnAccion").click(function() {
 						                            tablaEjecutivos = null;
 						                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 													    data: resultado,
+													    "order" : [[ 4, "ASC" ]],
 													    columns: [
 													    	{ data: 'promedio_ejecutivo'},
 														    { data: 'cantidad_evaluaciones'},

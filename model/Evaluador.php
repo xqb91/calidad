@@ -8,6 +8,9 @@
 		private $fecha_creacion;
 		private $estado; 
 		private $admin;
+		private $supervisor;
+		private $cobranza;
+		private $area;
 
 
 		//Constructor
@@ -21,6 +24,9 @@
 			$this->fecha_creacion	= $arreglo['fecha_creacion'];
 			$this->estado			= $arreglo['estado'];
 			$this->admin 			= $arreglo['admin'];
+			$this->supervisor		= $arreglo['supervisor'];
+			$this->cobranza			= $arreglo['cobranza'];
+			$this->area 			= $arreglo['area'];
 		}
 
 		//accesadores
@@ -84,6 +90,38 @@
 			}
 		}
 
+		public function getSupervisor() {
+			try {
+				if($this->supervisor == 1) {
+					return true;
+				}else{
+					return false;
+				}
+			}catch(Exception $e) {
+				return false;
+			}
+		}
+
+		public function getCobranza() {
+			try {
+				if($this->supervisor == 1) {
+					return true;
+				}else{
+					return false;
+				}
+			}catch(Exception $e) {
+				return false;
+			}
+		}
+
+		public function getArea() {
+			try {
+				return $this->area;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
 		//mutadores
 		public function setrut_evaluador($rut_evaluador) {
 			try {
@@ -143,6 +181,33 @@
 			try 
 			{
 				$this->admin = $admin;
+				return true;
+			}catch(Exception $e) {
+				return false;
+			}
+		}
+
+		public function setSupervisor($supervisor) {
+			try {
+				$this->supervisor = $supervisor;
+				return true;
+			}catch(Exception $e) {
+				return false;
+			}
+		}
+
+		public function setCobranza($cobranza) {
+			try {
+				$this->cobranza = $cobranza;
+				return true;
+			}catch(Exception $e) {
+				return false;
+			}
+		}
+
+		public function setArea($area) {
+			try {
+				$this->area = $area;
 				return true;
 			}catch(Exception $e) {
 				return false;

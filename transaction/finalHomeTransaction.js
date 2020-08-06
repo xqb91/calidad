@@ -261,6 +261,7 @@ $(document).ready(function(){
 																					                            //cargando datos a la tabla
 																					                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																												    data: resultado,
+																												    "order" : [[ 3, "ASC" ]],
 																												    columns: [
 																												    	{ data: 'nota_final'},
 																												        { data: 'rut_ejecutivo' },
@@ -846,6 +847,7 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 									                            tablaEjecutivos = null;
 									                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																    data: resultado,
+																    "order" : [[ 3, "ASC" ]],
 																    columns: [
 																    	{ data: 'nota_final'},
 																        { data: 'rut_ejecutivo' },
@@ -1197,6 +1199,7 @@ $("#slcPeriodo").change(function() {
 											                            tablaEjecutivos = null;
 											                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																		    data: resultado,
+																		    "order" : [[ 3, "ASC" ]],
 																		    columns: [
 																		    	{ data: 'nota_final'},
 																		        { data: 'rut_ejecutivo' },
@@ -1686,6 +1689,7 @@ $("#slcArea").change(function(){
 																			                            tablaEjecutivos = null;
 																			                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																										    data: resultado,
+																										    "order" : [[ 3, "ASC" ]],
 																										    columns: [
 																										    	{ data: 'nota_final'},
 																										        { data: 'rut_ejecutivo' },
@@ -1929,6 +1933,7 @@ $("#modalHomeBtnAccion").click(function() {
 				                            tablaEjecutivos = null;
 				                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 											    data: resultado,
+											    "order" : [[ 3, "ASC" ]],
 											    columns: [
 											    	{ data: 'nota_final'},
 											        { data: 'rut_ejecutivo' },
@@ -2172,6 +2177,7 @@ $("#modalHomeBtnAccion").click(function() {
 				                            tablaEjecutivos = null;
 				                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 											    data: resultado,
+											    "order" : [[ 3, "ASC" ]],
 											    columns: [
 											    	{ data: 'nota_final'},
 											        { data: 'rut_ejecutivo' },

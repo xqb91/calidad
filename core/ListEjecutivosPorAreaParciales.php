@@ -43,8 +43,8 @@
 							$total++;
 						}
 						$promedio = $suma/$total;
-						$promedio = number_format($promedio, 2, '.', '');
-						echo '"promedio_ejecutivo" : '.$promedio.',';
+						$promedio = number_format($promedio, 2, '.', ',');
+						echo '"promedio_ejecutivo" : '.$promedio.', ';
 						echo '"cantidad_evaluaciones" : '.$total.', ';
 						if($c->bloqueado($temp->getrut_ejecutivo(), $_SESSION['current_periodo_work'])) {
 							echo '"bloqueado" : 1 ';

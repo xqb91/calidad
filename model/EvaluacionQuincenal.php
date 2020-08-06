@@ -8,6 +8,8 @@
 	    private $periodo; 
 	    private $ejecutivo_codigo_area; 
 	    private $nota_quincenal;
+	   	private $estado;
+
 
 
 		//Constructor
@@ -21,6 +23,7 @@
 			$this->periodo					= $arreglo['periodo'];
 			$this->ejecutivo_codigo_area	= $arreglo['codigo_area'];
 			$this->nota_quincenal			= $arreglo['nota_quincenal'];
+			$this->estado 					= $arreglo['estado'];
 		}
 
 		//accesadores
@@ -75,6 +78,14 @@
 		public function getnota_quincenal() {
 			try {
 				return $this->nota_quincenal;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
+		public function getestado() {
+			try {
+				return $this->estado;
 			}catch(Exception $e) {
 				return null;
 			}
@@ -143,6 +154,15 @@
 				return false;
 			}
 		}	
+
+		public function setestado($estado) {
+			try {
+				$this->estado = $estado;
+				return true;
+			}catch(Exception $e) {
+				return false;
+			}
+		}
 
 		//metodos de la clase
 		//lista todos los valores de la clase
