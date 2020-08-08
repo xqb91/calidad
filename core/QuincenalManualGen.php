@@ -8,6 +8,7 @@
 
 	include(dirModel.'Evaluador.php');
 	session_start();
+
 	
 	if(isset($_POST["evas"]) && isset($_POST["ejecutivo"]) && isset($_POST["area"])) {
 
@@ -129,12 +130,13 @@
 						$quincenalToCommit->setnota_quincenal($promedio);
 
 						if($ctrlQuincenal->actualizar($quincenalToCommit)) {
-
+							echo "1";
 							$last = $quincenalToCommit->getnumero_quincenal();
 							//insertar detalle
 							if($last == null) {
 								echo "No se encontró la última evaluación. <strong>No se pudo proceder con su solicitud</strong>";
 								http_response_code(404);
+								echo "3";
 							}else{
 								$ctrlDetQuincenal->eliminarPorNumeroQuincenal($last);
 
@@ -148,6 +150,7 @@
 								http_response_code(200);
 							}
 						}else{
+							echo "2";
 							echo "La evaluación quincenal no se generó en el sistema. <strong>No se pudo proceder con su solicitud</strong>";
 							http_response_code(205);
 						}

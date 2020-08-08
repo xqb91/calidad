@@ -350,6 +350,9 @@ $(document).ready(function(){
 																					             					}else if(v.estado == 4) {
 																					             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-success">'; 
 																					             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-success"><i class="fas fa-check"></i> Revisada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+																					             					}else if(v.estado == 7) {
+																					             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-warning">'; 
+																					             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-warning"><i class="far fa-tired"></i> Apelada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
 																					             					}else{ 
 																					             						fila = fila +'<tr evaluacion="'+v.evaluacion+'">'; 
 																					             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación</strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
@@ -360,6 +363,9 @@ $(document).ready(function(){
 																						                           	if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 0) {
 																						                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
 																						                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';
+																						                            }else if(v.estado == 9) {
+																						                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
+																						                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" disabled="disabled" class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';																		                            	
 																						                            }else{
 																						                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button></td>';
 																						                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></button></td>';																		                            	
@@ -2099,6 +2105,9 @@ $("#slcPeriodo").change(function() {
 											             					}else if(v.estado == 4) {
 											             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-success">'; 
 											             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-success"><i class="fas fa-check"></i> Revisada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+											             					}else if(v.estado == 7) {
+											             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-warning">'; 
+											             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-warning"><i class="far fa-tired"></i> Apelada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
 											             					}else{ 
 											             						fila = fila +'<tr evaluacion="'+v.evaluacion+'">'; 
 											             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación</strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
@@ -2109,6 +2118,9 @@ $("#slcPeriodo").change(function() {
 												                           	if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 0) {
 												                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
 												                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';
+												                            }else if(v.estado == 9) {
+												                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
+												                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" disabled="disabled" class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';																		                            	
 												                            }else{
 												                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button></td>';
 												                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></button></td>';																		                            	
@@ -3554,6 +3566,9 @@ $("#modalHomeBtnAccion").click(function() {
 							             					}else if(v.estado == 4) {
 							             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-success">'; 
 							             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-success"><i class="fas fa-check"></i> Revisada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+							             					}else if(v.estado == 7) {
+							             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-warning">'; 
+							             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-warning"><i class="far fa-tired"></i> Apelada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
 							             					}else{ 
 							             						fila = fila +'<tr evaluacion="'+v.evaluacion+'">'; 
 							             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación</strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
@@ -3564,6 +3579,9 @@ $("#modalHomeBtnAccion").click(function() {
 								                           	if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 0) {
 								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
 								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';
+								                            }else if(v.estado == 9) {
+								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
+								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" disabled="disabled" class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';																		                            	
 								                            }else{
 								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button></td>';
 								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></button></td>';																		                            	
@@ -3571,6 +3589,7 @@ $("#modalHomeBtnAccion").click(function() {
 								                            fila = fila +'<td style="width:10%; text-align: center;"><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
 								                          	fila = fila +'</tr>';
 								                          	$("#tablaEvaluacionesGeneradas").append(fila);
+
 														});
 													}
 
@@ -4766,6 +4785,9 @@ $("#modalHomeBtnAccion").click(function() {
 							             					}else if(v.estado == 4) {
 							             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-success">'; 
 							             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-success"><i class="fas fa-check"></i> Revisada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+							             					}else if(v.estado == 7) {
+							             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-warning">'; 
+							             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-warning"><i class="far fa-tired"></i> Apelada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
 							             					}else{ 
 							             						fila = fila +'<tr evaluacion="'+v.evaluacion+'">'; 
 							             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación</strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
@@ -4776,6 +4798,9 @@ $("#modalHomeBtnAccion").click(function() {
 								                           	if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 0) {
 								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
 								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';
+								                            }else if(v.estado == 9) {
+								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
+								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" disabled="disabled" class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';																		                            	
 								                            }else{
 								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button></td>';
 								                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></button></td>';																		                            	
@@ -4783,6 +4808,7 @@ $("#modalHomeBtnAccion").click(function() {
 								                            fila = fila +'<td style="width:10%; text-align: center;"><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
 								                          	fila = fila +'</tr>';
 								                          	$("#tablaEvaluacionesGeneradas").append(fila);
+
 														});
 													}
 
@@ -5171,6 +5197,9 @@ $("#modalHomeBtnAccion").click(function() {
 									             					}else if(v.estado == 4) {
 									             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-success">'; 
 									             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-success"><i class="fas fa-check"></i> Revisada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
+									             					}else if(v.estado == 7) {
+									             						fila = fila +'<tr evaluacion="'+v.evaluacion+'" class="table-warning">'; 
+									             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación <span class="badge badge-warning"><i class="far fa-tired"></i> Apelada</span></strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
 									             					}else{ 
 									             						fila = fila +'<tr evaluacion="'+v.evaluacion+'">'; 
 									             						fila = fila +'<td scope="row col-9" style="width:80%;"><strong>'+v.orden+'° Evaluación</strong><br /><div style="font-size:11px;"><i class="fas fa-edit"></i> <strong>'+v.evaluacion+'</strong> | <i class="far fa-calendar-alt"></i> <strong>'+v.fecha_evaluacion.substr(8,2)+'-'+v.fecha_evaluacion.substr(5,2)+'-'+v.fecha_evaluacion.substr(2,2)+'</strong></div></th>';
@@ -5181,6 +5210,9 @@ $("#modalHomeBtnAccion").click(function() {
 										                           	if(resultado.bloqueado_final == 1 && localStorage.getItem('bloqueoParcial') == 0) {
 										                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
 										                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar"  disabled="disabled"  class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';
+										                            }else if(v.estado == 9) {
+										                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" disabled="disabled" class="btn btn-danger btn-sm"><i class="fas fa-lock"></i></button></td>';
+										                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" disabled="disabled" class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>';																		                            	
 										                            }else{
 										                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="eliminar" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></button></td>';
 										                            	fila = fila +'<td width="50px"><button type="button" evaluacion="'+v.evaluacion+'" role="editar" class="btn btn-warning btn-sm"><i class="fas fa-pen"></i></button></td>';																		                            	
@@ -5188,6 +5220,7 @@ $("#modalHomeBtnAccion").click(function() {
 										                            fila = fila +'<td style="width:10%; text-align: center;"><i class="fas fa-book"></i> <strong>'+v.nota+'</strong></td>';
 										                          	fila = fila +'</tr>';
 										                          	$("#tablaEvaluacionesGeneradas").append(fila);
+
 																});
 															}
 
@@ -5777,7 +5810,7 @@ $("#modalHomeBtnAccion").click(function() {
 								},
 								200: function(responseObject, textStatus, errorThrown) {
 									$("#modalHomeContenido").html('Evaluación quincenal regenerada con éxito');
-									alert('Evaluación quincenal regenerada con éxito');
+									alert('Evaluación quincenal regenerada con éxito :'+responseObject);
 									window.location.reload();
 								}
 							}

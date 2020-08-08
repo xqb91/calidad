@@ -2,7 +2,7 @@
   include("config/Globales.php");
   //error_reporting(0);
   session_start();
-  $_SESSION['rauliUser'] = 'ntoro';
+  $_SESSION['rauliUser'] = '17151127';
   //---- NO OLVIDAR SETEAR ESTA VARIABLE DE SESION CUANDO INICIE EN EL SISTEMA VIEJO!!!!!!!!!
   $_SESSION['lastActivity'] = date('Y-m-d H:i:s');
 
@@ -27,6 +27,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
+    <link rel="icon" id="faviconico" type="image/vnd.microsoft.icon" href="facade/favicon/favicon.ico">
+  <link rel="icon" id="faviconpng" type="image/png" href="facade/favicon/favicon.png">
 
   <title>Módulo de Evaluaciones</title>
 

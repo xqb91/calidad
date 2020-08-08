@@ -183,14 +183,35 @@
 				//objeto
 				$obj = $param;
 				if($obj != null) {
+					//cambiando estado
+					if($obj->getEstado() == 2) {
+						$obj->setEstado(4);
+					}
+
+					if($obj->getEstado() == 7) {
+						$obj->setEstado(8);
+					}
 					//construyendo string
 					$consulta = "UPDATE evaluacion_final ";
-					$consulta = $consulta."SET observaciones = '".$obj->getobservaciones()."' ";
+					$consulta = $consulta."SET observaciones = '".$obj->getobservaciones()."', estado = ".$obj->getEstado()." ";
 					$consulta = $consulta."WHERE numero_final = ".$obj->getnumero_final().";";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
 						if($resultado == true) {
+							if($obj->getEstado() == 4) {
+								$sql = "INSERT INTO rev_evaluacion_status ";
+								$sql = $sql."(tipo, numero_evaluacion, estado, usuario, observacion) VALUES ";
+								$sql = $sql."(3, ".$obj->getnumero_final().", 4, '".$obj->getevaluador_rut_evaluador()."', 'SISTEMA: La actualización de la evaluación final fue realizada y cambio de estado en revisión a corregida')";
+								$this->databaseTransaction->ejecutar($sql);
+							}
+
+							if($obj->getEstado() == 8) {
+								$sql = "INSERT INTO rev_evaluacion_status ";
+								$sql = $sql."(tipo, numero_evaluacion, estado, usuario, observacion) VALUES ";
+								$sql = $sql."(3, ".$obj->getnumero_final().", 8, ".$obj->getevaluador_rut_evaluador().", 'SISTEMA: La actualización de la evaluación final fue realizada y cambio de estado apelación aceptada a apelación terminada')";
+								$this->databaseTransaction->ejecutar($sql);
+							}
 							$this->databaseTransaction->confirmar();
 							$this->databaseTransaction->cerrar();
 							return 1;

@@ -16,11 +16,6 @@
 				$obj = $obj[0];
 				$obj->setobservacion($comentarios);
 
-				//determinando si es una corrección
-				if($obj->getEstado() == 2) {
-					$obj->setEstado(4);
-				}
-
 				
 				if($control->actualizar($obj)) {
 					http_response_code(200);

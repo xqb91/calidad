@@ -38,34 +38,36 @@
 					if($evaluaciones != null) {
 						if($controlado->listarPorEjecutivo($ejecutivo, $periodo) != null) { 
 							if(count($controlado->listarPorEjecutivo($ejecutivo, $periodo)) == $evaluaciones->getcantidad_quincenales()) {
-								$arreglo['numero_quincenal'] 	= 0;
-								$arreglo['rut_ejecutivo']		= $ejecutivo;
-								$arreglo['fecha_creacion']		= date("Y-m-d");
-								$arreglo['rut_evaluador']		= $evaluador;
-								$arreglo['periodo']				= $periodo;
-								$arreglo['codigo_area']			= $area;
-								//obtener promedio de notas parciales
-								$contador = 0;
-								$notas	  = 0;
-								foreach ($controlado->listarPorEjecutivo($ejecutivo, $periodo) as $k) {
-									$notas = $notas + $k->getnota_final();
-									$contador++;
-								}
-								$arreglo['nota_quincenal']		= ($notas/$contador);
+								if($quincenal->existeEvaluacionParaPeriodo($periodo, $ejecutivo) == null) {
+									$arreglo['numero_quincenal'] 	= 0;
+									$arreglo['rut_ejecutivo']		= $ejecutivo;
+									$arreglo['fecha_creacion']		= date("Y-m-d");
+									$arreglo['rut_evaluador']		= $evaluador;
+									$arreglo['periodo']				= $periodo;
+									$arreglo['codigo_area']			= $area;
+									//obtener promedio de notas parciales
+									$contador = 0;
+									$notas	  = 0;
+									foreach ($controlado->listarPorEjecutivo($ejecutivo, $periodo) as $k) {
+										$notas = $notas + $k->getnota_final();
+										$contador++;
+									}
+									$arreglo['nota_quincenal']		= ($notas/$contador);
 
-								//ingresando evaluacion
-								$obj = new EvaluacionQuincenal($arreglo);
-								$quincenal->ingresar($obj);
+									//ingresando evaluacion
+									$obj = new EvaluacionQuincenal($arreglo);
+									$quincenal->ingresar($obj);
 
-								//obtener número de última quincenal
-								$recienCreada = $quincenal->ultimaEvaluacionGenerada($obj->getperiodo(), $obj->getrut_ejecutivo(), $obj->getrut_evaluador(), $obj->getejecutivo_codigo_area());
-								//ingresar detalle a la quincenal
-								foreach ($controlado->listarPorEjecutivo($ejecutivo, $periodo) as $k) {
-									$arreglo = null;
-									$arreglo['numero_quincenal']	= $recienCreada[0]->getnumero_quincenal();
-									$arreglo['numero_evaluacion']	= $k->getnumero_evaluacion();
-									$obj = new DetalleEvaluacionQuincenal($arreglo);
-									$detaQuinc->ingresar($obj);
+									//obtener número de última quincenal
+									$recienCreada = $quincenal->ultimaEvaluacionGenerada($obj->getperiodo(), $obj->getrut_ejecutivo(), $obj->getrut_evaluador(), $obj->getejecutivo_codigo_area());
+									//ingresar detalle a la quincenal
+									foreach ($controlado->listarPorEjecutivo($ejecutivo, $periodo) as $k) {
+										$arreglo = null;
+										$arreglo['numero_quincenal']	= $recienCreada[0]->getnumero_quincenal();
+										$arreglo['numero_evaluacion']	= $k->getnumero_evaluacion();
+										$obj = new DetalleEvaluacionQuincenal($arreglo);
+										$detaQuinc->ingresar($obj);
+									}
 								}
 							}
 						}

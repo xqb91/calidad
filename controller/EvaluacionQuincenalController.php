@@ -56,6 +56,35 @@
 			}
 		}
 
+		public function existeEvaluacionParaPeriodo($periodo, $ejecutivo) {
+			try {
+				$consulta = "SELECT * FROM evaluacion_quincenal WHERE rut_ejecutivo = ".$ejecutivo." AND periodo = '".$periodo."'; ";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$array = null;
+						$i 	   = 0;
+						while($registro = $this->databaseTransaction->resultados()) {
+							$array[$i] = new EvaluacionQuincenal($registro);
+							$i++;
+						}
+						$this->databaseTransaction->cerrar();
+						return $array;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - Listar: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
 		public function listarPorNumero($numero) {
 			try {
 				$consulta = "SELECT * FROM evaluacion_quincenal WHERE numero_quincenal = '".$numero."'";
@@ -87,7 +116,7 @@
 
 		public function listarPorEjecutivo($ejecutivo, $periodo) {
 			try {
-				$consulta = "SELECT * FROM evaluacion_quincenal WHERE rut_ejecutivo = '".$ejecutivo."' AND periodo='".$periodo."' ";
+				$consulta = "SELECT * FROM evaluacion_quincenal WHERE rut_ejecutivo = ".$ejecutivo." AND periodo='".$periodo."' ";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -382,25 +411,48 @@
 				//objeto
 				$obj = $param;
 				if($obj != null) {
+					if($obj->getestado() == 2) {
+						$obj->setestado(4);
+					}
+
+					if($obj->getestado() == 7) {
+						$obj->setestado(8);
+					}
+
 					//construyendo string
 					$consulta = "UPDATE evaluacion_quincenal SET "; 
 					$consulta = $consulta."fecha_creacion='".$obj->getfecha_creacion()."', ";
 					$consulta = $consulta."rut_evaluador=".$obj->getrut_evaluador().", ";
-					$consulta = $consulta."nota_quincenal=".$obj->getnota_quincenal()." "; 
+					$consulta = $consulta."nota_quincenal=".$obj->getnota_quincenal().", "; 
+					$consulta = $consulta."estado = ".$obj->getestado()." "; 
 					$consulta = $consulta."WHERE ";
 					$consulta = $consulta."numero_quincenal=".$obj->getnumero_quincenal();
+
 
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
 						if($resultado == true) {
-							$this->databaseTransaction->confirmar();
+							if($obj->getestado() == 4) {
+								$sql = "INSERT INTO rev_evaluacion_status ";
+								$sql = $sql."(tipo, numero_evaluacion, estado, usuario, observacion) VALUES ";
+								$sql = $sql."(2, ".$obj->getnumero_quincenal().", 4, '".$obj->getrut_evaluador()."', 'SISTEMA: La actualización de la evaluación quincenal fue realizada y cambio de estado en revisión a corregida')";
+								$this->databaseTransaction->ejecutar($sql);
+							}
+
+							if($obj->getestado() == 8) {
+								$sql = "INSERT INTO rev_evaluacion_status ";
+								$sql = $sql."(tipo, numero_evaluacion, estado, usuario, observacion) VALUES ";
+								$sql = $sql."(2, ".$obj->getnumero_quincenal().", 8, ".$obj->getrut_evaluador().", 'SISTEMA: La actualización de la evaluación quincenal fue realizada y cambio de estado apelación aceptada a apelación terminada')";
+								$this->databaseTransaction->ejecutar($sql);
+							}
 							$this->databaseTransaction->cerrar();
-							return 1;
+							echo $sql;
+							return true;
 						}else{
 							$this->databaseTransaction->deshacer();
 							$this->databaseTransaction->cerrar();
-							return 0;
+							return false;
 						}
 					}else{
 						if(ambiente == 'DEV') { echo "EvaluacionQuincenalController - actualizar: El objeto DatabaseTransaction se encuentra nulo"; }

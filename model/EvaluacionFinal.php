@@ -105,7 +105,7 @@
 
 		public function getEstado() {
 			try {
-				return $this->nota_final;
+				return $this->estado;
 			}catch(Exception $e) {
 				return null;
 			}
@@ -113,7 +113,7 @@
 
 		public function setEstado($estado) {
 			try {
-				$this->nota_final = $estado;
+				$this->estado = $estado;
 				return true;
 			}catch(Exception $e) {
 				return false;

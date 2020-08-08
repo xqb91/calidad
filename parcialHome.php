@@ -37,6 +37,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
+    <link rel="icon" id="faviconico" type="image/vnd.microsoft.icon" href="facade/favicon/favicon.ico">
+  <link rel="icon" id="faviconpng" type="image/png" href="facade/favicon/favicon.png">
 
   <title>Sistema De Evaluacion de Calidad</title>
 
@@ -168,7 +170,41 @@
 
 
             <!-- Nav Item - Alerts -->
-            <!-- Nav Item - Messages MENSAJES-->
+            <!-- INICIO DE CENTRO DE NOTIFICACIONES-->
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                
+                <span class="badge badge-secondary"><i class="fas fa-check-double"></i> Revisiones</span>
+                <!-- Counter - Alerts -->
+                <span class="badge badge-danger badge-counter" id="lblRevisionesCounter">--</span>
+              </a>
+              <!-- Dropdown - Alerts -->
+              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
+                <h6 class="dropdown-header">
+                  <i class="fas fa-tired"></i> Solicitudes de Revisión 
+                </h6>
+                  <p id="lblCentroRevisiones"></p>
+              </div>
+            </li>
+
+            <div class="topbar-divider d-none d-sm-block"></div>
+
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                
+                <span class="badge badge-secondary"><i class="fas fa-tired"></i> Apelaciones</span>
+                <!-- Counter - Alerts -->
+                <span class="badge badge-danger badge-counter" id="lblApelacionesCounter">--</span>
+              </a>
+              <!-- Dropdown - Alerts -->
+              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
+                <h6 class="dropdown-header">
+                  <i class="fas fa-tired"></i> Solicitudes de Apelación
+                </h6>
+                  <p id="lblCentroApelaciones"></p>
+              </div>
+            </li>
+             <!-- FIN  DE CENTRO DE NOTIFICACIONES-->
 
             <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -347,7 +383,8 @@
 
   <!-- Page level custom scripts -->
   <script src="transaction/parcialHomeTransaction.js"></script>
-
+ <script src="framework/play-sound/jquery.playSound.js"></script>
+  <script src="transaction/PushNotificacionRevisiones.js"></script>
 </body>
 
 </html>

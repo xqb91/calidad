@@ -1,6 +1,8 @@
 <?php
 	//Controlador OK: 09.04.2020
-	include(dirModel."EvaluacionParcial.php");
+	include("../model/EvaluacionParcial.php");
+	include("RevEvaluacionStatusController.php");
+
 	class EvaluacionParcialController {
 
 		private $databaseTransaction;
@@ -369,6 +371,32 @@
 				//objeto
 				$obj = $param;
 				if($obj != null) {
+					//cambiando estado
+					if($obj->getEstado() == 2) {
+						$obj->setEstado(4);
+						$temp = new RevEvaluacionStatusController();
+						$array['id']					= 0;
+						$array['tipo']					= 1;
+						$array['numero_evaluacion']		= $obj->getnumero_evaluacion();
+						$array['estado']				= 4;
+						$array['usuario']				= $obj->getrut_evaluador();
+						$array['observacion']			= 'SISTEMA: La actualización de la evaluación parcial fue realizada y cambio de estado en revisión a corregida';
+						$nuevo = new RevEvaluacionStatus($array);
+						$temp->ingresar($nuevo);
+					}
+
+					if($obj->getEstado() == 7) {
+						$obj->setEstado(8);
+						$temp = new RevEvaluacionStatusController();
+						$array['id']					= 0;
+						$array['tipo']					= 1;
+						$array['numero_evaluacion']		= $obj->getnumero_evaluacion();
+						$array['estado']				= 8;
+						$array['usuario']				= $obj->getrut_evaluador();
+						$array['observacion']			= 'SISTEMA: La actualización de la evaluación parcial fue realizada y cambio  de estado en revisión a corregida';
+						$nuevo = new RevEvaluacionStatus($array);
+						$temp->ingresar($nuevo);
+					}
 					//construyendo string
 					$consulta = "UPDATE evaluacion_parcial ";
 					$consulta = $consulta."SET observacion = '".$obj->getobservacion()."', nota_final = ".$obj->getnota_final().", estado = ".$obj->getEstado()." ";
