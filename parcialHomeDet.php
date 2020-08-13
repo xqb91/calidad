@@ -291,7 +291,9 @@
                      <!--<button type="button" class="btn btn-primary btn-sm">Primary</button><button type="button" class="btn dropdown-menu-right  btn-primary btn-sm" id="btnGenerarEva"><i class="fas fa-plus-square"></i> Generar Evaluación</button> -->
                      <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
                       <button type="button" class="btn btn-secondary" disabled="disabled" id="btnUnlockEvas" title="Desbloquear Evaluaciones"><i class="fas fa-lock-open"></i></button>
-                      <button type="button" class="btn dropdown-menu-right  btn-primary btn-sm" id="btnGenerarEva"><i class="fas fa-plus-square"></i> Generar Evaluación</button></div>
+                      <button type="button" class="btn dropdown-menu-right  btn-success btn-sm" id="btnExcelMasivo"><i class="fas fa-file-excel"></i> Excel</button>
+                      <button type="button" class="btn dropdown-menu-right  btn-primary btn-sm" id="btnGenerarEva"><i class="fas fa-plus-square"></i> Generar Evaluación</button>
+                    </div>
                     <!--</div>-->
                   </div>
                   </div>
@@ -388,7 +390,10 @@
     </div>
   </div>
 </div>
-
+<form action="../centralreport/core/exportXLS.php" method="post" id="frmXls">
+  <input type="hidden" name="tipo" id="frmXLSTipo" value="">
+  <input type="hidden" name="evaluacion" id="frmXLSEvaluacion" value="">
+</form>
 
 
 
