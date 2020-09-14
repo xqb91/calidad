@@ -90,6 +90,7 @@
 				$consulta = $consulta."WHERE  ";
 				$consulta = $consulta."a.estado = 2 ";
 				$consulta = $consulta."AND a.rut_evaluador = ".$rut_evaluador." ";
+
 				//echo $consulta;
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {

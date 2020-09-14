@@ -5,7 +5,7 @@
 	include(dirController."EvaluacionQuincenalController.php");
 	include(dirController."EvaluacionesAreaController.php");
 	include(dirController."DetalleEvaluacionQuincenalController.php");
-
+	
 	$array = null;
 
 	if(isset($_POST["periodo"])) {
@@ -34,7 +34,7 @@
 					$detaQuinc 	= new DetalleEvaluacionQuincenalController();
 
 					//generando evaluacion quincenal
-					$evaluaciones = $evaArea->listarPorCodigoAreaPeriodo($area, $periodo)[0];
+					/*$evaluaciones = $evaArea->listarPorCodigoAreaPeriodo($area, $periodo)[0];
 					if($evaluaciones != null) {
 						if($controlado->listarPorEjecutivo($ejecutivo, $periodo) != null) { 
 							if(count($controlado->listarPorEjecutivo($ejecutivo, $periodo)) == $evaluaciones->getcantidad_quincenales()) {
@@ -71,7 +71,7 @@
 								}
 							}
 						}
-					}
+					}*/
 
 
 					if($controlado->ingresar($evaluacion) == 1) {

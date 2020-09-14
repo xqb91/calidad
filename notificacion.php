@@ -111,7 +111,7 @@
                           <th scope="row" colspan="2" class="table table-hover table-dark">Detalles de Solicitud</th>
                         </tr>
                         <tr>
-                          <td colspan="2" style="text-align: justify;"><?php echo $obj[0]['observacion']; ?></td>
+                          <td colspan="2" style="text-align: justify;"><?php echo html_entity_decode ($obj[0]['observacion'], ENT_QUOTES, 'UTF-8'); ?></td>
                         </tr>
                       </tbody>
                     </table>
