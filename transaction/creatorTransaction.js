@@ -1020,80 +1020,82 @@ function guardarNotaFinal(evaluacion, notafinal) {
 
 
 $("#modalHomeBtnCerrar").click(function() {
-	var bandera = false;
-	$.each($('input:radio'), function(i, x) {
-		if($(this).is(':checked')) {
-			if($(this).val() != -1) {
-				bandera = true;
-			}
-		}
-	});
-
-	if(!bandera) {
-			$.ajax({
-				type: 'post',
-				url: 'core/EliminarEvaluacionParcial.php',
-				data: 'evaluacion='+nroEvaluacionGlobal.numero_evaluacion,
-				beforeSend: function() {
-
-				},
-				error: function(XMLHttpRequest, textStatus, errorThrown) {
-				    if (XMLHttpRequest.readyState == 0) {
-						$("#modalEditorConfig").attr('class', 'modal-dialog');
-						$("#modalEditorTitle").text('Verifique su conexión a internet');
-						$("#modalEditorContenido").attr('align', 'left');
-						$("#modalEditorCerrarVentana").show();
-						$("#modalEditorContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
-						$("#modalEditorBtnCerrar").show();
-						$("#modalEditorBtnCerrar").text('Cerrar');
-						$("#modalEditorBtnAccion").hide();
-				    }
-				},
-				statusCode: {
-				    404: function(responseObject, textStatus, errorThrown) {
-				        $("#modalEditor").modal('show');
-				        $("#modalEditorTitle").text('Problema al procesar su solicitud');
-				        $("#modalEditorContenido").attr('align', 'left');
-				        $("#modalEditorCerrarVentana").show();
-				        $("#modalEditorContenido").html('No se encontró respuesta del servidor para procesar su solicitud<br /><strong>HTTP 404</strong>');
-				        $("#modalEditorBtnCerrar").show();
-				        $("#modalEditorBtnCerrar").text('Cerrar');
-				        $("#modalEditorBtnAccion").hide();
-				    },
-					500: function(responseObject, textStatus, errorThrown) {
-				        $("#modalEditor").modal('show');
-				        $("#modalEditorTitle").text('Ha ocurrido un error');
-				        $("#modalEditorContenido").attr('align', 'left');
-				        $("#modalEditorCerrarVentana").show();
-				        $("#modalEditorContenido").html('La evaluación no se ha podido eliminar ya que no existe en el sistema.<br /><strong>CORE ELIMINAREVALUACIONPARCIAL 500</strong>');
-				        $("#modalEditorBtnCerrar").show();
-				        $("#modalEditorBtnCerrar").text('Cerrar');
-				        $("#modalEditorBtnAccion").hide();
-				    },
-				    206: function(responseObject, textStatus, errorThrown) {
-				        $("#modalEditor").modal('show');
-				        $("#modalEditorTitle").text('Ha ocurrido un error');
-				        $("#modalEditorContenido").attr('align', 'left');
-				        $("#modalEditorCerrarVentana").show();
-				        $("#modalEditorContenido").html('Esta evaluación ha sido considerada en una evaluación quincenal y por ello no ha sido eliminada.<br /><strong>CORE ELIMINAREVALUACIONPARCIAL 206</strong>');
-				        $("#modalEditorBtnCerrar").show();
-				        $("#modalEditorBtnCerrar").text('Cerrar');
-				        $("#modalEditorBtnAccion").hide();
-				    },
-				    501: function(responseObject, textStatus, errorThrown) {
-				        $("#modalEditor").modal('show');
-				        $("#modalEditorTitle").text('Ha ocurrido un error');
-				        $("#modalEditorContenido").attr('align', 'left');
-				        $("#modalEditorCerrarVentana").show();
-				        $("#modalEditorContenido").html('El sistema no entregó el número de la evaluación para realizar la eliminación de la evaluación parcial.<br /><strong>CORE ELIMINAREVALUACIONPARCIAL 501</strong>');
-				        $("#modalEditorBtnCerrar").show();
-				        $("#modalEditorBtnCerrar").text('Cerrar');
-				        $("#modalEditorBtnAccion").hide();
-				    },
-				    200: function(responseObject, textStatus, errorThrown) {
-				    	console.log('evaluacion eliminada porque el analista cancelo la acción: '+nroEvaluacionGlobal.numero_evaluacion);
-				    }
+	if($("#modalHomeBtnCerrar").text() == "Cancelar Cambios") {
+		var bandera = false;
+		$.each($('input:radio'), function(i, x) {
+			if($(this).is(':checked')) {
+				if($(this).val() != -1) {
+					bandera = true;
 				}
-			});
+			}
+		});
+
+		if(!bandera) {
+				$.ajax({
+					type: 'post',
+					url: 'core/EliminarEvaluacionParcial.php',
+					data: 'evaluacion='+nroEvaluacionGlobal.numero_evaluacion,
+					beforeSend: function() {
+
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown) {
+					    if (XMLHttpRequest.readyState == 0) {
+							$("#modalEditorConfig").attr('class', 'modal-dialog');
+							$("#modalEditorTitle").text('Verifique su conexión a internet');
+							$("#modalEditorContenido").attr('align', 'left');
+							$("#modalEditorCerrarVentana").show();
+							$("#modalEditorContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+							$("#modalEditorBtnCerrar").show();
+							$("#modalEditorBtnCerrar").text('Cerrar');
+							$("#modalEditorBtnAccion").hide();
+					    }
+					},
+					statusCode: {
+					    404: function(responseObject, textStatus, errorThrown) {
+					        $("#modalEditor").modal('show');
+					        $("#modalEditorTitle").text('Problema al procesar su solicitud');
+					        $("#modalEditorContenido").attr('align', 'left');
+					        $("#modalEditorCerrarVentana").show();
+					        $("#modalEditorContenido").html('No se encontró respuesta del servidor para procesar su solicitud<br /><strong>HTTP 404</strong>');
+					        $("#modalEditorBtnCerrar").show();
+					        $("#modalEditorBtnCerrar").text('Cerrar');
+					        $("#modalEditorBtnAccion").hide();
+					    },
+						500: function(responseObject, textStatus, errorThrown) {
+					        $("#modalEditor").modal('show');
+					        $("#modalEditorTitle").text('Ha ocurrido un error');
+					        $("#modalEditorContenido").attr('align', 'left');
+					        $("#modalEditorCerrarVentana").show();
+					        $("#modalEditorContenido").html('La evaluación no se ha podido eliminar ya que no existe en el sistema.<br /><strong>CORE ELIMINAREVALUACIONPARCIAL 500</strong>');
+					        $("#modalEditorBtnCerrar").show();
+					        $("#modalEditorBtnCerrar").text('Cerrar');
+					        $("#modalEditorBtnAccion").hide();
+					    },
+					    206: function(responseObject, textStatus, errorThrown) {
+					        $("#modalEditor").modal('show');
+					        $("#modalEditorTitle").text('Ha ocurrido un error');
+					        $("#modalEditorContenido").attr('align', 'left');
+					        $("#modalEditorCerrarVentana").show();
+					        $("#modalEditorContenido").html('Esta evaluación ha sido considerada en una evaluación quincenal y por ello no ha sido eliminada.<br /><strong>CORE ELIMINAREVALUACIONPARCIAL 206</strong>');
+					        $("#modalEditorBtnCerrar").show();
+					        $("#modalEditorBtnCerrar").text('Cerrar');
+					        $("#modalEditorBtnAccion").hide();
+					    },
+					    501: function(responseObject, textStatus, errorThrown) {
+					        $("#modalEditor").modal('show');
+					        $("#modalEditorTitle").text('Ha ocurrido un error');
+					        $("#modalEditorContenido").attr('align', 'left');
+					        $("#modalEditorCerrarVentana").show();
+					        $("#modalEditorContenido").html('El sistema no entregó el número de la evaluación para realizar la eliminación de la evaluación parcial.<br /><strong>CORE ELIMINAREVALUACIONPARCIAL 501</strong>');
+					        $("#modalEditorBtnCerrar").show();
+					        $("#modalEditorBtnCerrar").text('Cerrar');
+					        $("#modalEditorBtnAccion").hide();
+					    },
+					    200: function(responseObject, textStatus, errorThrown) {
+					    	console.log('evaluacion eliminada porque el analista cancelo la acción: '+nroEvaluacionGlobal.numero_evaluacion);
+					    }
+					}
+				});
+		}
 	}
 });

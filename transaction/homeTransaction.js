@@ -2,6 +2,7 @@
 var tablaEjecutivos;
 
 $(document).ready(function(){
+	$("#modalHomeBtnCerrar").text('Cerrar');
 
 	$.ajax({
 		type: 'get', 
@@ -584,7 +585,7 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 				            301: function(responseObject, textStatus, errorThrown) {
 				                $("#modalHomeContenido").load('creator.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
 				            	$("#modalHomeBtnCerrar").show();
-								$("#modalHomeBtnCerrar").text('Cancelar');
+								$("#modalHomeBtnCerrar").text('Cancelar Cambios');
 								$("#modalHomeCerrarVentana").hide();
 								$("#modalHomeBtnAccion").show();
 								$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
@@ -603,6 +604,7 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 			}
 		});
 	}else{
+		$("#modalHomeBtnCerrar").text('Cerrar');
 		var ejecutivodata = data.rut_ejecutivo;
 		var ejecutivoname = data.nombre_ejecutivo;
 		$.ajax({

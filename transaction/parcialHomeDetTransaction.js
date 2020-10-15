@@ -3586,7 +3586,7 @@ $("#btnGenerarEva").click(function() {
 				            301: function(responseObject, textStatus, errorThrown) {
 				                $("#modalHomeContenido").load('creator.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+ejecutivo);
 				            	$("#modalHomeBtnCerrar").show();
-								$("#modalHomeBtnCerrar").text('Cancelar');
+								$("#modalHomeBtnCerrar").text('Cancelar Cambios');
 								$("#modalHomeCerrarVentana").hide();
 								$("#modalHomeBtnAccion").show();
 								$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
