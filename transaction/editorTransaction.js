@@ -316,6 +316,7 @@ $(document).ready(function() {
 
 // ############################################################# HABILITANDO LA FUNCIÓN PARA EL RECALCULO
 											                    $("input:radio").click(function () {
+											                    	guardarNotaItem(idjob, $(this).attr('codigo_item'), $(this).val());
 											                    	//definiendo variables locales para el calculo
 																    localStorage.setItem($("#tablaNotasNotaCategoria1").prop('codigo'), 0);
 																    localStorage.setItem($("#tablaNotasNotaCategoria2").prop('codigo'), 0);
@@ -332,15 +333,17 @@ $(document).ready(function() {
 																    	if($(this).is(':checked')) {
 																    		//si el valor del elemento seleccionado es -1 corresponde a no aplica y no se contabiliza
 																    		if(parseInt($(this).val()) == -1) {
-																    			if($("#tablaNotasNotaCategoria1").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 ); guardarNotaItem(idjob, $(this).attr('codigo_item'), $(this).val()); }
-																    			if($("#tablaNotasNotaCategoria2").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 ); guardarNotaItem(idjob, $(this).attr('codigo_item'), $(this).val()); }
-																    			if($("#tablaNotasNotaCategoria3").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 ); guardarNotaItem(idjob, $(this).attr('codigo_item'), $(this).val()); }
+																    			if($("#tablaNotasNotaCategoria1").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 );  }
+																    			if($("#tablaNotasNotaCategoria2").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 );  }
+																    			if($("#tablaNotasNotaCategoria3").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 );  }
 																    			//de lo contrario, es un valor de nota 0, 5 o 10 y se cuenta para el promedio
 																    		}else{
-																    			if($("#tablaNotasNotaCategoria1").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat1++; guardarNotaItem(idjob, $(this).attr('codigo_item'), $(this).val()); }
-																    			if($("#tablaNotasNotaCategoria2").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat2++; guardarNotaItem(idjob, $(this).attr('codigo_item'), $(this).val()); }
-																    			if($("#tablaNotasNotaCategoria3").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat3++; guardarNotaItem(idjob, $(this).attr('codigo_item'), $(this).val()); }
+																    			if($("#tablaNotasNotaCategoria1").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat1++;  }
+																    			if($("#tablaNotasNotaCategoria2").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat2++;  }
+																    			if($("#tablaNotasNotaCategoria3").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat3++;  }
 																    		}
+
+
 																    	}
 																    });
 																	

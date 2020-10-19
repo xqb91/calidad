@@ -300,7 +300,6 @@
 
   <!-- Bootstrap core JavaScript-->
 
-
   <!-- Core plugin JavaScript-->
   <script src="facade/vendor/jquery-easing/jquery.easing.min.js"></script>
 

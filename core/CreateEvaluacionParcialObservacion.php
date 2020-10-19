@@ -25,8 +25,10 @@
 				$obj->setobservacion($comentarios);
 
 				//generando evaluacion quincenal
-				if($quincenal->existeEvaluacionParaPeriodo($obj->getperiodo(), $obj->getrut_ejecutivo()) == null) {
-
+				$evaQuincenalSearch = $quincenal->existeEvaluacionParaPeriodo($obj->getperiodo(), $obj->getrut_ejecutivo());
+				if($evaQuincenalSearch == null) {
+					//no existe... se genera
+					echo "entre a donde no existe";
 					$evaluaciones = $evaArea->listarPorCodigoAreaPeriodo($obj->getcodigo_area(), $obj->getperiodo())[0];
 					if($evaluaciones != null) {
 						if($controlado->listarPorEjecutivo($obj->getrut_ejecutivo(), $obj->getperiodo()) != null) { 
@@ -65,6 +67,49 @@
 							}
 						}
 					}
+				}else{
+					//ya existe
+					echo "entre donde ya existe";
+					$quincenal 			= $evaQuincenalSearch[0];
+					$quincenalNumero 	= $quincenal->getnumero_quincenal();
+					$detalleQuincenal 	= $detaQuinc->listarPorNumeroQUincenal($quincenalNumero);
+
+					$bandera = true;
+					foreach ($detalleQuincenal as $key => $value) {
+						if(!$controlado->existeEvaluacion($value->getevaluacion_parcial())) {
+							$bandera = false;
+						}
+					}
+
+					//si las evaluaciones existen.... actualizar
+					if($bandera) {
+						$promedio = 0;
+						$contador = 0;
+						foreach ($detalleQuincenal as $key => $value) {
+							$obj = $controlado->listarPorNumero($value->getevaluacion_parcial());
+							$promedio = $promedio + $obj[0]->getnota_final();
+							$ct++;
+						}
+						$quincenal->setnota_quincenal($promedio/$ct);
+						$ctrlQuin = new EvaluacionQuincenalController();
+						$ctrlQuin->actualizar($quincenal);
+					}else{
+						$ctrlQuin 		= new EvaluacionQuincenalController();
+						$ctrlDetQuin 	= new DetalleEvaluacionQuincenalController();
+
+						$obj = $ctrlDetQuin->listarPorNumeroQUincenal($quincenalNumero);
+						if($obj != null) {
+							$ctrlDetQuinQuin->eliminar($quincenalNumero);
+						} 
+
+						$obj = $ctrlQuin->listarPorNumero($quincenalNumero);
+						if($obj != null) {
+							$ctrlQuin->eliminar($quincenalNumero);
+						}
+						http_response_code(305);
+					}
+					//de lo contrario eliminar la evaluación quincenal y desplegar el módulo para regenerar quincenal
+
 				}
 				
 				if($controlado->actualizar($obj)) {

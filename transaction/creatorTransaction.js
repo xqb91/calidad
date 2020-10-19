@@ -281,7 +281,7 @@ $(document).ready(function() {
 
 													        	//desbloqueo global
 																setTimeout(function(){ 
-																	$.each($('.form-check-input'), function(i,v) {  
+																	/*$.each($('.form-check-input'), function(i,v) {  
 																		if($(this).attr('codigo_item') == min) {
 																			if($(this).val() == -1) {
 																				//do this when is complete 
@@ -289,7 +289,25 @@ $(document).ready(function() {
 																				$("#tablaEvaluaciones").show(); 
 																			}  
 																		}
-																	}); 
+																	}); */
+
+																	$.each($("input:radio"), function (a) {
+																    	//validando los elementos que se encuentren seleccionados
+																    	if($(this).is(':checked')) {
+																    		//si el valor del elemento seleccionado es -1 corresponde a no aplica y no se contabiliza
+																    		if(parseInt($(this).val()) == -1) {
+																    			if($("#tablaNotasNotaCategoria1").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 ); guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
+																    			if($("#tablaNotasNotaCategoria2").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 ); guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
+																    			if($("#tablaNotasNotaCategoria3").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 ); guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
+																    			//de lo contrario, es un valor de nota 0, 5 o 10 y se cuenta para el promedio
+																    		}else{
+																    			if($("#tablaNotasNotaCategoria1").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat1++; guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
+																    			if($("#tablaNotasNotaCategoria2").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat2++; guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
+																    			if($("#tablaNotasNotaCategoria3").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat3++; guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
+																    		}
+																    	}
+																    });
+																    $("#tablaEvaluaciones").show(); 
 																}, 1200);
 													        }
 													    }
@@ -303,7 +321,9 @@ $(document).ready(function() {
 													    localStorage.setItem($("#tablaNotasNotaCategoria1").prop('codigo'), 0);
 													    localStorage.setItem($("#tablaNotasNotaCategoria2").prop('codigo'), 0);
 													    localStorage.setItem($("#tablaNotasNotaCategoria3").prop('codigo'), 0);
-
+													    
+													    //guardando la informacion del cambio
+													    guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val());
 													    //definiendo contador de evaluaciones por categoria
 													    cat1 = 0;
 													    cat2 = 0;
@@ -315,14 +335,14 @@ $(document).ready(function() {
 													    	if($(this).is(':checked')) {
 													    		//si el valor del elemento seleccionado es -1 corresponde a no aplica y no se contabiliza
 													    		if(parseInt($(this).val()) == -1) {
-													    			if($("#tablaNotasNotaCategoria1").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 ); guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
-													    			if($("#tablaNotasNotaCategoria2").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 ); guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
-													    			if($("#tablaNotasNotaCategoria3").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 ); guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
+													    			if($("#tablaNotasNotaCategoria1").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 );  }
+													    			if($("#tablaNotasNotaCategoria2").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 );  }
+													    			if($("#tablaNotasNotaCategoria3").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 );  }
 													    			//de lo contrario, es un valor de nota 0, 5 o 10 y se cuenta para el promedio
 													    		}else{
-													    			if($("#tablaNotasNotaCategoria1").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat1++; guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
-													    			if($("#tablaNotasNotaCategoria2").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat2++; guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
-													    			if($("#tablaNotasNotaCategoria3").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat3++; guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
+													    			if($("#tablaNotasNotaCategoria1").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat1++; }
+													    			if($("#tablaNotasNotaCategoria2").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat2++; }
+													    			if($("#tablaNotasNotaCategoria3").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat3++; }
 													    		}
 													    	}
 													    });
@@ -340,6 +360,51 @@ $(document).ready(function() {
 														guardarNotaFinal(nroEvaluacionGlobal.numero_evaluacion, (notacat1+notacat2+notacat3).toFixed(2));
 
 													});
+
+													function registrarTodasEvas() {
+														 $("input:radio").click(function () {
+									                    	//definiendo variables locales para el calculo
+														    localStorage.setItem($("#tablaNotasNotaCategoria1").prop('codigo'), 0);
+														    localStorage.setItem($("#tablaNotasNotaCategoria2").prop('codigo'), 0);
+														    localStorage.setItem($("#tablaNotasNotaCategoria3").prop('codigo'), 0);
+
+														    //definiendo contador de evaluaciones por categoria
+														    cat1 = 0;
+														    cat2 = 0;
+														    cat3 = 0;
+
+														    //revisando TODOS los radiobutton de la página
+														    $.each($("input:radio"), function (a) {
+														    	//validando los elementos que se encuentren seleccionados
+														    	if($(this).is(':checked')) {
+														    		//si el valor del elemento seleccionado es -1 corresponde a no aplica y no se contabiliza
+														    		if(parseInt($(this).val()) == -1) {
+														    			if($("#tablaNotasNotaCategoria1").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 ); guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
+														    			if($("#tablaNotasNotaCategoria2").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 ); guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
+														    			if($("#tablaNotasNotaCategoria3").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + 0 ); guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
+														    			//de lo contrario, es un valor de nota 0, 5 o 10 y se cuenta para el promedio
+														    		}else{
+														    			if($("#tablaNotasNotaCategoria1").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat1++; guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
+														    			if($("#tablaNotasNotaCategoria2").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat2++; guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
+														    			if($("#tablaNotasNotaCategoria3").prop('codigo') == $(this).attr('categoria')) { localStorage.setItem($(this).attr('categoria'), parseFloat(localStorage.getItem($(this).attr('categoria'))) + parseFloat($(this).val()) );  cat3++; guardarNotaItem(nroEvaluacionGlobal.numero_evaluacion, $(this).attr('codigo_item'), $(this).val()); }
+														    		}
+														    	}
+														    });
+															
+															//Calculando promedios totales por categoria
+															if(cat1 == 0) { $("#tablaNotasNotaCategoria1").html( parseFloat(localStorage.getItem($("#tablaNotasNotaCategoria1").prop('codigo'))).toFixed(2) );  }else{ $("#tablaNotasNotaCategoria1").html( (parseFloat(localStorage.getItem($("#tablaNotasNotaCategoria1").prop('codigo')))/cat1).toFixed(2) ); }
+															if(cat2 == 0) { $("#tablaNotasNotaCategoria2").html( parseFloat(localStorage.getItem($("#tablaNotasNotaCategoria2").prop('codigo'))).toFixed(2) );  }else{ $("#tablaNotasNotaCategoria2").html( (parseFloat(localStorage.getItem($("#tablaNotasNotaCategoria2").prop('codigo')))/cat2).toFixed(2) );  }
+															if(cat3 == 0) { $("#tablaNotasNotaCategoria3").html( parseFloat(localStorage.getItem($("#tablaNotasNotaCategoria3").prop('codigo'))).toFixed(2) );  }else{ $("#tablaNotasNotaCategoria3").html( (parseFloat(localStorage.getItem($("#tablaNotasNotaCategoria3").prop('codigo')))/cat3).toFixed(2) ); }
+
+															//calculando nota real aplicando el peso de cada categoría
+															var notacat1 = parseFloat($("#tablaNotasNotaCategoria1").html())*parseInt($("#tablaNotasNotaCategoria1").prop('peso'))/100;
+															var notacat2 = parseFloat($("#tablaNotasNotaCategoria2").html())*parseInt($("#tablaNotasNotaCategoria2").prop('peso'))/100;
+															var notacat3 = parseFloat($("#tablaNotasNotaCategoria3").html())*parseInt($("#tablaNotasNotaCategoria3").prop('peso'))/100;
+															$("#tablaNotasNotaFinal").html((notacat1+notacat2+notacat3).toFixed(2));
+															guardarNotaFinal(nroEvaluacionGlobal.numero_evaluacion, (notacat1+notacat2+notacat3).toFixed(2));
+
+														});
+													}
 													
 													//rellenando cabecera de titulos de las categorias que se evaluarán
 													$.ajax({
