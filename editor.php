@@ -18,6 +18,7 @@
     header('Location: index.php');
     exit;
   }
+  header("Cache-Control: no-cache, must-revalidate");
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -104,6 +105,9 @@
 
         </nav>
         <!-- End of Topbar -->
+        <div class="alert alert-warning" role="alert" id="mensajeCargandoServidorUp">
+          <img src="facade/img/loading3.gif" alt="cargando"> <strong>El sistema esta envíando información</strong>
+        </div>
 
         <!-- Begin Page Content -->
         <div class="container-fluid">
@@ -264,6 +268,11 @@
         <!-- /.container-fluid -->
 
 
+        <div class="alert alert-warning" role="alert" id="mensajeCargandoServidorDown">
+          <img src="facade/img/loading3.gif" alt="cargando"> <strong>El sistema esta envíando información</strong>
+          <hr>
+          <p>Este mensaje lo estas visualizando porque tu conexión a internet esta demorando en transmitir la información al servidor... Una vez haya terminado los botones para que guardes o canceles se volverán a habilitar.</p>
+        </div>
       </div>
       <!-- End of Main Content -->
     </div>

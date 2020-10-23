@@ -1,10 +1,14 @@
 var quill;
 
+
 $(document).ready(function() {
 	//limpiando localstorage y declarando variables
 	localStorage.clear();
 	var nroEvaluacionGlobal;
 	var categorias;
+
+	$("#mensajeCargandoServidorUp").hide();
+	$("#mensajeCargandoServidorDown").hide();
 	
 	//iniciando recuperación de parametros
 	var idjob = $("#irql").val();
@@ -1179,3 +1183,19 @@ function guardarNotaFinal(evaluacion, notafinal) {
 		}
 	});
 }
+
+
+$( document ).ajaxStart(function() {
+  $( "#modalHomeBtnAccion" ).attr('disabled', 'disabled');
+  $( "#modalHomeBtnCerrar" ).attr('disabled', 'disabled');
+  $("#mensajeCargandoServidorUp").show();
+  $("#mensajeCargandoServidorDown").show();
+});
+
+
+$( document ).ajaxStop(function() {
+  $( "#modalHomeBtnAccion" ).removeAttr('disabled');
+  $( "#modalHomeBtnCerrar" ).removeAttr('disabled');
+  $("#mensajeCargandoServidorUp").hide();
+  $("#mensajeCargandoServidorDown").hide();
+});

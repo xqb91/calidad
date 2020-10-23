@@ -93,6 +93,18 @@ header("Content-Type: text/html");
        } 
     }
 
+
+
+    //------------------------------------------------------------------------------------------------------
+    // VALIDACION PARA NUESTRO "AMIGO ESPECIAL MUY QUERIDO Y AMADO "
+    // -----------------------------------------------------------------------------------------------------
+    if($data_area[0]->getnombre_area() == "SAC") {
+      $banderaSAC = true;
+      $dataSACItems = $ct_final->resumenReporteSAC($evaluacion);
+    }else{
+      $banderaSAC = false;
+    }
+
   
     function agregar_dv($_rol) {
         /* Bonus: remuevo los ceros del comienzo. */
@@ -146,6 +158,13 @@ header("Content-Type: text/html");
   font-family: Arial, Helvetica, sans-serif;
   font-size: 10px;
 }
+
+.IzquierdaSinFormato {
+  text-align: left;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10px;
+}
+
 .CentroSinFormatoNotas {
   text-align: center;
   font-family: Arial, Helvetica, sans-serif;
@@ -282,6 +301,12 @@ table tfoot .links a{
       </tr>
     </table></td>
   </tr>
+<?php
+  //---------------------------------------------------
+  //BLOQUE DE OTRAS AREAS
+  //--------------------------------------------------
+  if(!$banderaSAC) {
+?>
   <tr>
     <td colspan="2"><table width="100%" border="0">
       <tr>
@@ -309,6 +334,74 @@ table tfoot .links a{
       ?>
     </table></td>
   </tr>
+<?php 
+  }else{
+    //----------------------------------------------------
+    //BLOQUE DE NUESTRO QUERIDO AMIGO ESPECIAL
+    //----------------------------------------------------
+?>
+  <tr>
+    <td colspan="2"><table width="100%" border="0">
+      <tr>
+        <td class="TituloCentrado">Categoría</td>
+        <td class="TituloCentrado">ítem Evaluado</td>
+        <td class="TituloCentrado">Nota Ítem</td>
+        <td class="TituloCentrado">Promedio</td>
+        </tr>
+      
+      <?php
+
+        //contando la cantidad de elementos previamente para las categorias
+        $act    = "";
+        $array  = null;
+        $pos = 0;
+        for($i=0; $i<count($dataSACItems); $i++) {
+          if($dataSACItems[$i]['nombre_categoria'] != $act) {
+            $array[$pos]  = $i;
+            $pos++;
+            $act          = $dataSACItems[$i]['nombre_categoria'];
+          }else if(($i+1) == count($dataSACItems)) {
+            $array[$pos]  = $i;
+          }
+        }
+
+
+        $act = "";
+        $lecArray = 1;
+        $ctNotaFinal = 0;
+        foreach ($dataSACItems as $key => $value) {
+          echo '<tr>';
+          if($act != $value['nombre_categoria']) {
+            $act = $value['nombre_categoria'];
+            echo '<td width="8%" class="IzquierdaSinFormato" rowspan="'.($array[($lecArray)]-$array[($lecArray-1)]).'"><strong>'.$value['nombre_categoria'].'</td>';
+          }
+          echo '<td width="22%" class="IzquierdaSinFormato">'.$value['nombre_item'].'</td>';
+          echo '<td width="10%" class="CentroSinFormato">'.$value['promedio'].'</td>';
+          if($ctNotaFinal == 0) {
+            $ctNotaFinal++;
+            echo '<td width="10%" class="CentroSinFormatoNotaFinal" rowspan="'.count($dataSACItems).'">'.$value['nota_final'].'</td>';
+          }
+          echo '</tr>';
+         } 
+        /*for($i=0; $i<count($dataSACItems); $i++) {
+          $k = $datosfinal;
+          echo '<tr>';
+          echo '<td width="20%" class="IzquierdaSinFormato"><strong>'.$k[$i]['nombre_categoria'].'° Evaluación Parcial</strong><br />Evaluación Correlativa de Sistema #'.$k[$i]['parcial'].'</td>';
+          echo '<td width="10%" class="CentroSinFormato">'.$k[$i]['promedio'].'</td>';
+          echo '<td width="10%" class="CentroSinFormato">'.$k[$i+1]['promedio'].'</td>';
+          echo '<td width="10%" class="CentroSinFormato">'.$k[$i+2]['promedio'].'</td>';
+          //calculo de promedio
+          $promedio = ($k[$i]['promedio']*($k[$i]['peso_categoria']/100))+($k[$i+1]['promedio']*($k[$i+1]['peso_categoria']/100))+($k[$i+2]['promedio']*($k[$i+2]['peso_categoria']/100));
+          //echo '<td width="10%" class="CentroSinFormato">'. number_format($promedio, 2, '.', ',').'</td>';
+          echo '</tr>';
+        }*/
+
+      ?>
+    </table></td>
+  </tr>
+<?php
+  }
+?>
   <tr>
     <td colspan="2"><table width="100%" border="0">
       <tr>

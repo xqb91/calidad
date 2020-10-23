@@ -1,6 +1,6 @@
 <?php
   //echo "<h1>".$_GET["periodo"]." && ".$_GET["ejecutivo"]."</h1>";
-
+  header("Cache-Control: no-cache, must-revalidate");
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -87,7 +87,9 @@
 
         </nav>
         <!-- End of Topbar -->
-
+        <div class="alert alert-warning" role="alert" id="mensajeCargandoServidorUp">
+          <img src="facade/img/loading3.gif" alt="cargando"> <strong>El sistema esta recibiendo/enviando información en el servidor</strong>
+        </div>
         <!-- Begin Page Content -->
         <div class="container-fluid">
 
@@ -246,6 +248,11 @@
         </div>
         <!-- /.container-fluid -->
 
+        <div class="alert alert-warning" role="alert" id="mensajeCargandoServidorDown">
+          <img src="facade/img/loading3.gif" alt="cargando"> <strong>El sistema esta enviando/recibiendo información en el servidor</strong>
+          <hr>
+          <p>Este mensaje lo estas visualizando porque tu conexión a internet esta demorando en transmitir o recibir la información al servidor... Una vez haya terminado los botones para que guardes o canceles se volverán a habilitar.</p>
+        </div>
 
       </div>
       <!-- End of Main Content -->
@@ -282,6 +289,7 @@
 </div>
 
   <!-- Bootstrap core JavaScript-->
+
 
   <!-- Core plugin JavaScript-->
   <script src="facade/vendor/jquery-easing/jquery.easing.min.js"></script>

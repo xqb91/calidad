@@ -23,6 +23,7 @@
     header('Location: finalHome.php');
     exit;
   }
+  
 ?>
 <!DOCTYPE html>
 <html lang="es">

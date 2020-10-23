@@ -51,7 +51,7 @@ $(document).ready(function() {
 											var fila = "";
 											fila = fila+'<tr>';
 					                        fila = fila+'<th scope="row"><div class="form-check"><input class="form-check-input" type="checkbox" value="'+v.evaluacion+'" id="evaluacion"></div></th>';
-					                        fila = fila+'<td><strong>Evaluación #'+v.evaluacion+'</strong></td>';
+					                        fila = fila+'<td><strong>'+v.orden+'° Evaluación #'+v.evaluacion+'</strong></td>';
 					                        fila = fila+'<td>'+v.fecha_evaluacion+'</td>';
 					                        fila = fila+'<td>'+v.nota+'</td>';
 					                      	fila = fila+'</tr>';

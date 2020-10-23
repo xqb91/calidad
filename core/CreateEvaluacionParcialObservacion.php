@@ -6,11 +6,14 @@
 	include(dirController."EvaluacionesAreaController.php");
 	include(dirController."DetalleEvaluacionQuincenalController.php");
 
+	
+
 	$controlado = new EvaluacionParcialController();
 	$quincenal  = new EvaluacionQuincenalController();
 	$evaArea    = new EvaluacionesAreaController();
 	$detaQuinc 	= new DetalleEvaluacionQuincenalController();
 
+	error_reporting(E_ALL);
 
 	if(isset($_POST["evaluacion"])) {
 		if(isset($_POST["comentarios"])) {

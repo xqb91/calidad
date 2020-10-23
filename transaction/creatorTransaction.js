@@ -5,6 +5,8 @@ $(document).ready(function() {
 	//limpiando localstorage
 	localStorage.clear();
 	$("#tablaEvaluaciones").hide();
+	$("#mensajeCargandoServidorUp").hide();
+	$("#mensajeCargandoServidorDown").hide();
 
 	//inicializando objetos
 	$("#barraCargaAudio").hide();
@@ -598,7 +600,7 @@ $("#fileAudio").change(function() {
 	            $("#infoFileAudio").html('Audio: <strong>'+respuesta.nombre_fichero+'</strong><br />Peso: <strong>'+respuesta.peso+'</strong>');
 	            $("#btnDownloadAudio").prop('href', respuesta.url);
 	            $("#btnDeleteAudio").prop('url', respuesta.nombre_fichero);
-	            $("#btnDeleteAudio").attr();
+	            //$("#btnDeleteAudio").attr();
 
 	        }
 	    }
@@ -1158,9 +1160,25 @@ $("#modalHomeBtnCerrar").click(function() {
 					    },
 					    200: function(responseObject, textStatus, errorThrown) {
 					    	console.log('evaluacion eliminada porque el analista cancelo la acción: '+nroEvaluacionGlobal.numero_evaluacion);
+					    	$("#modalEditorBtnCerrar").click();
 					    }
 					}
 				});
 		}
 	}
+});
+
+$( document ).ajaxStart(function() {
+  $( "#modalHomeBtnAccion" ).attr('disabled', 'disabled');
+  $( "#modalHomeBtnCerrar" ).attr('disabled', 'disabled');
+  $("#mensajeCargandoServidorUp").show();
+  $("#mensajeCargandoServidorDown").show();
+});
+
+
+$( document ).ajaxStop(function() {
+  $( "#modalHomeBtnAccion" ).removeAttr('disabled');
+  $( "#modalHomeBtnCerrar" ).removeAttr('disabled');
+  $("#mensajeCargandoServidorUp").hide();
+  $("#mensajeCargandoServidorDown").hide();
 });

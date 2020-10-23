@@ -15,6 +15,7 @@
     header('Location: home.php');
     exit;
   }
+  header("Cache-Control: no-cache, must-revalidate");
 ?>
 
 <!DOCTYPE html>

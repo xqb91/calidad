@@ -480,5 +480,84 @@
 		}
 
 
+		public function resumenReporteSAC($evaluacion = null) {
+			try {
+				if($evaluacion != null) {
+					$consulta = "SELECT ";
+					$consulta = $consulta."numero_final, ";
+					$consulta = $consulta."nota_final, ";
+					$consulta = $consulta."codigo_item, ";
+					$consulta = $consulta."nombre_item, ";
+					$consulta = $consulta."codigo_categoria, ";
+					$consulta = $consulta."nombre_categoria, ";
+					$consulta = $consulta."peso_categoria, ";
+					$consulta = $consulta."CASE WHEN contador = 0 THEN CAST(0 as decimal(20,2)) ELSE CAST(nota/contador as decimal(20,2)) END as promedio ";
+					$consulta = $consulta."FROM ( ";
+					$consulta = $consulta."SELECT  ";
+					$consulta = $consulta."a.numero_final, ";
+					$consulta = $consulta."a.nota_final, ";
+					$consulta = $consulta."c.codigo_item, ";
+					$consulta = $consulta."d.nombre_item, ";
+					$consulta = $consulta."d.codigo_categoria, ";
+					$consulta = $consulta."e.nombre_categoria, ";
+					$consulta = $consulta."e.peso_categoria, ";
+					$consulta = $consulta."SUM(CASE WHEN c.nota = -1 THEN 0 ELSE c.nota END) as nota, ";
+					$consulta = $consulta."SUM(CASE WHEN c.nota = -1 THEN 0 ELSE 1 END) as contador ";
+					$consulta = $consulta."FROM ";
+					$consulta = $consulta."evaluacion_final a  ";
+					$consulta = $consulta."INNER JOIN detalle_evaluacion_final b ON a.numero_final = b.numero_final ";
+					$consulta = $consulta."INNER JOIN detalle_evaluacion_parcial c ON b.numero_evaluacion = c.numero_evaluacion ";
+					$consulta = $consulta."INNER JOIN item_evaluacion d ON c.codigo_item = d.codigo_item  ";
+					$consulta = $consulta."INNER JOIN categoria e ON d.codigo_categoria = e.codigo_categoria ";
+					$consulta = $consulta."WHERE  ";
+					$consulta = $consulta."a.numero_final = ".$evaluacion." ";
+					$consulta = $consulta."GROUP BY  ";
+					$consulta = $consulta."a.numero_final, ";
+					$consulta = $consulta."a.nota_final, ";
+					$consulta = $consulta."c.codigo_item, ";
+					$consulta = $consulta."d.nombre_item, ";
+					$consulta = $consulta."d.codigo_categoria, ";
+					$consulta = $consulta."e.nombre_categoria, ";
+					$consulta = $consulta."e.peso_categoria ";
+					$consulta = $consulta.")xx ";
+					$consulta = $consulta."GROUP BY  ";
+					$consulta = $consulta."numero_final, ";
+					$consulta = $consulta."nota_final, ";
+					$consulta = $consulta."codigo_item, ";
+					$consulta = $consulta."nombre_item, ";
+					$consulta = $consulta."codigo_categoria, ";
+					$consulta = $consulta."peso_categoria, ";
+					$consulta = $consulta."nombre_categoria ";
+					//ejecutando la consulta
+					if($this->databaseTransaction != null) {
+						$resultado = $this->databaseTransaction->ejecutar($consulta);
+						if($this->databaseTransaction->cantidadResultados() == 0) {
+							$this->databaseTransaction->cerrar();
+							return null;
+						}else{
+							$array = null;
+							$i 	   = 0;
+							while($registro = $this->databaseTransaction->resultados()) {
+								$array[$i] = $registro;
+								$i++;
+							}
+							$this->databaseTransaction->cerrar();
+							return $array;
+						}
+					}else{
+						if(ambiente == 'DEV') { echo "EvaluacionFinalController - calcularNotaFinal: El objeto DatabaseTransaction se encuentra nulo"; }
+						return false;
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionFinalController - calcularNotaFinal: El parametro ejecutivo se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
+
+
 	}
 ?>
