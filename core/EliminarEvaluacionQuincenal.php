@@ -3,9 +3,14 @@
 	include("../config/basicos.php");
 	include("../controller/EvaluacionQuincenalController.php");
 	include("../controller/DetalleEvaluacionQuincenalController.php");
-	
+	include("../controller/LogEvaluacionQuincenalController.php");
+	include(dirModel.'Evaluador.php');
+	session_start();
+
 	$cabecera 		= new EvaluacionQuincenalController();
 	$posiciones		= new DetalleEvaluacionQuincenalController();
+	$ctLog 			= new LogEvaluacionQuincenalController();
+	$sesionlck 		= $_SESSION['loginUser'];
 
 	if(isset($_POST["evaluacion"])) {
 		$numero = filter_input(INPUT_POST, ("evaluacion"));
@@ -40,7 +45,10 @@
 
 
 			if($cabecera->eliminar($global_eva)) {
+				$ctLog->ingresar($global_eva, $sesionlck->getusuario(), 'ELIMINAR');
 				$global_status = $global_status.'<strong>Se ha eliminado la evaluación quincenal #'.$numero.' exitosamente</strong>.';
+
+
 			}else{
 				$global_status = $global_status.'<strong>Ocurrió un error al eliminar la evaluación quincenal #'.$numero.'</strong>.';
 			}

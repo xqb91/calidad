@@ -85,17 +85,28 @@
 			}
 		}
 
-		public function ingresar($LogDetalleEvaluacionParcial) {
+		public function ingresar($evaluacionParcia, $conectado, $accion) {
 			try {
 				//objeto
-				$obj = $LogDetalleEvaluacionParcial;
+				$obj = $evaluacionParcial;
 				if($obj != null) {
 					//construyendo string
-					$consulta = "INSERT INTO log_detalle_evaluacion_parcial ";
-					$consulta = $consulta."(fecha, usuario, numero_evaluacion, codigo_item,nota) VALUES ";
-					
-					$consulta = $consulta."('".date('Y-m-d H:i:s')."','"
-					        .$obj->getusuario()."',".$obj->getnumero_evaluacion().",".$obj->getcodigo_item().", ".$obj->getnota().");";
+					$consulta = "INSERT INTO log_evaluacion_parcial (fecha,usuario,numero_evaluacion,fecha_evaluacion,periodo,rut_ejecutivo,rut_evaluador,nota_final,observacion,codigo_area,orden,estado,accion) ";
+					$consulta = $consulta." VALUES (";
+					$consulta = $consulta." '".date('Y-m-d H:i:s')."', ";
+					$consulta = $consulta." ".$conectado.", ";
+					$consulta = $consulta." ".$obj->getnumero_evaluacion().", ";
+					$consulta = $consulta." '".$obj->getfecha_evaluacion()."', ";
+					$consulta = $consulta." '".$obj->getperiodo()."', ";
+					$consulta = $consulta." ".$obj->getrut_ejecutivo().", ";
+					$consulta = $consulta." ".$obj->getrut_evaluador().", ";
+					$consulta = $consulta." ".$obj->getnota_final().", ";
+					$consulta = $consulta." '".$obj->getobservacion()."', ";
+					$consulta = $consulta." ".$obj->getcodigo_area().", ";
+					$consulta = $consulta." ".$obj->getOrden().", ";
+					$consulta = $consulta." ".$obj->getEstado().", ";
+					$consulta = $consulta." '".$accion."' ";
+					$consulta = $consulta."); ";
 					
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {

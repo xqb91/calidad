@@ -753,5 +753,35 @@
 			}
 		}
 
+		public function esPropietarioDeEvaluacion($numero_evaluacion) {
+			try {			
+				$query = 'SELECT '; 
+				$query = $query.'distinct a.rut_evaluador ';
+				$query = $query.'FROM '; 
+				$query = $query.'evaluacion_parcial a ';
+				$query = $query.'WHERE '; 
+				$query = $query.'a.numero_evaluacion = '.$evaluacion.' ';
+
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($query);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$registro = $this->databaseTransaction->resultados();
+						$this->databaseTransaction->cerrar();
+						return $registro['rut_evaluador'];
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluacionParcialController - esPropietario: El objeto DatabaseTransaction se encuentra nulo"; }
+					return null;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo "Error Crítico: ".$e->getMessage(); }
+				return false;
+			}
+		}
+
 	}
 ?>

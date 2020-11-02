@@ -1,7 +1,7 @@
 <?php
 	//include("../config/Globales.php");
-	include(dirModel."LogEvaluacionParcial.php");
-	class LogEvaluacionParcialController {
+	include(dirModel."LogEvaluacionQuincenal.php");
+	class LogEvaluacionQuincenalController {
 
 		private $databaseTransaction;
 
@@ -29,7 +29,7 @@
 		//funcion retorna un arreglo de todos los registros que encuentre en la tabla
 		public function listar() {
 			try {
-				$consulta = 'SELECT * FROM log_evaluacion_parcial ORDER BY fecha ASC';
+				$consulta = 'SELECT * FROM log_evaluacion_quincenal ORDER BY fecha ASC';
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -40,7 +40,7 @@
 						$array = null;
 						$i 	   = 0;
 						while($registro = $this->databaseTransaction->resultados()) {
-							$array[$i] = new LogEvaluacionParcial($registro);
+							$array[$i] = new LogEvaluacionQuincenal($registro);
 							$i++;
 						}
 						$this->databaseTransaction->cerrar();
@@ -58,7 +58,7 @@
 
 		public function listarPorCodigo($codigo) {
 			try {
-				$consulta = "SELECT * FROM log_evaluacion_parcial WHERE id = '".$codigo."'";
+				$consulta = "SELECT * FROM log_evaluacion_quincenal WHERE id = '".$codigo."'";
 				//ejecutando la consulta
 				if($this->databaseTransaction != null) {
 					$resultado = $this->databaseTransaction->ejecutar($consulta);
@@ -69,7 +69,7 @@
 						$array = null;
 						$i 	   = 0;
 						while($registro = $this->databaseTransaction->resultados()) {
-							$array[$i] = new LogEvaluacionParcial($registro);
+							$array[$i] = new LogEvaluacionQuincenal($registro);
 							$i++;
 						}
 						$this->databaseTransaction->cerrar();
@@ -85,27 +85,25 @@
 			}
 		}
 		
-		public function ingresar($evaluacionParcial, $conectado, $accion) {
+		public function ingresar($evaluacionQuincenal, $conectado, $accion) {
 			try {
 				//objeto
-				$obj = $evaluacionParcial;
+				$obj = $evaluacionQuincenal;
 				if($obj != null) {
 
 					//construyendo string
-					$consulta = "INSERT INTO log_evaluacion_parcial (fecha,usuario,numero_evaluacion,fecha_evaluacion,periodo,rut_ejecutivo,rut_evaluador,nota_final,observacion,codigo_area,orden,estado,accion) ";
+					$consulta = "INSERT INTO log_evaluacion_quincenal(fecha, usuario, numero_quincenal, rut_ejecutivo, fecha_creacion, rut_evaluador, periodo, codigo_area, nota_quincenal, estado, accion)  ";
 					$consulta = $consulta." VALUES (";
 					$consulta = $consulta." '".date('Y-m-d H:i:s')."', ";
 					$consulta = $consulta." '".$conectado."', ";
-					$consulta = $consulta." ".$obj->getnumero_evaluacion().", ";
-					$consulta = $consulta." '".$obj->getfecha_evaluacion()."', ";
-					$consulta = $consulta." '".$obj->getperiodo()."', ";
-					$consulta = $consulta." ".$obj->getrut_ejecutivo().", ";
+					$consulta = $consulta." ".$obj->getnumero_quincenal().", ";
+					$consulta = $consulta." '".$obj->getrut_ejecutivo()."', ";
+					$consulta = $consulta." '".$obj->getfecha_creacion()."', ";
 					$consulta = $consulta." ".$obj->getrut_evaluador().", ";
-					$consulta = $consulta." ".$obj->getnota_final().", ";
-					$consulta = $consulta." '".$obj->getobservacion()."', ";
-					$consulta = $consulta." ".$obj->getcodigo_area().", ";
-					$consulta = $consulta." ".$obj->getOrden().", ";
-					$consulta = $consulta." ".$obj->getEstado().", ";
+					$consulta = $consulta." '".$obj->getperiodo()."', ";
+					$consulta = $consulta." ".$obj->getejecutivo_codigo_area().", ";
+					$consulta = $consulta." ".$obj->getnota_quincenal().", ";
+					$consulta = $consulta." ".$obj->getestado().", ";
 					$consulta = $consulta." '".$accion."' ";
 					$consulta = $consulta."); ";
 

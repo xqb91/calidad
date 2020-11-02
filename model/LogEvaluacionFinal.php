@@ -1,43 +1,36 @@
 <?php
-	class LogEvaluacionParcial {
-		//columnas de la tabla
+	class LogDetalleEvaluacionParcial  {
 		private $id;
 		private $fecha;
 		private $usuario;
-		private $numero_evaluacion;
-		private $fecha_evaluacion;
+		private $numero_final;
+		private $fecha_creacion;
 		private $periodo;
 		private $rut_ejecutivo;
 		private $rut_evaluador;
-		private $nota_final;
-		private $observacion;
 		private $codigo_area;
-		private $orden;
+		private $observaciones;
+		private $nota_final;
 		private $estado;
 		private $accion;
 
-		//Constructor
-		//Obtiene un arreglo que es generado de forma automática por MySQL
-		//mediante un mysql_result, debe entregarse un arreglo de tipo asociativo
 		public function __construct($arreglo) {
 			$this->id					= $arreglo['id'];
 			$this->fecha				= $arreglo['fecha'];
 			$this->usuario				= $arreglo['usuario'];
-			$this->numero_evaluacion	= $arreglo['numero_evaluacion'];
-			$this->fecha_evaluacion		= $arreglo['fecha_evaluacion'];
+			$this->numero_final			= $arreglo['numero_final'];
+			$this->fecha_creacion		= $arreglo['fecha_creacion'];
 			$this->periodo				= $arreglo['periodo'];
 			$this->rut_ejecutivo		= $arreglo['rut_ejecutivo'];
 			$this->rut_evaluador		= $arreglo['rut_evaluador'];
-			$this->nota_final			= $arreglo['nota_final'];
-			$this->observacion			= $arreglo['observacion'];
 			$this->codigo_area			= $arreglo['codigo_area'];
-			$this->orden				= $arreglo['orden'];
+			$this->observaciones		= $arreglo['observaciones'];
+			$this->nota_final			= $arreglo['nota_final'];
 			$this->estado				= $arreglo['estado'];
 			$this->accion				= $arreglo['accion'];
-
 		}
 
-		//accesadores
+
 		public function getid() {
 			try {
 				return $this->id;
@@ -52,7 +45,7 @@
 			}catch(Exception $e) {
 				return null;
 			}
-		}		
+		}
 
 		public function getusuario() {
 			try {
@@ -62,17 +55,17 @@
 			}
 		}
 
-		public function getnumero_evaluacion() {
+		public function getnumero_final() {
 			try {
-				return $this->numero_evaluacion;
+				return $this->numero_final;
 			}catch(Exception $e) {
 				return null;
 			}
 		}
 
-		public function getfecha_evaluacion() {
+		public function getfecha_creacion() {
 			try {
-				return $this->fecha_evaluacion;
+				return $this->fecha_creacion;
 			}catch(Exception $e) {
 				return null;
 			}
@@ -102,33 +95,25 @@
 			}
 		}
 
-		public function getnota_final() {
-			try {
-				return $this->nota_final;
-			}catch(Exception $e) {
-				return null;
-			}
-		}
-
-		public function getobservacion() {
-			try {
-				return $this->observacion;
-			}catch(Exception $e) {
-				return null;
-			}
-		}		
-
 		public function getcodigo_area() {
 			try {
 				return $this->codigo_area;
 			}catch(Exception $e) {
 				return null;
 			}
-		}	
+		}
 
-		public function getorden() {
+		public function getobservaciones() {
 			try {
-				return $this->orden;
+				return $this->observaciones;
+			}catch(Exception $e) {
+				return null;
+			}
+		}
+
+		public function getnota_final() {
+			try {
+				return $this->nota_final;
 			}catch(Exception $e) {
 				return null;
 			}
@@ -140,8 +125,7 @@
 			}catch(Exception $e) {
 				return null;
 			}
-		}	
-
+		}
 
 		public function getaccion() {
 			try {
@@ -150,8 +134,9 @@
 				return null;
 			}
 		}
-		
-		//mutadores
+
+
+
 		public function setid($id) {
 			try {
 				$this->id = $id;
@@ -177,25 +162,25 @@
 			}catch(Exception $e) {
 				return false;
 			}
-		}		
+		}
 
-		public function setnumero_evaluacion($numero_evaluacion) {
+		public function setnumero_final($numero_final) {
 			try {
-				$this->numero_evaluacion = $numero_evaluacion;
+				$this->numero_final = $numero_final;
 				return true;
 			}catch(Exception $e) {
 				return false;
 			}
-		}		
+		}
 
-		public function setfecha_evaluacion($fecha_evaluacion) {
+		public function setfecha_creacion($fecha_creacion) {
 			try {
-				$this->fecha_evaluacion = $fecha_evaluacion;
+				$this->fecha_creacion = $fecha_creacion;
 				return true;
 			}catch(Exception $e) {
 				return false;
 			}
-		}	
+		}
 
 		public function setperiodo($periodo) {
 			try {
@@ -204,7 +189,7 @@
 			}catch(Exception $e) {
 				return false;
 			}
-		}	
+		}
 
 		public function setrut_ejecutivo($rut_ejecutivo) {
 			try {
@@ -213,8 +198,8 @@
 			}catch(Exception $e) {
 				return false;
 			}
-		}			
-	
+		}
+
 		public function setrut_evaluador($rut_evaluador) {
 			try {
 				$this->rut_evaluador = $rut_evaluador;
@@ -222,25 +207,7 @@
 			}catch(Exception $e) {
 				return false;
 			}
-		}		
-	
-		public function setnota_final($nota_final) {
-			try {
-				$this->nota_final = $nota_final;
-				return true;
-			}catch(Exception $e) {
-				return false;
-			}
-		}		
-
-		public function setobservacion($observacion) {
-			try {
-				$this->observacion = $observacion;
-				return true;
-			}catch(Exception $e) {
-				return false;
-			}
-		}	
+		}
 
 		public function setcodigo_area($codigo_area) {
 			try {
@@ -249,11 +216,20 @@
 			}catch(Exception $e) {
 				return false;
 			}
-		}	
+		}
 
-		public function setorden($orden) {
+		public function setobservaciones($observaciones) {
 			try {
-				$this->orden = $orden;
+				$this->observaciones = $observaciones;
+				return true;
+			}catch(Exception $e) {
+				return false;
+			}
+		}
+
+		public function setnota_final($nota_final) {
+			try {
+				$this->nota_final = $nota_final;
 				return true;
 			}catch(Exception $e) {
 				return false;
@@ -276,13 +252,7 @@
 			}catch(Exception $e) {
 				return false;
 			}
-		}				
-
-		//metodos de la clase
-		//lista todos los valores de la clase
-		public function serializar() {
-	        return json_encode(get_object_vars($this), JSON_FORCE_OBJECT);
-		}	    
+		}
 
 	}
 ?>		

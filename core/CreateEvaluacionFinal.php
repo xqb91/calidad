@@ -1,9 +1,10 @@
 <?php
 	include("../config/Globales.php");
 	include("../config/basicos.php");
-	
+	include("../controller/LogEvaluacionFinalController.php");
 	//including models necesaries
 	include(dirModel."Evaluador.php");
+	session_start();
 
 	//including controllers
 	include(dirController."EvaluacionFinalController.php");
@@ -26,6 +27,8 @@
 	$ciclo 			= new CicloController();
 	$areactl		= new AreaController();
 	$jornada 		= new JornadaController();
+	$ctLog 			= new LogEvaluacionFinalController();
+	$sesionlck 		= $_SESSION['loginUser'];
 
 	if(isset($_POST["ejecutivo"])) {
 		
@@ -105,6 +108,7 @@
 							echo '  ],';
 							echo '  "nota_final": '.$dataNotas[0]["final"].'';
 							echo '}';
+							$ctLog->ingresar($last[0], $sesionlck->getusuario(), 'CREAR INIT');
 							http_response_code(200);
 						}else{
 							http_response_code(406);

@@ -5,11 +5,13 @@
 	include(dirController."EvaluacionesAreaController.php");
 	include(dirController."DetalleEvaluacionQuincenalController.php");
 	include(dirController."EvaluacionParcialController.php");
-
+	include("../controller/LogEvaluacionQuincenalController.php");
 	include(dirModel.'Evaluador.php');
 	session_start();
 
-	
+	$ctLog 		= new LogEvaluacionQuincenalController();
+	$sesionlck 	= $_SESSION['loginUser'];
+
 	if(isset($_POST["evas"]) && isset($_POST["ejecutivo"]) && isset($_POST["area"])) {
 
 		//información proveniente de ajax
@@ -110,7 +112,10 @@
 											$temp = new DetalleEvaluacionQuincenal($arreglo);
 											$ctrlDetQuincenal->ingresar($temp);
 										}
-										echo "<strong>Se generó satisfactoriamente la evaluación quincenal ".$last[0]->getnumero_quincenal()."</strong>";
+										$quincenalToCommit->setestado(1);
+										$quincenalToCommit->setnumero_quincenal($last[0]->getnumero_quincenal());
+										$ctLog->ingresar($quincenalToCommit, $sesionlck->getusuario(), 'REGENERACIÓN MANUAL INSERT');
+										echo "Se generó satisfactoriamente la evaluación quincenal ".$last[0]->getnumero_quincenal()."";
 										http_response_code(200);
 									}
 								}else{
@@ -146,6 +151,7 @@
 									$temp = new DetalleEvaluacionQuincenal($arreglo);
 									$ctrlDetQuincenal->ingresar($temp);
 								}
+								$ctLog->ingresar($quincenalToCommit, $sesionlck->getusuario(), 'REGENERACIÓN MANUAL UPDATE');
 								echo "<strong>Se regeneró satisfactoriamente la evaluación quincenal ".$last."</strong>";
 								http_response_code(200);
 							}

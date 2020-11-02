@@ -416,5 +416,36 @@
 			}
 		}
 
+		public function detectaPosibleEquivocacion($rut_ejecutivo, $periodo) {
+			try {
+				$consulta = "SELECT  ";
+				$consulta = $consulta."distinct rut_evaluador ";
+				$consulta = $consulta."FROM ";
+				$consulta = $consulta."evaluacion_parcial ";
+				$consulta = $consulta."WHERE ";
+				$consulta = $consulta."periodo = '".$periodo."' ";
+				$consulta = $consulta."AND rut_ejecutivo = ".$rut_ejecutivo." ";
+				$consulta = $consulta." AND numero_evaluacion = (SELECT min(numero_evaluacion) FROM evaluacion_parcial WHERE periodo = '".$periodo."' AND rut_ejecutivo = ".$rut_ejecutivo.") ";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						$registro = $this->databaseTransaction->resultados();
+						$this->databaseTransaction->cerrar();
+						return $registro['rut_evaluador'];
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "Controller Area - Listar: El objeto DatabaseTransaction se encuentra nulo"; }
+					return null;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return null;
+			}
+		}
+
 	}
 ?>

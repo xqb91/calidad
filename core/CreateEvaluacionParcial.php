@@ -5,7 +5,9 @@
 	include(dirController."EvaluacionQuincenalController.php");
 	include(dirController."EvaluacionesAreaController.php");
 	include(dirController."DetalleEvaluacionQuincenalController.php");
-	
+	include("../controller/LogEvaluacionParcialController.php");
+	include(dirController."EvaluadorController.php");
+	session_start();
 	$array = null;
 
 	if(isset($_POST["periodo"])) {
@@ -32,6 +34,8 @@
 					$quincenal  = new EvaluacionQuincenalController();
 					$evaArea    = new EvaluacionesAreaController();
 					$detaQuinc 	= new DetalleEvaluacionQuincenalController();
+					$ctLog 		= new LogEvaluacionParcialController();
+					$sesionlck 	= $_SESSION['loginUser'];
 
 					//generando evaluacion quincenal
 					/*$evaluaciones = $evaArea->listarPorCodigoAreaPeriodo($area, $periodo)[0];
@@ -80,6 +84,7 @@
 						if($parcial == null) {
 							http_response_code(401);
 						}else{
+							$ctLog->ingresar($parcial[0], $sesionlck->getusuario(), 'CREAR');
 							echo $parcial[0]->serializar();
 							http_response_code(200);
 						}

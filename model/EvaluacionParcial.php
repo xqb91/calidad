@@ -4,7 +4,7 @@
 		//columnas de la tabla
 		private $numero_evaluacion; 
 		private $fecha_evaluacion; 
-		private $periodo ; 
+		private $periodo; 
 		private $rut_ejecutivo; 
 		private $rut_evaluador; 
 		private $nota_final; 

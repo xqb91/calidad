@@ -6,12 +6,18 @@
 	include("../controller/AdjuntosController.php");
 	include("../controller/AudioController.php");
 	include("../controller/DetalleEvaluacionQuincenalController.php");
+	include("../controller/LogEvaluacionParcialController.php");
+	include(dirController."EvaluadorController.php");
+	session_start();
 	
 	$evaluacion 		= new EvaluacionParcialController();
 	$detalle 			= new DetalleEvaluacionParcialController();
 	$adjunto 			= new AdjuntosController();
 	$audio 				= new AudioController();
 	$ctquincenal 		= new DetalleEvaluacionQuincenalController();
+	$ctLog 				= new LogEvaluacionParcialController();
+	$sesionlck 			= $_SESSION['loginUser'];
+	error_reporting(E_ALL);
 
 	if(isset($_POST["evaluacion"])) {
 		$numero = filter_input(INPUT_POST, ("evaluacion"));
@@ -81,6 +87,7 @@
 				}
 
 				if($evaluacion->eliminar($global_eva)) {
+					$ctLog->ingresar($global_eva, $sesionlck->getusuario(), 'ELIMINAR');
 					$global_status = $global_status.'<strong>Se ha eliminado la evaluación '.$numero.' exitosamente</strong>.';
 				}else{
 					$global_status = $global_status.'<strong>Ocurrió un error al eliminar la evaluación '.$numero.'</strong>.';

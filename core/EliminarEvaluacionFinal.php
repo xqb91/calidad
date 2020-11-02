@@ -1,13 +1,16 @@
 <?php
 	include("../config/Globales.php");
 	include("../config/basicos.php");
-	
+	include("../controller/LogEvaluacionFinalController.php");
 	//including models necesaries
 	include(dirModel."Evaluador.php");
+	session_start();
 
 	//including controllers
 	include(dirController."EvaluacionFinalController.php");
 	include(dirController."DetalleEvaluacionFinalController.php");
+	$ctLog 				= new LogEvaluacionFinalController();
+	$sesionlck 			= $_SESSION['loginUser'];
 	//recuperando session PHP
 
 	if(isset($_POST["evaluacion"])) {
@@ -28,6 +31,7 @@
 			}
 			if($cabecera->eliminar($temp[0])) {
 				echo "La evaluación final ".$evaluacion." ha sido eliminada de forma satisfactoria.";
+				$ctLog->ingresar($temp[0], $sesionlck->getusuario(), 'ELIMINAR');
 				http_response_code(200);
 			}else{
 				http_response_code(201);

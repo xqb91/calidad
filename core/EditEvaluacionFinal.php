@@ -1,7 +1,7 @@
 <?php
 	include("../config/Globales.php");
 	include("../config/basicos.php");
-	
+	include("../controller/LogEvaluacionFinalController.php");
 	//including models necesaries
 	include(dirModel."Evaluador.php");
 
@@ -26,6 +26,8 @@
 	$ciclo 			= new CicloController();
 	$areactl		= new AreaController();
 	$jornada 		= new JornadaController();
+	$ctLog 			= new LogEvaluacionFinalController();
+	$sesionlck 		= $_SESSION['loginUser'];
 
 	if(isset($_POST["evaluacion"])) {
 		
@@ -86,6 +88,7 @@
 					echo '  "nota_final": '.$dataNotas[0]["final"].',';
 					echo '  "observacion": "'.str_replace('"', "'", trim(preg_replace('/\t+/', '', html_entity_decode($last[0]->getobservaciones(), ENT_QUOTES, 'UTF-8')))).'"';
 					echo '}';
+					$ctLog->ingresar($last[0], $sesionlck->getusuario(), 'EDITAR');
 					http_response_code(200);
 
 				}

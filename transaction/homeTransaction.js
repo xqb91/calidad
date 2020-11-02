@@ -583,12 +583,120 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 				                $("#modalIndexBtnAccion").hide();
 				            },
 				            301: function(responseObject, textStatus, errorThrown) {
-				                $("#modalHomeContenido").load('creator.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
-				            	$("#modalHomeBtnCerrar").show();
-								$("#modalHomeBtnCerrar").text('Cancelar Cambios');
-								$("#modalHomeCerrarVentana").hide();
-								$("#modalHomeBtnAccion").show();
-								$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
+				            	var ejecutivo = data.rut_ejecutivo;
+				            	var datos = data;
+				            	//validacion previa
+				            	$.ajax({
+									type: 'post', 
+									url: 'core/esEjecutivoAsignado.php',
+									data: {'ejecutivo': ejecutivo},
+									error: function(XMLHttpRequest, textStatus, errorThrown) {
+										if (XMLHttpRequest.readyState == 0) {
+											$("#modalHomeConfig").attr('class', 'modal-dialog');
+											$("#modalHomeTitle").text('Verifique su conexión a internet');
+											$("#modalHomeContenido").attr('align', 'left');
+											$("#modalHomeCerrarVentana").show();
+											$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto los últimos cambios de su evaluación no pudieron ser guardadas. <strong>Pero calma... que no panda el cúnico!</strong>, Las calificaciones, audio y adjuntos que has seleccionado para esta evaluación han sido guardados de forma automática y lo mas probable es que solo hayas perdido la observación de la interacción telefónica. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+											$("#modalHomeBtnCerrar").show();
+											$("#modalHomeBtnCerrar").text('Cerrar');
+											$("#modalHomeBtnAccion").hide();
+											$("#modalHome").modal('show');
+										}
+									},
+									beforeSend: function() {
+										$("#modalHomeConfig").attr('class', 'modal-dialog');
+											$("#modalHomeTitle").text('Realizando validaciones');
+											$("#modalHomeContenido").attr('align', 'left');
+											$("#modalHomeCerrarVentana").show();
+											$("#modalHomeContenido").html('Un momento, por favor...');
+											$("#modalHomeBtnCerrar").hide();
+											$("#modalHomeBtnCerrar").text('Cerrar');
+											$("#modalHomeBtnAccion").text('Iniciar Sesión');
+											$("#modalHomeBtnAccion").hide();
+											$("#modalHome").modal('show');
+									},
+									statusCode : {
+										202: function(responseObject, textStatus, errorThrown) {
+											$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+						                	$("#modalHomeTitle").html('<i class="far fa-edit"></i> Crear Evaluación Final para <strong>'+datos.nombre_evaluador+'</strong>');
+											$("#modalHomeContenido").load('creator.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+ejecutivo);
+							            	$("#modalHomeBtnCerrar").show();
+											$("#modalHomeBtnCerrar").text('Cancelar Cambios');
+											$("#modalHomeCerrarVentana").hide();
+											$("#modalHomeBtnAccion").show();
+											$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
+										},
+										500: function(responseObject, textStatus, errorThrown) {
+											$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+											$("#modalHomeTitle").text('Ha ocurrido un error');
+											$("#modalHomeContenido").attr('align', 'left');
+											$("#modalHomeCerrarVentana").show();
+											$("#modalHomeContenido").html('No se ha recibido el rut del ejecutivo para realizar la validación correspondiente.');
+											$("#modalHomeBtnCerrar").show();
+											$("#modalHomeBtnCerrar").text('Cerrar');
+											$("#modalHomeBtnAccion").text('Iniciar Sesión');
+											$("#modalHomeBtnAccion").hide();
+											$("#modalHome").modal('show');
+										},
+										200: function(responseObject, textStatus, errorThrown) {
+											var bckEvaluador = JSON.parse(responseObject);
+											$.ajax({
+										        type: 'post',
+										        url: 'core/InfoSesionEvaluador.php',
+										        beforeSend: function() {
+										            //inicializando modal que valida sesión de raulí
+										        },
+												error: function(XMLHttpRequest, textStatus, errorThrown) {
+												    if (XMLHttpRequest.readyState == 0) {
+														$("#modalHomeConfig").attr('class', 'modal-dialog');
+														$("#modalHomeTitle").text('Verifique su conexión a internet');
+														$("#modalHomeContenido").attr('align', 'left');
+														$("#modalHomeCerrarVentana").show();
+														$("#modalHomeContenido").html('No se pudo establecer una conexión con el servidor del sistema de calidad y por lo tanto su solicitud no pudo ser procesada. <br /><strong>Por favor, verifique que la conexión de su ordenador se encuentre en orden, si usted se conecta vía Wi-Fi intente acercase al router para aumentar la señal o valique estar conectado a su red. Si ya ha intentado todo lo anterior, solicite ayuda llamando a la mesa de ayuda de tricot al anexo 616 o desde celulares al 2 2350 3616</strong>');
+														$("#modalHomeBtnCerrar").show();
+														$("#modalHomeBtnCerrar").text('Cerrar');
+														$("#modalHomeBtnAccion").hide();
+												    }
+												},
+										        statusCode: {
+										            500: function(responseObject, textStatus, errorThrown) {
+										                $("#modalHomeTitle").text('´Problema al cargar el periodo');
+										                $("#modalHomeContenido").attr('align', 'left');
+										                $("#modalHomeCerrarVentana").show();
+										                $("#modalHomeContenido").html('No se encontró respuesta del servidor para los periodos a trabajar<br /><strong>HTTP 404</strong>');
+										                $("#modalHomeBtnCerrar").show();
+										                $("#modalHomeBtnCerrar").text('Cerrar');
+										                $("#modalHomeBtnAccion").hide();
+										            },
+										            200: function(responseObject, textStatus, errorThrown) {
+										                var resultados = JSON.parse(responseObject);
+										                if(resultados.rut_evaluador == bckEvaluador.rut_evaluador) {
+										                	$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+										                	$("#modalHomeTitle").html('<i class="far fa-edit"></i> Crear Evaluación Final para <strong>'+datos.nombre_evaluador+'</strong>');
+															$("#modalHomeContenido").load('creator.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+ejecutivo);
+											            	$("#modalHomeBtnCerrar").show();
+															$("#modalHomeBtnCerrar").text('Cancelar Cambios');
+															$("#modalHomeCerrarVentana").hide();
+															$("#modalHomeBtnAccion").show();
+															$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');		
+										                }else{
+										                	$("#modalHomeConfig").attr('class', 'modal-dialog');
+										                	$("#modalHomeTitle").html('<i class="fas fa-exclamation-triangle"></i> Advertencia');
+											                $("#modalHomeContenido").attr('align', 'left');
+											                $("#modalHomeCerrarVentana").show();
+											                $("#modalHomeContenido").html('<p style="color:red;">Estimad@ '+resultados.nombre_evaluador+':<br />El ejecutivo <strong>'+datos.nombre_ejecutivo+'</strong> al que piensas evaluar lo comenzó a evaluar <strong>'+bckEvaluador.nombre_evaluador+'</strong>. Si te has equivocado de ejecutivo, cancela esta operación de lo contrario haz click en proceder con nueva evaluación.</p>');
+											                $("#modalHomeBtnCerrar").show();
+											                $("#modalHomeBtnCerrar").text('Cancelar');
+											                $("#modalHomeBtnAccion").html('Proceder con Nueva Evaluación');
+											                $("#modalHomeBtnAccion").attr('ejecutivo', ejecutivo);
+											                $("#modalHomeBtnAccion").show();
+										                }
+													}
+												}
+											});
+										}
+									}
+								});
 				            },
 				            200: function(responseObject, textStatus, errorThrown) {
 				            	$("#modalHomeContenido").load('todoListoParcial.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
@@ -1773,8 +1881,19 @@ $("#modalHomeBtnAccion").click(function() {
 				}
 			}
 		});
+	}else if($("#modalHomeBtnAccion").text() == "Proceder con Nueva Evaluación") {
+		$("#modalHomeConfig").attr('class', 'modal-dialog modal-xl');
+    	$("#modalHomeTitle").html('<i class="far fa-edit"></i> Creando Evaluación Parcial Excepcional</strong>');
+		$("#modalHomeContenido").load('creator.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+$("#modalHomeBtnAccion").attr('ejecutivo'));
+    	$("#modalHomeBtnCerrar").show();
+		$("#modalHomeBtnCerrar").text('Cancelar Cambios');
+		$("#modalHomeCerrarVentana").hide();
+		$("#modalHomeBtnAccion").show();
+		$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
 	}
 })
+
+
 
 	function validarSesionActiva() {
 		var bandera = false;
