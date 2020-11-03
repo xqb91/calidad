@@ -102,6 +102,15 @@
 			}
 		}
 
+		public function setnotafinal($nota_final) {
+			try {
+				$this->nota_final = $nota_final;
+				return true;
+			}catch(Exception $e) {
+				return false;
+			}
+		}
+
 
 		public function getEstado() {
 			try {

@@ -193,7 +193,7 @@
 					}
 					//construyendo string
 					$consulta = "UPDATE evaluacion_final ";
-					$consulta = $consulta."SET observaciones = '".$obj->getobservaciones()."', estado = ".$obj->getEstado()." ";
+					$consulta = $consulta."SET observaciones = '".$obj->getobservaciones()."', estado = ".$obj->getEstado().", nota_final = ".$obj->getnotafinal()." ";
 					$consulta = $consulta."WHERE numero_final = ".$obj->getnumero_final().";";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
