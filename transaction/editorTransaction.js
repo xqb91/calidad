@@ -1,12 +1,11 @@
 var quill;
 
-
 $(document).ready(function() {
 	//limpiando localstorage y declarando variables
 	localStorage.clear();
 	var nroEvaluacionGlobal;
 	var categorias;
-
+	
 	$("#mensajeCargandoServidorUp").hide();
 	$("#mensajeCargandoServidorDown").hide();
 	

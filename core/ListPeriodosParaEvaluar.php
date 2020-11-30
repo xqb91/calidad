@@ -4,7 +4,7 @@
 	
 		public function __construct() {
 			$array = null;
-			for($i=0; $i<=4; $i++) {
+			for($i=0; $i<=6; $i++) {
 				$date = new DateTime("-".$i." months");
 				$array[$i] = $date->format("Y-m");
 			}

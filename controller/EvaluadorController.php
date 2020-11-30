@@ -121,6 +121,43 @@
 				return false;
 			}
 		}
+		
+		public function listarPorUsuarioMD5($usuario) {
+			try {
+				$consulta = "SELECT * FROM evaluador WHERE MD5(MD5(usuario)) = '".$usuario."'";
+				//ejecutando la consulta
+				if($this->databaseTransaction != null) {
+					$resultado = $this->databaseTransaction->ejecutar($consulta);
+					if($this->databaseTransaction->cantidadResultados() == 0) {
+						$this->databaseTransaction->cerrar();
+						return null;
+					}else{
+						switch ($this->databaseTransaction->cantidadResultados()) {
+							case 1:
+								return new Evaluador($this->databaseTransaction->resultados());
+							break;
+							
+							default:
+								$array = null;
+								$i 	   = 0;
+								while($registro = $this->databaseTransaction->resultados()) {
+									$array[$i] = new Evaluador($registro);
+									$i++;
+								}
+								$this->databaseTransaction->cerrar();
+								return $array;
+							break;
+						}
+					}
+				}else{
+					if(ambiente == 'DEV') { echo "EvaluadorController - listarPorUsuario: El objeto DatabaseTransaction se encuentra nulo"; }
+					return false;
+				}
+			}catch(Exception $e) {
+				if(ambiente == 'DEV') { echo $e->getMessage(); }
+				return false;
+			}
+		}
 
 		public function ingresar($param) {
 			try {

@@ -383,18 +383,7 @@ table tfoot .links a{
           }
           echo '</tr>';
          } 
-        /*for($i=0; $i<count($dataSACItems); $i++) {
-          $k = $datosfinal;
-          echo '<tr>';
-          echo '<td width="20%" class="IzquierdaSinFormato"><strong>'.$k[$i]['nombre_categoria'].'° Evaluación Parcial</strong><br />Evaluación Correlativa de Sistema #'.$k[$i]['parcial'].'</td>';
-          echo '<td width="10%" class="CentroSinFormato">'.$k[$i]['promedio'].'</td>';
-          echo '<td width="10%" class="CentroSinFormato">'.$k[$i+1]['promedio'].'</td>';
-          echo '<td width="10%" class="CentroSinFormato">'.$k[$i+2]['promedio'].'</td>';
-          //calculo de promedio
-          $promedio = ($k[$i]['promedio']*($k[$i]['peso_categoria']/100))+($k[$i+1]['promedio']*($k[$i+1]['peso_categoria']/100))+($k[$i+2]['promedio']*($k[$i+2]['peso_categoria']/100));
-          //echo '<td width="10%" class="CentroSinFormato">'. number_format($promedio, 2, '.', ',').'</td>';
-          echo '</tr>';
-        }*/
+
 
       ?>
     </table></td>

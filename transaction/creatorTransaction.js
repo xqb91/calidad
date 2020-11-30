@@ -293,6 +293,7 @@ $(document).ready(function() {
 																		}
 																	}); */
 
+																	/* DEPRECADO PORQUE SE REALIZA A NIVEL DE DB AHORA
 																	$.each($("input:radio"), function (a) {
 																    	//validando los elementos que se encuentren seleccionados
 																    	if($(this).is(':checked')) {
@@ -309,6 +310,7 @@ $(document).ready(function() {
 																    		}
 																    	}
 																    });
+																	*/
 																    $("#tablaEvaluaciones").show(); 
 																}, 1200);
 													        }
@@ -1160,13 +1162,14 @@ $("#modalHomeBtnCerrar").click(function() {
 					    },
 					    200: function(responseObject, textStatus, errorThrown) {
 					    	console.log('evaluacion eliminada porque el analista cancelo la acción: '+nroEvaluacionGlobal.numero_evaluacion);
-					    	$("#modalEditorBtnCerrar").click();
+							$("#modalEditorBtnCerrar").click();
 					    }
 					}
 				});
 		}
 	}
 });
+
 
 $( document ).ajaxStart(function() {
   $( "#modalHomeBtnAccion" ).attr('disabled', 'disabled');

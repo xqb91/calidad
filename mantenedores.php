@@ -51,6 +51,7 @@
 
   <!-- Custom styles for this template-->
   <link href="facade/css/sb-admin-2.min.css" rel="stylesheet">
+
 </head>
 
 <body id="page-top">
@@ -196,52 +197,48 @@
               <!-- Default Card Example -->
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Categorías</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Jornadas</h6>
                   <div class="dropdown no-arrow">
-                    <div class="form-group form-control-sm">
-                      <select class="form-control form-control-sm" id="slcAreaCategoria">
-
-                      </select>
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      
+                      <button type="button" class="btn btn-secondary btn-sm"><i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i> Seleccione un área por favor</button>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                      <div class="dropdown-header">Áreas disponibles:</div>
+                      <a class="dropdown-item" href="#">Cobranza</a>
+                      <a class="dropdown-item" href="#">Calidad del Dato</a>
+                      <a class="dropdown-item" href="#">Servicio Atención al Cliente</a>
+                      <a class="dropdown-item" href="#">Informática</a>
+                      <a class="dropdown-item" href="#">Avatar</a>
                     </div>
                   </div>
                 </div>
                 <div class="card-body">
-                  <div id="descCategorias">Seleccione un área para comenzar.</div>
-                  <table class="table table-bordered" id="tablaCategorias">
-                    <thead>
-                      <tr>
-                        <th scope="col">Categorías</th>
-                        <th scope="col">Peso (%)</th>
-                        <th scope="col" colspan="2">Acción</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td align="center" colspan="4"><img src="facade/img/loading2.gif"></tr></td>
-                    </tbody>
-                  </table> 
+                  Seleccione un área para comenzar.
                 </div>
               </div>
 
               <!-- Basic Card Example -->
               <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                  <h6 class="m-0 font-weight-bold text-primary">Items de Categorías</h6>
-
+                  <h6 class="m-0 font-weight-bold text-primary">Jornadas</h6>
+                  <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      
+                      <button type="button" class="btn btn-secondary btn-sm"><i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i> Seleccione un área por favor</button>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                      <div class="dropdown-header">Áreas disponibles:</div>
+                      <a class="dropdown-item" href="#">Cobranza</a>
+                      <a class="dropdown-item" href="#">Calidad del Dato</a>
+                      <a class="dropdown-item" href="#">Servicio Atención al Cliente</a>
+                      <a class="dropdown-item" href="#">Informática</a>
+                      <a class="dropdown-item" href="#">Avatar</a>
+                    </div>
+                  </div>
                 </div>
                 <div class="card-body">
-                  <div id="descItems">Seleccione una categoría para comenzar.</div>
-                  <table class="table table-bordered" id="tablaItems">
-                    <thead>
-                      <tr>
-                        <th scope="col">Nombre</th>
-                        <th scope="col" colspan="2">Acción</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td align="center" colspan="4"><img src="facade/img/loading2.gif"></tr></td>
-                    </tbody>
-                  </table> 
-
+                  Seleccione un área para comenzar.                
                 </div>
               </div>
 
@@ -261,12 +258,12 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
                       <div class="dropdown-header">Opciones:</div>
-                      <a class="dropdown-item" id="btnAddNewJornada">Añadir Nueva Jornada</a>
+                      <a class="dropdown-item" href="#">Añadir Nueva Jornada</a>
                     </div>
                   </div>
                 </div>
                 <!-- Card Body -->
-                  <table class="table table-bordered" id="tablaJornadas">
+                  <table class="table table-bordered">
                     <thead>
                       <tr>
                         <th scope="col">Nombre</th>
@@ -274,7 +271,12 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr><td align="center" colspan="4"><img src="facade/img/loading2.gif"></tr></td>
+                      <tr>
+                        <th scope="row" width="80%">Mañana</th>
+                        <td><button type="button" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></button></td>
+                        <td><button type="button" class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>
+                        <td><button type="button" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button></td>
+                      </tr>
                     </tbody>
                   </table>                
               </div>
@@ -292,12 +294,12 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
                       <div class="dropdown-header">Opciones:</div>
-                      <a class="dropdown-item" id="btnAddNewCiclo">Añadir Nueva Ciclo</a>
+                      <a class="dropdown-item" href="#">Añadir Nueva Ciclo</a>
                     </div>
                   </div>
                 </div>
                 <!-- Card Body -->
-                  <table class="table table-bordered" id="tablaCiclos">
+                  <table class="table table-bordered">
                     <thead>
                       <tr>
                         <th scope="col">Nombre</th>
@@ -305,7 +307,12 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr><td align="center" colspan="4"><img src="facade/img/loading2.gif"></tr></td>
+                      <tr>
+                        <th scope="row" width="80%">Ciclo</th>
+                        <td><button type="button" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></button></td>
+                        <td><button type="button" class="btn btn-warning btn-sm"><i class="fas fa-lock"></i></button></td>
+                        <td><button type="button" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button></td>
+                      </tr>
                     </tbody>
                   </table>                
               </div>
@@ -323,7 +330,7 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
                       <div class="dropdown-header">Opciones:</div>
-                      <a class="dropdown-item" id="btnAddNewArea">Añadir Nueva Área</a>
+                      <a class="dropdown-item" href="#">Añadir Nueva Área</a>
                     </div>
                   </div>
                 </div>
@@ -336,7 +343,6 @@
                       </tr>
                     </thead>
                     <tbody>
-                        <tr><td align="center" colspan="4"><img src="facade/img/loading2.gif"></tr></td>
                     </tbody>
                   </table>                
               </div>
@@ -395,8 +401,6 @@
 
   <!-- Bootstrap core JavaScript-->
   <script src="facade/vendor/jquery/jquery.min.js"></script>
-  <script src="framework/jquery_ui/jquery-ui.js"></script>
-
   <script src="facade/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- Core plugin JavaScript-->
@@ -404,7 +408,6 @@
 
   <!-- Custom scripts for all pages-->
   <script src="facade/js/sb-admin-2.min.js"></script>
-
   <script src="transaction/mantenedores/ajustes.js"></script>
 </body>
 

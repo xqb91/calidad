@@ -304,7 +304,8 @@
 				$obj = $param;
 				if($obj != null) {
 					//construyendo string
-					$consulta."CALL sp_update_numero_orden_parcial('".$param->getperiodo()."', ".$param->getrut_ejecutivo().");";
+					$consulta."CALL sp_update_numero_orden_parcial('".$param->getperiodo()."', ".$param->getrut_ejecutivo()."); ";
+					$consulta = $consulta."CALL sp_genera_detalle_parcial(".$param->getnumero_evaluacion().", ".$param->getcodigo_area()."); ";
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);

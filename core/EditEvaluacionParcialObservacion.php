@@ -5,6 +5,7 @@
 	include("../controller/LogEvaluacionParcialController.php");
 	include(dirController."EvaluadorController.php");
 	session_start();
+	
 	$control = new EvaluacionParcialController();
 	$ctLog 	= new LogEvaluacionParcialController();
 	$sesionlck = $_SESSION['loginUser'];
@@ -22,7 +23,5 @@
 			echo html_entity_decode($obj->getObservacion(), ENT_QUOTES, 'UTF-8');
 		}	
 	}
-
-	//echo htmlspecialchars('<p>Hola este es un texto de prueba</p><ol><li>uno</li><li>dos</li><li>tres</li><li>cuatro</li></ol><p><strong>texto </strong><em>super </em><u>hiper </u><strong><em><u>duper </u></em></strong><a href="http://google.com/" target="_blank">formateado</a></p>', ENT_QUOTES, "UTF-8");
 
 ?>

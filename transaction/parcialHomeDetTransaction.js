@@ -228,7 +228,7 @@ $(document).ready(function(){
 																				             		url: 'core/resumenEjecutivo.php',
 																				             		data: 'ejecutivo='+irqljob,
 																				             		beforeSend: function() {
-																				             			$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Obteniendo información del ejecutivo...');
+																				             			//$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Obteniendo información del ejecutivo...');
 																				             		},
 																				             		statusCode: {
 																				             			500: function(responseObject, textStatus, errorThrown) {
@@ -265,7 +265,7 @@ $(document).ready(function(){
 																				             		url: 'core/ResumenEvaluacionParcialEjecutivo.php',
 																				             		data: 'ejecutivo='+irqljob,
 																				             		beforeSend: function() {
-																				             			$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Obteniendo información del ejecutivo...');
+																				             			//$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Obteniendo información del ejecutivo...');
 																				             		},
 																				             		statusCode: {
 																				             			500: function(responseObject, textStatus, errorThrown) {
@@ -1732,26 +1732,26 @@ $(document).ready(function(){
 																												                	//$("#frmXLSTipo").val(tipo);
 																												                	//$("#frmXLSEvaluacion").val(evaluacion);
 																												                	//$("#frmXls").submit();
-																												                	var urlProceso = "";
-																														        	var nombreFichero = "";
-																														        	if(tipo == 1) {
-																														        		urlProceso = "../centralreport/core/ExcelParcial.php?evaluacion="+evaluacion;
-																														        		nombreFichero = "parcial_"+evaluacion+".xlsx";
-																														        	}else if(tipo == 2) {
-																														        		urlProceso = "../centralreport/core/ExcelQuincenal.php?evaluacion="+evaluacion;
-																														        		nombreFichero = "Quincenal_"+evaluacion+".xlsx";
-																														        	}else{
-																														        		urlProceso = "../centralreport/core/ExcelFinal.php?evaluacion="+evaluacion;
-																														        		nombreFichero = "final_"+evaluacion+".xlsx";
-																														        	}
-
-																														        	$.ajax({
+																																	var urlProceso = "";
+																																	var nombreFichero = "";
+																																	if(tipo == 1) {
+																																		urlProceso = "../centralreport/core/ExcelParcial.php?evaluacion="+evaluacion;
+																																		nombreFichero = "parcial_"+evaluacion+".xlsx";
+																																	}else if(tipo == 2) {
+																																		urlProceso = "../centralreport/core/ExcelQuincenal.php?evaluacion="+evaluacion;
+																																		nombreFichero = "Quincenal_"+evaluacion+".xlsx";
+																																	}else{
+																																		urlProceso = "../centralreport/core/ExcelFinal.php?evaluacion="+evaluacion;
+																																		nombreFichero = "final_"+evaluacion+".xlsx";
+																																	}
+																																	
+																																	$.ajax({
 																																	    type: 'post',
 																																	    url: urlProceso
 																																	});
-																														        	$("#modalHomeBtnCerrar").click();
-									        																						window.location.href="../centralreport/files/tmp/"+nombreFichero;
 
+																																	$("#modalHomeBtnCerrar").click();
+																																	window.location.href="../centralreport/files/tmp/"+nombreFichero;
 																																}
 																															}
 																														});
@@ -2139,7 +2139,7 @@ $("#slcPeriodo").change(function() {
 															url: 'core/ResumenEvaluacionParcialEjecutivo.php',
 															data: 'ejecutivo='+irqljob,
 															beforeSend: function() {
-																$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Obteniendo información del ejecutivo...');
+																//$("#modalHomeContenido").html('<img src="facade/img/loading2.gif" /> Obteniendo información del ejecutivo...');
 															},
 															statusCode: {
 																500: function(responseObject, textStatus, errorThrown) {
@@ -3371,32 +3371,32 @@ $("#slcPeriodo").change(function() {
 																						$("#modalHome").modal('show');
 																					},
 																					200: function(responseObject, textStatus, errorThrown) {
-																						var evaluacion 		= eval;
-																	                	var tipo 			= 1;
+																						//var evaluacion 		= eval;
+																	                	//var tipo 			= 1;
 																	                	//$("#frmXLSTipo").val(tipo);
 																	                	//$("#frmXLSEvaluacion").val(evaluacion);
 																	                	//$("#frmXls").submit();
-
-																	                	var urlProceso = "";
-																			        	var nombreFichero = "";
-																			        	if(tipo == 1) {
-																			        		urlProceso = "../centralreport/core/ExcelParcial.php?evaluacion="+evaluacion;
-																			        		nombreFichero = "parcial_"+evaluacion+".xlsx";
-																			        	}else if(tipo == 2) {
-																			        		urlProceso = "../centralreport/core/ExcelQuincenal.php?evaluacion="+evaluacion;
-																			        		nombreFichero = "Quincenal_"+evaluacion+".xlsx";
-																			        	}else{
-																			        		urlProceso = "../centralreport/core/ExcelFinal.php?evaluacion="+evaluacion;
-																			        		nombreFichero = "final_"+evaluacion+".xlsx";
-																			        	}
-
-																			        	$.ajax({
-																						    type: 'post',
-																						    url: urlProceso
+																						
+																						var urlProceso = "";
+																						var nombreFichero = "";
+																						if(tipo == 1) {
+																							urlProceso = "../centralreport/core/ExcelParcial.php?evaluacion="+evaluacion;
+																							nombreFichero = "parcial_"+evaluacion+".xlsx";
+																						}else if(tipo == 2) {
+																							urlProceso = "../centralreport/core/ExcelQuincenal.php?evaluacion="+evaluacion;
+																							nombreFichero = "Quincenal_"+evaluacion+".xlsx";
+																						}else{
+																							urlProceso = "../centralreport/core/ExcelFinal.php?evaluacion="+evaluacion;
+																							nombreFichero = "final_"+evaluacion+".xlsx";
+																						}
+																						
+																						$.ajax({
+																							type: 'post',
+																							url: urlProceso
 																						});
 
-																			        	$("#modalHomeBtnCerrar").click();
-													        							window.location.href="../centralreport/files/tmp/"+nombreFichero;
+																						$("#modalHomeBtnCerrar").click();
+																						window.location.href="../centralreport/files/tmp/"+nombreFichero;
 																					}
 																				}
 																			});
@@ -3625,7 +3625,7 @@ $("#btnGenerarEva").click(function() {
 				                $("#modalIndexBtnAccion").hide();
 				            },
 				            301: function(responseObject, textStatus, errorThrown) {
-				            	//validacion previa
+				               //validacion previa
 				            	$.ajax({
 									type: 'post', 
 									url: 'core/esEjecutivoAsignado.php',
@@ -3845,7 +3845,6 @@ $("#btnExcelMasivo").click(function() {
 				$("#modalHomeBtnAccion").text('Iniciar Sesión');
 				$("#modalHomeBtnAccion").hide();
 				$("#modalHome").modal('show');
-				//window.location.href="../centralreport/core/exportXLSConsolidado.php?ejecutivo="+irqljob+"&periodo="+$("#slcPeriodo :selected").val();
 				window.location.href="../centralreport/core/exportXLSConsolidado.php?ejecutivo="+irqljob+"&periodo="+$("#slcPeriodo :selected").val();
 			}
 		}
@@ -4075,7 +4074,6 @@ $("#modalHomeBtnAccion").click(function() {
 								                          	$("#tablaEvaluacionesGeneradas").append(fila);
 
 														});
-														$("#modalEditorBtnCerrar").click();
 													}
 
 
@@ -5227,8 +5225,7 @@ $("#modalHomeBtnAccion").click(function() {
 													                	//$("#frmXLSTipo").val(tipo);
 													                	//$("#frmXLSEvaluacion").val(evaluacion);
 													                	//$("#frmXls").submit();
-
-													                	var urlProceso = "";
+																		var urlProceso = "";
 															        	var nombreFichero = "";
 															        	if(tipo == 1) {
 															        		urlProceso = "../centralreport/core/ExcelParcial.php?evaluacion="+evaluacion;
@@ -5240,9 +5237,10 @@ $("#modalHomeBtnAccion").click(function() {
 															        		urlProceso = "../centralreport/core/ExcelFinal.php?evaluacion="+evaluacion;
 															        		nombreFichero = "final_"+evaluacion+".xlsx";
 															        	}
-															        	$.ajax({
-																		    type: 'post',
-																		    url: urlProceso
+																		
+																		$.ajax({
+																			type: 'post',
+																			url: urlProceso
 																		});
 
 															        	$("#modalHomeBtnCerrar").click();
@@ -6623,27 +6621,26 @@ $("#modalHomeBtnAccion").click(function() {
 															                	//$("#frmXLSTipo").val(tipo);
 															                	//$("#frmXLSEvaluacion").val(evaluacion);
 															                	//$("#frmXls").submit();
-
-																	            var urlProceso = "";
-																	        	var nombreFichero = "";
-																	        	if(tipo == 1) {
-																	        		urlProceso = "../centralreport/core/ExcelParcial.php?evaluacion="+evaluacion;
-																	        		nombreFichero = "parcial_"+evaluacion+".xlsx";
-																	        	}else if(tipo == 2) {
-																	        		urlProceso = "../centralreport/core/ExcelQuincenal.php?evaluacion="+evaluacion;
-																	        		nombreFichero = "Quincenal_"+evaluacion+".xlsx";
-																	        	}else{
-																	        		urlProceso = "../centralreport/core/ExcelFinal.php?evaluacion="+evaluacion;
-																	        		nombreFichero = "final_"+evaluacion+".xlsx";
-																	        	}
-
-																	        	$.ajax({
-																				    type: 'post',
-																				    url: urlProceso
+																				var urlProceso = "";
+																				var nombreFichero = "";
+																				if(tipo == 1) {
+																					urlProceso = "../centralreport/core/ExcelParcial.php?evaluacion="+evaluacion;
+																					nombreFichero = "parcial_"+evaluacion+".xlsx";
+																				}else if(tipo == 2) {
+																					urlProceso = "../centralreport/core/ExcelQuincenal.php?evaluacion="+evaluacion;
+																					nombreFichero = "Quincenal_"+evaluacion+".xlsx";
+																				}else{
+																					urlProceso = "../centralreport/core/ExcelFinal.php?evaluacion="+evaluacion;
+																					nombreFichero = "final_"+evaluacion+".xlsx";
+																				}
+																				
+																				$.ajax({
+																					type: 'post',
+																					url: urlProceso
 																				});
 
-																	        	$("#modalHomeBtnCerrar").click();
-									        									window.location.href="../centralreport/files/tmp/"+nombreFichero;
+																				$("#modalHomeBtnCerrar").click();
+																				window.location.href="../centralreport/files/tmp/"+nombreFichero;
 																			}
 																		}
 																	});
@@ -8027,27 +8024,27 @@ $("#modalHomeBtnAccion").click(function() {
 															                	//$("#frmXLSTipo").val(tipo);
 															                	//$("#frmXLSEvaluacion").val(evaluacion);
 															                	//$("#frmXls").submit();
-
-															                	var urlProceso = "";
-																	        	var nombreFichero = "";
-																	        	if(tipo == 1) {
-																	        		urlProceso = "../centralreport/core/ExcelParcial.php?evaluacion="+evaluacion;
-																	        		nombreFichero = "parcial_"+evaluacion+".xlsx";
-																	        	}else if(tipo == 2) {
-																	        		urlProceso = "../centralreport/core/ExcelQuincenal.php?evaluacion="+evaluacion;
-																	        		nombreFichero = "Quincenal_"+evaluacion+".xlsx";
-																	        	}else{
-																	        		urlProceso = "../centralreport/core/ExcelFinal.php?evaluacion="+evaluacion;
-																	        		nombreFichero = "final_"+evaluacion+".xlsx";
-																	        	}
-
-																	        	$.ajax({
-																				    type: 'post',
-																				    url: urlProceso
+																				
+																				var urlProceso = "";
+																				var nombreFichero = "";
+																				if(tipo == 1) {
+																					urlProceso = "../centralreport/core/ExcelParcial.php?evaluacion="+evaluacion;
+																					nombreFichero = "parcial_"+evaluacion+".xlsx";
+																				}else if(tipo == 2) {
+																					urlProceso = "../centralreport/core/ExcelQuincenal.php?evaluacion="+evaluacion;
+																					nombreFichero = "Quincenal_"+evaluacion+".xlsx";
+																				}else{
+																					urlProceso = "../centralreport/core/ExcelFinal.php?evaluacion="+evaluacion;
+																					nombreFichero = "final_"+evaluacion+".xlsx";
+																				}
+																				
+																				$.ajax({
+																					type: 'post',
+																					url: urlProceso
 																				});
 
-																	        	$("#modalHomeBtnCerrar").click();
-									        									window.location.href="../centralreport/files/tmp/"+nombreFichero;
+																				$("#modalHomeBtnCerrar").click();
+																				window.location.href="../centralreport/files/tmp/"+nombreFichero;
 																			}
 																		}
 																	});
@@ -8229,7 +8226,7 @@ $("#modalHomeBtnAccion").click(function() {
 						$.ajax({
 							url: 'core/CreateEvaluacionFinalObservacion.php',
 							type: 'POST',
-							data: {'comentarios' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
+							data: {'comentario' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
 							beforeSend: function() {
 							},
 							statusCode: {
@@ -8634,7 +8631,7 @@ $("#modalHomeBtnAccion").click(function() {
 					$.ajax({
 						url: 'core/CreateEvaluacionFinalObservacion.php',
 						type: 'POST',
-						data: {'comentarios' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
+						data: {'comentario' : quill.root.innerHTML, 'evaluacion' : $("#modalHomeBtnAccion").attr('evaluacion')},
 						beforeSend: function() {
 
 						},

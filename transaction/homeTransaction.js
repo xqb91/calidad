@@ -2,8 +2,6 @@
 var tablaEjecutivos;
 
 $(document).ready(function(){
-	$("#modalHomeBtnCerrar").text('Cerrar');
-
 	$.ajax({
 		type: 'get', 
 		url: 'core/SessionManager.php',
@@ -264,7 +262,6 @@ $(document).ready(function(){
 													                            //cargando datos a la tabla
 													                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																				    data: resultado,
-																				    "order" : [[ 2, "ASC" ]],
 																				    columns: [
 																				        { data: 'rut_ejecutivo' },
 																				        { data: 'nombre_ejecutivo' },
@@ -583,7 +580,7 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 				                $("#modalIndexBtnAccion").hide();
 				            },
 				            301: function(responseObject, textStatus, errorThrown) {
-				            	var ejecutivo = data.rut_ejecutivo;
+				                var ejecutivo = data.rut_ejecutivo;
 				            	var datos = data;
 				            	//validacion previa
 				            	$.ajax({
@@ -696,7 +693,7 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 											});
 										}
 									}
-								});
+								});	
 				            },
 				            200: function(responseObject, textStatus, errorThrown) {
 				            	$("#modalHomeContenido").load('todoListoParcial.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);
@@ -712,7 +709,6 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 			}
 		});
 	}else{
-		$("#modalHomeBtnCerrar").text('Cerrar');
 		var ejecutivodata = data.rut_ejecutivo;
 		var ejecutivoname = data.nombre_ejecutivo;
 		$.ajax({
@@ -1470,7 +1466,6 @@ $("#slcArea").change(function(){
 																				                            tablaEjecutivos = null;
 																				                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 																											    data: resultado,
-																											    "order" : [[ 2, "ASC" ]],
 																											    columns: [
 																											        { data: 'rut_ejecutivo' },
 																											        { data: 'nombre_ejecutivo' },
@@ -1818,7 +1813,6 @@ $("#modalHomeBtnAccion").click(function() {
 					                            tablaEjecutivos = null;
 					                            tablaEjecutivos = $("#tablaEjecutivos").DataTable({
 												    data: resultado,
-												    "order" : [[ 2, "ASC" ]],
 												    columns: [
 												        { data: 'rut_ejecutivo' },
 												        { data: 'nombre_ejecutivo' },
@@ -1892,8 +1886,6 @@ $("#modalHomeBtnAccion").click(function() {
 		$("#modalHomeBtnAccion").text('Guardar Evaluación Parcial');	
 	}
 })
-
-
 
 	function validarSesionActiva() {
 		var bandera = false;

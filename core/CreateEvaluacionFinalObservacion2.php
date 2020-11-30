@@ -1,14 +1,9 @@
 <?php
 	include("../config/Globales.php");
 	include("../config/basicos.php");
-	include("../controller/LogEvaluacionFinalController.php");
-	//including models necesaries
-	include(dirModel."Evaluador.php");
-	session_start();
+	
 	//including controllers
 	include(dirController."EvaluacionFinalController.php");
-	error_reporting(E_ALL);
-
 
 	if(isset($_POST["evaluacion"])) {
 		if(isset($_POST["comentario"])) {
@@ -17,9 +12,6 @@
 
 			//instanciando controlador
 			$control = new EvaluacionFinalController();
-			$ctLog 		= new LogEvaluacionFinalController();
-			$sesionlck 	= $_SESSION['loginUser'];
-			
 			$temp 	 = $control->listarPorNumero($evaluacion);
 
 			if($evaluacion == null) {
@@ -27,18 +19,12 @@
 			}else{
 				//actualizar
 				$temp = $temp[0];
-				$dataNotas = $control->calcularNotaFinal($temp->getejecutivo_rut_ejecutivo(), $temp->getperiodo());
 				$temp->setobservaciones($comentario);
-				$temp->setnotafinal($dataNotas[0]["final"]);
-				
-				
 				if($control->actualizar($temp)) {
 					//ok
-					$ctLog->ingresar($temp, $sesionlck->getusuario(), 'CREAR END OK');
 					http_response_code(200);
 				}else{
 					//error
-					$ctLog->ingresar($temp, $sesionlck->getusuario(), 'CREAR END ERROR COMMENTS');
 					http_response_code(204);
 				}
 			}

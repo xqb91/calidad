@@ -391,6 +391,7 @@ $(document).ready(function(){
 $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 	var data = tablaEjecutivos.row( $(this).parents('tr') ).data();
 	var ejecutivodata = data.rut_ejecutivo;
+	
 	//funcion que determina que botón se presionó y arrancar respuesta
 	if($(this).attr('placetogo') == 'verEjecutivo') {
 		$.ajax({
@@ -592,7 +593,7 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 				                $("#modalIndexBtnAccion").hide();
 				            },
 				            301: function(responseObject, textStatus, errorThrown) {
-				            	var ejecutivo = data.rut_ejecutivo;
+				                var ejecutivo = data.rut_ejecutivo;
 				            	var datos = data;
 				            	//validacion previa
 				            	$.ajax({
@@ -705,7 +706,7 @@ $('#tablaEjecutivos tbody').on( 'click', 'button', function () {
 											});
 										}
 									}
-								});
+								});	
 				            },
 				            200: function(responseObject, textStatus, errorThrown) {
 				            	$("#modalHomeContenido").load('todoListoParcial.php?periodo='+$("#slcPeriodo :selected").text()+'&ejecutivo='+data.rut_ejecutivo);

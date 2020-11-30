@@ -33,7 +33,7 @@
 			$c 			= new EvaluadorController();
 			//evaluador logueado en sistema de calidad anterior
 			$evaluador 	=  $_SESSION["rauliUser"];
-			$recu = $c->listarPorUsuario($evaluador);
+			$recu = $c->listarPorUsuarioMD5($evaluador);
 			if($recu != null) {
 				$_SESSION['loginUser'] = $recu;
 				$_SESSION['lastActivity'] = date('Y-m-d H:i:s');

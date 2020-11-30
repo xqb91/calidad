@@ -87,9 +87,10 @@
 
         </nav>
         <!-- End of Topbar -->
-        <div class="alert alert-warning" role="alert" id="mensajeCargandoServidorUp">
+		<div class="alert alert-warning" role="alert" id="mensajeCargandoServidorUp">
           <img src="facade/img/loading3.gif" alt="cargando"> <strong>El sistema esta recibiendo/enviando información en el servidor</strong>
         </div>
+
         <!-- Begin Page Content -->
         <div class="container-fluid">
 
@@ -247,8 +248,7 @@
               </div>
         </div>
         <!-- /.container-fluid -->
-
-        <div class="alert alert-warning" role="alert" id="mensajeCargandoServidorDown">
+		<div class="alert alert-warning" role="alert" id="mensajeCargandoServidorDown">
           <img src="facade/img/loading3.gif" alt="cargando"> <strong>El sistema esta enviando/recibiendo información en el servidor</strong>
           <hr>
           <p>Este mensaje lo estas visualizando porque tu conexión a internet esta demorando en transmitir o recibir la información al servidor... Una vez haya terminado los botones para que guardes o canceles se volverán a habilitar.</p>
@@ -289,7 +289,8 @@
 </div>
 
   <!-- Bootstrap core JavaScript-->
-
+  <!--<script src="facade/vendor/jquery/jquery.min.js"></script>
+  <script src="facade/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>-->
 
   <!-- Core plugin JavaScript-->
   <script src="facade/vendor/jquery-easing/jquery.easing.min.js"></script>

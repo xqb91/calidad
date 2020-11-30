@@ -8,17 +8,19 @@
     include("../controller/LogEvaluacionQuincenalController.php");
 	include(dirController."EvaluadorController.php");
     session_start();
-
+	
+	error_reporting(E_ALL);
 	$controlado = new EvaluacionParcialController();
 	$quincenal  = new EvaluacionQuincenalController();
 	$evaArea    = new EvaluacionesAreaController();
 	$detaQuinc 	= new DetalleEvaluacionQuincenalController();
+    $ctLog 		= new LogEvaluacionQuincenalController();
+	$sesionlck 	= $_SESSION['loginUser'];
 	
-	
-	if(isset($_POST["evaluacion"])) {
-		if(isset($_POST["comentarios"])) {
-			$comentarios = htmlspecialchars(filter_input(INPUT_POST, ("comentarios")), ENT_QUOTES, "UTF-8");
-			$evaluacion  = filter_input(INPUT_POST, ("evaluacion"));
+	if(isset($_GET["evaluacion"])) {
+		if(isset($_GET["comentarios"])) {
+			$comentarios = htmlspecialchars(filter_input(INPUT_GET, ("comentarios")), ENT_QUOTES, "UTF-8");
+			$evaluacion  = filter_input(INPUT_GET, ("evaluacion"));
 			ERROR_REPORTING(E_ALL);
 			$obj = $controlado->listarPorNumero($evaluacion);
 			if($obj == null) {
@@ -60,9 +62,8 @@
 										//obtener número de última quincenal
 										$recienCreada = $quincenal->ultimaEvaluacionGenerada($obj2->getperiodo(), $obj2->getrut_ejecutivo(), $obj2->getrut_evaluador(), $obj2->getejecutivo_codigo_area());
 										
-										$ctLog 		= new LogEvaluacionQuincenalController();
-										$sesionlck 	= $_SESSION['loginUser'];
-										$ctLog->ingresar($recienCreada[0], $sesionlck->getusuario(), 'AUTO GENERADO');
+										
+										$ctLog->ingresar($recienCreada, $sesionlck->getusuario(), 'CREAR');
 
 										
 										//ingresar detalle a la quincenal
@@ -102,10 +103,7 @@
 							$quincenal->setnota_quincenal($promedio/$ct);
 							$ctrlQuin = new EvaluacionQuincenalController();
 							$ctrlQuin->actualizar($quincenal);
-							$ctLog 		= new LogEvaluacionQuincenalController();
-							$sesionlck 	= $_SESSION['loginUser'];
-							$PP_evaluacion  = filter_input(INPUT_POST, ("evaluacion"));
-							$ctLog->ingresar($quincenal, $sesionlck->getusuario(), 'ACTUALIZACION x EDICION PARCIAL '.$PP_evaluacion);
+							$ctLog->ingresar($quincenal, $sesionlck->getusuario(), 'ACTUALIZACION');
 
 						}
 						//de lo contrario eliminar la evaluación quincenal y desplegar el módulo para regenerar quincenal
@@ -123,9 +121,11 @@
 				}
 			}
 		}else{
+			echo "error parametro 2 no recibido";
 			http_response_code(501);
 		}
 	}else{
-		http_response_code(500);
+		echo "error parametro 1 no recibido";
+		//http_response_code(500);
 	}
 ?>

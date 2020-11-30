@@ -108,7 +108,7 @@
 					$consulta = $consulta." ".$obj->getEstado().", ";
 					$consulta = $consulta." '".$accion."' ";
 					$consulta = $consulta."); ";
-
+					
 					//ejecutando la consulta
 					if($this->databaseTransaction != null) {
 						$resultado = $this->databaseTransaction->ejecutar($consulta);
