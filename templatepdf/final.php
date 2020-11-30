@@ -266,11 +266,11 @@ table tfoot .links a{
       </tr>
       <tr>
         <td class="IzquierdaSinFormato">Evaluador</td>
-        <td class="IzquierdaSinFormato"><?php echo agregar_dv($final[0]->getevaluador_rut_evaluador()); ?> - <strong><?php echo ucfirst($dataejecutivo[0]->getnombre_ejecutivo()); ?></strong></td>
+        <td class="IzquierdaSinFormato"><?php echo agregar_dv($final[0]->getevaluador_rut_evaluador()); ?> - <strong><?php echo ucfirst($dataevaluador[0]->getnombre_evaluador()); ?></strong></td>
       </tr>
       <tr>
         <td class="IzquierdaSinFormato">Nombre</td>
-        <td class="IzquierdaSinFormato"><?php echo agregar_dv($final[0]->getejecutivo_rut_ejecutivo()); ?> - <strong><?php echo ucfirst($dataevaluador[0]->getnombre_evaluador()); ?></strong></td>
+        <td class="IzquierdaSinFormato"><?php echo agregar_dv($final[0]->getejecutivo_rut_ejecutivo()); ?> - <strong><?php echo ucfirst($dataejecutivo[0]->getnombre_ejecutivo()); ?></strong></td>
       </tr>
     </table></td>
     <td width="60%"><table width="100%" border="0">
